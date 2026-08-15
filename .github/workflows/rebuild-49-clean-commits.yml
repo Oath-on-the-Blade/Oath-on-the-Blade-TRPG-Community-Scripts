@@ -1,0 +1,48 @@
+name: Temporary clean 49-commit rebuild
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: final-content-current-rules
+          fetch-depth: 0
+      - name: Rebuild exactly one commit per script
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "OOTB Script Repair"
+          git config user.email "actions@users.noreply.github.com"
+          rm -f FINAL_AUDIT_REPORT.txt
+          mkdir -p /tmp/final49
+          cp OOTB_*.md /tmp/final49/
+          git switch --detach 74998356b3655d808658883d7a8f8e5367a706e3
+          git switch -C repair-current-rules-clean-final
+          count=0
+          for src in $(find /tmp/final49 -maxdepth 1 -type f -name 'OOTB_*.md' -printf '%f\n' | LC_ALL=C.UTF-8 sort); do
+            cp "/tmp/final49/$src" "$src"
+            git add -- "$src"
+            git commit -m "Repair ${src#OOTB_} for current script rules"
+            changed=$(git diff-tree --no-commit-id --name-only -r HEAD)
+            if [ "$changed" != "$src" ]; then
+              echo "scope violation for $src: $changed"
+              exit 1
+            fi
+            count=$((count+1))
+          done
+          if [ "$count" -ne 49 ]; then
+            echo "expected 49 commits, got $count"
+            exit 1
+          fi
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "dirty tree"
+            git status --porcelain
+            exit 1
+          fi
+          echo "CLEAN_SCRIPT_COMMIT_COUNT=$count"
+          git push --force origin HEAD:repair-current-rules-clean-final
