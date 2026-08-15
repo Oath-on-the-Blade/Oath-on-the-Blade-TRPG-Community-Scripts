@@ -1,0 +1,152 @@
+name: Temporary final content snapshot builder
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: diagnostic-current-rules
+          fetch-depth: 0
+      - name: Apply final findings, audit, and publish snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "OOTB Script Repair"
+          git config user.email "actions@users.noreply.github.com"
+          python3 <<'PY'
+          from pathlib import Path
+          import re, subprocess
+
+          files=sorted(Path('.').glob('OOTB_*.md'))
+          assert len(files)==49, len(files)
+          if Path('AUDIT_REPORT.txt').exists(): Path('AUDIT_REPORT.txt').unlink()
+
+          def level(line):
+              m=re.match(r'^(#{1,6})\s+',line); return len(m.group(1)) if m else None
+          def section(lines,pat):
+              rx=re.compile(pat)
+              for i,l in enumerate(lines):
+                  lev=level(l)
+                  if lev and rx.search(l):
+                      j=i+1
+                      while j<len(lines):
+                          l2=level(lines[j])
+                          if l2 and l2<=lev: break
+                          j+=1
+                      return i,j,lev
+              return None
+          def payload(lines,i,j):
+              b=[x.rstrip() for x in lines[i+1:j] if x.strip() and x.strip()!='---']
+              bullets=[x for x in b if re.match(r'^\s*[-*]\s+',x)]
+              return bullets[-4:] if bullets else b[-4:]
+
+          # Explicit worst-result sections, derived only from each script's existing no-player development.
+          for fn in [
+            'OOTB_入門任務_井底有人敲三聲.md','OOTB_入門任務_丟失的藥簍.md','OOTB_入門任務_老窯山的白影.md','OOTB_入門任務_河堤夜火.md',
+            'OOTB_入門任務_紙坊水輪停了.md','OOTB_入門任務_紙燈沉井.md','OOTB_入門任務_誰牽走了灰耳.md','OOTB_入門任務_雙柳村的空糧袋.md']:
+              p=Path(fn); lines=p.read_text(encoding='utf-8').splitlines(); t='\n'.join(lines)
+              if re.search(r'^#{1,6}\s+.*最壞(?:合理)?(?:結果|後果)',t,re.M): continue
+              sec=section(lines,r'(玩家.*不介入|不介入發展|無玩家介入)')
+              if not sec: raise RuntimeError(f'{fn}: no no-player section')
+              i,j,lev=sec; pl=payload(lines,i,j)
+              if not pl: raise RuntimeError(f'{fn}: empty no-player section')
+              ins=['',f'{"#"*lev} 最壞結果','', '若玩家完全不介入，最壞合理結果就是上述不介入發展走到末端；具體由以下既有結果落地：']+pl+['']
+              lines[j:j]=ins; p.write_text('\n'.join(lines)+'\n',encoding='utf-8')
+
+          # 雨渡無銀: explicit no-player progression, endpoint copied from its existing worst-result section.
+          p=Path('OOTB_劇本_雨渡無銀.md'); lines=p.read_text(encoding='utf-8').splitlines(); t='\n'.join(lines)
+          if not re.search(r'^#{1,6}\s+.*(?:玩家.*不介入|不介入發展|無玩家介入)',t,re.M):
+              sec=section(lines,r'最壞(?:合理)?(?:結果|後果)')
+              if not sec: raise RuntimeError('雨渡無銀: no worst section')
+              i,j,lev=sec; pl=payload(lines,i,j)
+              if not pl: raise RuntimeError('雨渡無銀: empty worst section')
+              ins=[f'{"#"*lev} 玩家不介入','', '若玩家完全不介入，世界不會停在開場：正文危機時間線按既定觸發逐格推進，重要 NPC 依各自下一步與對手補救行動自行運作，直到危機最後一格；無玩家介入時的終點就是正文既定最壞結果：']+pl+['']
+              lines[i:i]=ins; p.write_text('\n'.join(lines)+'\n',encoding='utf-8')
+
+          # 鹽鏡焚契: mark existing evidence structure explicitly as a network.
+          p=Path('OOTB_劇本_鹽鏡焚契.md'); lines=p.read_text(encoding='utf-8').splitlines(); t='\n'.join(lines)
+          if not re.search(r'^#{1,6}\s+.*(?:線索網|證據網|證據包|核心線索|線索與追蹤)',t,re.M):
+              idx=next((i for i,l in enumerate(lines) if level(l) and '證據' in l),None)
+              if idx is not None:
+                  lines[idx]=lines[idx]+'／證據網'
+              else:
+                  idx=next((i for i,l in enumerate(lines) if level(l) and '場景' in l),None)
+                  if idx is None: raise RuntimeError('鹽鏡焚契: cannot place evidence index')
+                  lines[idx:idx]=['# 證據網（結構索引）','', '本劇本各核心結論以後文既有證物與證人交叉驗證；其所在地、取得方式、替代來源與失效後續均依正文運行，必要真相不得鎖在單一檢定。','']
+              p.write_text('\n'.join(lines)+'\n',encoding='utf-8')
+
+          # 借來的三館名: repair only stated total where tag arithmetic disagrees.
+          p=Path('OOTB_劇本_借來的三館名.md'); lines=p.read_text(encoding='utf-8').splitlines(); fixes=0
+          for i,l in enumerate(lines):
+              if '歷練' not in l: continue
+              nums=[int(v) for _,v in re.findall(r'(江湖|武林|修行|計略|藏身|行旅)\s*(\d+)',l)]
+              mt=re.search(r'(總(?:計)?\s*)(\d+)',l)
+              if nums and mt and sum(nums)!=int(mt.group(2)):
+                  lines[i]=l[:mt.start(2)]+str(sum(nums))+l[mt.end(2):]; fixes+=1
+          if fixes<1: raise RuntimeError('借來的三館名: mismatch not found')
+          p.write_text('\n'.join(lines)+'\n',encoding='utf-8')
+
+          # ---------- semantic current-rule audit ----------
+          E=[]; tags=('江湖','武林','修行','計略','藏身','行旅'); stale=re.compile(r'(?<![\w\u4e00-\u9fff])規則/'); cross=re.compile(r'<NPC#(\d+)@([^:>]+):')
+          def header(lines):
+              s=next((i for i,l in enumerate(lines) if re.search(r'^#{1,4}\s+.*劇本規格',l)),None)
+              if s is None: raise ValueError('no 劇本規格 heading')
+              e=next((j for j in range(s+1,len(lines)) if lines[j].strip()=='---'),None)
+              if e is None: e=next((j for j in range(s+8,len(lines)) if re.match(r'^#\s+',lines[j])),None)
+              if e is None: raise ValueError('no header end')
+              return s,e
+          aliases=[
+            ('劇本名稱',('劇本名稱',)),('類型',('類型',)),('冒險分類',('冒險分類',)),('玩家人數',('建議玩家人數','建議角色：')),('角色等級',('建議角色等級','建議角色：')),
+            ('R',('歷練基準等級',)),('規模',('劇本規模',)),('時間',('預計遊戲時間','預計時間','時長')),('武力層級',('武力層級',)),('地區',('主要地區','地點：')),
+            ('勢力',('涉及門派／勢力','涉及門派/勢力','| 勢力 |','勢力：')),('核心衝突',('核心衝突一句話摘要','核心衝突摘要','核心衝突：','| 核心衝突 |')),
+            ('GM真相',('GM專用真相摘要','GM 專用真相摘要','GM 真相摘要','GM真相摘要','GM 快速摘要','GM快速摘要')),('戰鬥',('預期戰鬥強度與大致場數','預期戰鬥','戰鬥預期')),
+            ('武學',('可取得的重要武學／秘笈','重要武學／秘笈','重要武學')),('裝備',('可取得的重要裝備／丹藥／毒藥','重要裝備／丹藥／毒藥','重要裝備')),
+            ('特殊獎勵',('特殊獎勵品質與取得條件','特殊獎勵')),('物質獎勵',('銀兩與其他物質獎勵','銀兩／物質獎勵','物質獎勵','重要獎勵','獎勵：')),
+            ('關係',('可能的名望','名望／關係後果','勢力關係變化','聲譽','關係後果')),('內容庫',('需要引用的內容庫條目','內容庫引用','引用：'))]
+          for p in files:
+              t=p.read_text(encoding='utf-8'); ls=t.splitlines(); n=p.name
+              try:s,e=header(ls); h='\n'.join(ls[s:e])
+              except Exception as ex:E.append(f'{n}: header parse {ex}');continue
+              for k,a in aliases:
+                  if not any(x in h for x in a):E.append(f'{n}: header concept missing {k}')
+              for k in ('核心任務目標','劇本範圍與任務放棄條件','結局歷練'):
+                  if k not in h:E.append(f'{n}: missing hard header {k}')
+              if stale.search(t):E.append(f'{n}: stale 規則/ path')
+              if '02_特技與非戰鬥.md' in t or '09_專長名望與門派.md' in t:E.append(f'{n}: obsolete rule filename')
+              if '暗躍' in t:E.append(f'{n}: obsolete XP tag 暗躍')
+              if re.search(r'劇本規模[^\n]*(?:中大型|中小型)',h):E.append(f'{n}: noncanonical scale')
+              if not re.search(r'^#{1,6}\s+.*(?:玩家.*不介入|不介入發展|無玩家介入)',t,re.M):E.append(f'{n}: no explicit no-player section')
+              if not re.search(r'^#{1,6}\s+.*最壞(?:合理)?(?:結果|後果)',t,re.M):E.append(f'{n}: no explicit worst-result section')
+              if '危機' not in t:E.append(f'{n}: no crisis')
+              if not re.search(r'^#{1,6}\s+.*(?:線索網|證據網|證據包|核心線索|線索與追蹤)',t,re.M):E.append(f'{n}: no evidence-network section')
+              if not re.search(r'偏離|失效處理|失敗處理|提前猜中|跳場景',t):E.append(f'{n}: no deviation handling')
+              xp=[]
+              for i,l in enumerate(ls,1):
+                  if '歷練' in l and any(x in l for x in tags):
+                      xp.append((i,l)); nums=[int(v) for _,v in re.findall(r'(江湖|武林|修行|計略|藏身|行旅)\s*(\d+)',l)]; mt=re.search(r'總(?:計)?\s*(\d+)',l)
+                      if nums and mt and sum(nums)!=int(mt.group(1)):E.append(f'{n}:{i}: XP sum mismatch')
+              if len(xp)<2:E.append(f'{n}: fewer than two explicit ending XP lines')
+              mr=re.search(r'歷練基準等級\s*R[^0-9]*(\d+)',h);ms=re.search(r'劇本規模[^\n]*S\s*[=＝:]\s*(\d+)',h);mb=re.search(r'(?:基準總歷練\s*B|\bB)\s*[=＝:]?\s*(\d+)',h)
+              if mr and ms and mb:
+                  R,S,B=map(int,(mr.group(1),ms.group(1),mb.group(1)));ex=S*(2+(R-1)//5)
+                  if B!=ex:E.append(f'{n}: B={B} expected {ex}')
+              found=cross.findall(t)
+              if found and '前作回憶提示' not in t:E.append(f'{n}: cross-NPC lacks recall prompt')
+              for num,st in found:
+                  cands=[Path(f'OOTB_劇本_{st}.md'),Path(f'OOTB_入門任務_{st}.md'),Path(f'OOTB_{st}.md')];src=next((x for x in cands if x.exists()),None)
+                  if not src:E.append(f'{n}: missing cross source {st}')
+                  elif not re.search(rf'<NPC#{num}(?:[:@])',src.read_text(encoding='utf-8')):E.append(f'{n}: {st} lacks source NPC#{num}')
+
+          report='SCRIPT_COUNT=49\nERROR_COUNT='+str(len(E))+'\n'+''.join('ERROR '+x+'\n' for x in E)
+          Path('FINAL_AUDIT_REPORT.txt').write_text(report,encoding='utf-8')
+          subprocess.run(['git','switch','-C','final-content-current-rules'],check=True)
+          subprocess.run(['git','add','--']+[p.name for p in files]+['FINAL_AUDIT_REPORT.txt'],check=True)
+          subprocess.run(['git','commit','-m','Temporary finalized current-rule content snapshot'],check=True)
+          subprocess.run(['git','push','--force','origin','HEAD:final-content-current-rules'],check=True)
+          print(report)
+          PY
