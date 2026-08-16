@@ -1,0 +1,67 @@
+name: Temporary OOTB specialty audit
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fix final deterministic shorthand
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path('OOTB_任務_百爐空鳴.md')
+          t=p.read_text(encoding='utf-8')
+          t=t.replace('醫毒／軍旅可排除「三件都因同一種保養錯誤」','智力（醫毒藥理）或智力（格物推理）可排除「三件都因同一種保養錯誤」')
+          t=t.replace('**能力互動**：高名氣可讓兩邊各派代表同桌；輕功可越人牆但不會自動取得信任；醫毒可先照顧停工中受舊傷的軍匠，取得邊地線。','**能力互動**：高名氣可讓兩邊各派代表同桌；輕功可越人牆但不會自動取得信任；以智力（醫毒藥理）處理停工軍匠的舊傷可取得邊地線；有軍旅醫護背景者可作協助或取得優勢，但背景本身不是拿手。')
+          p.write_text(t,encoding='utf-8')
+      - name: Specialty and completeness audit
+        shell: python
+        run: |
+          import re, pathlib
+          files=sorted(pathlib.Path('.').glob('OOTB_*.md'))
+          out=[]
+          for p in files:
+            t=p.read_text(encoding='utf-8'); issues=[]
+            # Common structural completeness signals required by current design/check rules.
+            groups={
+              'truth':['GM專用真相摘要','真相'],
+              'timeline':['時間線','玩家不介入'],
+              'npc':['NPC'],
+              'scene':['場景'],
+              'ending':['結局','ending_id'],
+              'abandon':['任務放棄','放棄'],
+              'social':['社會名譽','俠名'],
+            }
+            for k,alts in groups.items():
+              if not any(a in t for a in alts): issues.append('structure-missing:'+k)
+            if p.name.startswith('OOTB_可重覆任務_'):
+              reqs=['運行類別','可重覆任務','replay_policy','repeatable','劇本規模','小型','連續性','independent','重跑基型','game_id','variant_id','NPC#','LOC#','社會名譽']
+              for r in reqs:
+                if r not in t: issues.append('repeatable-missing:'+r)
+              # Reputation repeat caps: wording can vary, accept 上限/最多/累積.
+              if not re.search(r'(俠名|惡名).{0,40}(上限|最多|累積)',t,re.S): issues.append('repeatable-missing:reputation-cap')
+            if p.name.startswith('OOTB_戰役任務_'):
+              if 'continuous' not in t and 'independent' not in t: issues.append('campaign-missing:continuity-value')
+              if '承接' not in t and '(1)' not in p.name: issues.append('campaign-missing:handoff')
+            # Any explicit text-mechanism declarations should mention both Mandarin and Cantonese support or nonphonetic redundancy.
+            if any(x in t for x in ['諧音','同音','近音','聲調','粵語','普通話','拆字','形近字']):
+              if ('普通話' in t or '國語' in t) and '粵語' not in t: issues.append('text-mechanism:missing-cantonese')
+            if issues: out.append((str(p),issues))
+          lines=['# Temporary specialty audit','',f'Total scripts: {len(files)}',f'Flagged scripts: {len(out)}','']
+          for p,iss in out:
+            lines.append('## '+p); lines += ['- '+x for x in iss]
+          pathlib.Path('AUDIT_SPECIAL_TMP.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+      - name: Commit fix and report
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add OOTB_任務_百爐空鳴.md AUDIT_SPECIAL_TMP.md
+          if ! git diff --cached --quiet; then
+            git commit -m 'Complete specialty quality audit pass'
+            git push
+          fi
