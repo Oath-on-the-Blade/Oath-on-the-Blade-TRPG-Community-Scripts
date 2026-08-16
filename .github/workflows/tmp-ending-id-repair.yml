@@ -1,0 +1,51 @@
+name: Temporary ending ID repair
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add explicit ending_id fields
+        shell: python
+        run: |
+          import pathlib,re
+          targets={
+            'OOTB_任務_三更換囚.md','OOTB_任務_借來的三館名.md','OOTB_任務_夜市少半斤.md','OOTB_任務_封館前三炷香.md',
+            'OOTB_任務_山驛換馬夜.md','OOTB_任務_石場最後一聲錘.md','OOTB_任務_舊匾新契.md','OOTB_任務_茶山三道封條.md',
+            'OOTB_任務_雪線斷碑.md','OOTB_任務_鳳羽宮前借燈夜.md','OOTB_初期任務_一夜長出的界碑.md','OOTB_初期任務_井底有人敲三聲.md'}
+          cn='一二三四五六七八九十'
+          for name in targets:
+            p=pathlib.Path(name); lines=p.read_text(encoding='utf-8').splitlines(); out=[]; seq=0
+            for idx,line in enumerate(lines):
+              out.append(line)
+              if not re.match(r'^#{2,3}\s+',line): continue
+              eid=None
+              m=re.search(r'`(END[-A-Z0-9_]+)`',line)
+              if m: eid=m.group(1)
+              else:
+                m=re.search(r'\b(END[-A-Z0-9_]+)\b',line)
+                if m: eid=m.group(1)
+              is_named=bool(re.match(rf'^#{{2,3}}\s*結局\s*(?:[{cn}]|\d+|[A-Z])',line))
+              if not eid and is_named:
+                seq+=1; eid=f'END-{seq:02d}'
+              elif eid and eid!='END-ABANDON':
+                seq+=1
+              if not eid: continue
+              nearby='\n'.join(lines[idx+1:idx+7])
+              if 'ending_id' in nearby: continue
+              out.append(f'- **ending_id**：`{eid}`')
+            p.write_text('\n'.join(out)+'\n',encoding='utf-8')
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add 'OOTB_*.md'
+          if ! git diff --cached --quiet; then
+            git commit -m 'Add explicit ending IDs to legacy scripts'
+            git push
+          fi
