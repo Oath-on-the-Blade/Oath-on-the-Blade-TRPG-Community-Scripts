@@ -22,108 +22,98 @@ jobs:
           import re
 
           changed = []
+          notes = []
 
-          def edit(path, fn):
-              p = Path(path)
-              before = p.read_text(encoding='utf-8')
-              after = fn(before)
-              if after == before:
-                  raise SystemExit(f'expected audit change not found: {path}')
-              p.write_text(after, encoding='utf-8')
-              changed.append(path)
+          abandonment = '若尚未達成正文任何明確結局，視為任務放棄，基礎歷練為 **0**；若離開前已達成正文某一主要／部分結局，直接按該結局結算。'
 
-          def replace_early_exit_section(text):
-              pat = re.compile(r'(?ms)^(#{2,4}\s*提早退出[^\n]*\n).*?(?=\n---|\n#\s|\n##\s|\Z)')
-              m = pat.search(text)
-              if not m:
-                  raise SystemExit('提早退出 section not found')
-              repl = m.group(1) + '\n玩家若在尚未達成正文任何一個明確結局的成立條件前確認不再處理核心事件，依本檔「任務放棄／推進來源永久失效結局」結算：基礎歷練為 **0**。若離開前其實已達成正文某一主要／部分結局，直接按該結局結算。\n'
-              return text[:m.start()] + repl + text[m.end():]
+          def write_if_changed(path, before, after):
+              if after != before:
+                  Path(path).write_text(after, encoding='utf-8')
+                  changed.append(path)
+                  return True
+              notes.append(f'NO MATCH: {path}')
+              return False
 
-          # Explicit old early-exit awards that conflict with the current abandonment rule.
-          for f in [
-              'OOTB_劇本_墨雨七榜.md',
-              'OOTB_劇本_萬燈空棺.md',
-              'OOTB_劇本_雪線斷碑.md',
-              'OOTB_劇本_鹽鏡焚契.md',
-          ]:
-              edit(f, replace_early_exit_section)
+          def replace_heading_section(path, heading_keyword):
+              p = Path(path); text = p.read_text(encoding='utf-8'); before = text
+              # Find a markdown heading containing the keyword and replace its body only.
+              m = re.search(rf'(?m)^(#{{2,5}}[^\n]*{re.escape(heading_keyword)}[^\n]*\n)', text)
+              if m:
+                  level = len(m.group(1)) - len(m.group(1).lstrip('#'))
+                  nxt = re.search(rf'(?m)^#{{1,{level}}}\s', text[m.end():])
+                  end = m.end() + (nxt.start() if nxt else len(text)-m.end())
+                  body = '\n' + abandonment + '\n\n'
+                  text = text[:m.end()] + body + text[end:]
+              write_if_changed(path, before, text)
 
-          def replace_keyword_line(keyword):
-              def fn(text):
-                  lines = text.splitlines(True)
-                  hits = [i for i,l in enumerate(lines) if keyword in l and ('歷練' in l or 'XP' in l or '退出' in l or '離境' in l)]
-                  if not hits:
-                      # allow section text where keyword and XP are on adjacent lines
-                      pos = text.find(keyword)
-                      if pos < 0:
-                          raise SystemExit(f'keyword not found: {keyword}')
-                      end = text.find('\n\n', pos)
-                      if end < 0: end = len(text)
-                      block = text[pos:end]
-                      if not re.search(r'(歷練|XP|點)', block):
-                          raise SystemExit(f'keyword block has no XP: {keyword}')
-                      return text[:pos] + keyword + '：若此時尚未達成正文任何明確結局，視為任務放棄，基礎歷練為 **0**；若已達成明確結局則按該結局結算。' + text[end:]
-                  i = hits[0]
-                  prefix = re.match(r'^(\s*(?:[-*]\s*)?(?:\*\*)?)', lines[i]).group(1)
-                  lines[i] = prefix + keyword + '：若尚未達成正文任何明確結局，視為任務放棄，基礎歷練為 **0**；若已達成明確結局則按該結局結算。\n'
-                  return ''.join(lines)
-              return fn
+          def replace_paragraph_containing(path, keyword):
+              p = Path(path); text = p.read_text(encoding='utf-8'); before = text
+              pos = text.find(keyword)
+              if pos >= 0:
+                  start = text.rfind('\n\n', 0, pos)
+                  start = 0 if start < 0 else start + 2
+                  end = text.find('\n\n', pos)
+                  end = len(text) if end < 0 else end
+                  text = text[:start] + keyword + '：' + abandonment + text[end:]
+              write_if_changed(path, before, text)
 
-          edit('OOTB_入門任務_一夜長出的界碑.md', replace_keyword_line('很早退出'))
-          edit('OOTB_入門任務_井底有人敲三聲.md', replace_keyword_line('很早退出'))
-          edit('OOTB_劇本_潮關無聲.md', replace_keyword_line('不涉此關'))
-          edit('OOTB_劇本_灰簿照影.md', replace_keyword_line('只突破封關離境'))
+          # Old early-exit awards that conflict with the current explicit abandonment rule.
+          replace_heading_section('OOTB_劇本_雪線斷碑.md', '提早退出')
+          replace_heading_section('OOTB_劇本_鹽鏡焚契.md', '提早退出')
+          replace_paragraph_containing('OOTB_劇本_墨雨七榜.md', '只處理第一榜')
+          replace_paragraph_containing('OOTB_劇本_萬燈空棺.md', '未進棺場')
+          replace_paragraph_containing('OOTB_劇本_潮關無聲.md', '不涉此關')
+          replace_paragraph_containing('OOTB_劇本_灰簿照影.md', '只突破封關離境')
+          replace_paragraph_containing('OOTB_入門任務_一夜長出的界碑.md', '很早退出')
+          replace_paragraph_containing('OOTB_入門任務_井底有人敲三聲.md', '很早退出')
 
-          # 借來的三館名 has a dedicated early-exit/withdrawal award under older rules.
-          def fix_borrowed(text):
-              # Prefer a heading section if present.
-              if re.search(r'(?m)^#{2,4}\s*提早退出', text):
-                  return replace_early_exit_section(text)
-              # Otherwise replace the sentence/block that explicitly awards XP for leaving before a resolved ending.
-              pat = re.compile(r'(?ms)([^\n]*?(?:提早退出|提前退出|離開任務|退出任務)[^\n]*\n?(?:[^\n]*\n){0,3}?[^\n]*(?:歷練|XP)[^\n]*)')
-              m = pat.search(text)
-              if not m:
-                  raise SystemExit('借來的三館名 old exit award not found')
-              repl = '提早退出／放棄：若尚未達成正文任何明確結局，基礎歷練為 **0**；若已達成正文某一主要／部分結局，按該結局結算。'
-              return text[:m.start()] + repl + text[m.end():]
-          edit('OOTB_劇本_借來的三館名.md', fix_borrowed)
+          # Borrowed Three Halls Name: normalize only its explicit withdrawal/early-exit block.
+          p = Path('OOTB_劇本_借來的三館名.md'); text = p.read_text(encoding='utf-8'); before = text
+          m = re.search(r'(?mi)^#{2,5}[^\n]*(?:提早退出|提前退出|任務放棄|退出)[^\n]*\n', text)
+          if m:
+              level = len(m.group(0)) - len(m.group(0).lstrip('#'))
+              nxt = re.search(rf'(?m)^#{{1,{level}}}\s', text[m.end():])
+              end = m.end() + (nxt.start() if nxt else len(text)-m.end())
+              text = text[:m.end()] + '\n' + abandonment + '\n\n' + text[end:]
+          else:
+              # Fallback: replace a paragraph that contains both an exit term and an XP term.
+              for para in text.split('\n\n'):
+                  if re.search(r'(提早退出|提前退出|退出任務|離開任務)', para) and re.search(r'(歷練|XP|點)', para):
+                      text = text.replace(para, '提早退出／任務放棄：' + abandonment, 1)
+                      break
+          write_if_changed(str(p), before, text)
 
-          # 雨天不見的橋板：補上獨立、可落地的最壞世界狀態。
-          def fix_bridge(text):
-              if re.search(r'(?m)^##+\s*最壞結果', text):
-                  raise SystemExit('bridge already has worst-result section')
-              pat = re.compile(r'(?ms)(##\s*玩家不介入\s*\n.*?)(?=\n---|\n#\s|\n##\s)')
-              m = pat.search(text)
-              if not m:
-                  raise SystemExit('bridge no-player section not found')
-              worst = ('\n\n## 最壞結果\n\n'
-                       '暴雨再漲時，未封閉或加固的缺板便橋發生翻車事故，至少一名過路人重傷並造成大批貨損；青蠍會趁混亂把「護橋費」坐實成長期勒索，官差其後只追究偷板與鬥毆，木匠一家失去遮雨處，渡口亦因事故被迫停運。這是危機持續失控時的最壞世界狀態，不以單次失敗直接觸發。\n')
-              return text[:m.start()] + m.group(1).rstrip() + worst + text[m.end():]
-          edit('OOTB_入門任務_雨天不見的橋板.md', fix_bridge)
+          # Rainy Missing Bridge Planks: add an explicit worst-case world state.
+          p = Path('OOTB_入門任務_雨天不見的橋板.md'); text = p.read_text(encoding='utf-8'); before = text
+          if not re.search(r'(?m)^##+\s*最壞結果', text):
+              m = re.search(r'(?ms)(##\s*玩家不介入\s*\n.*?)(?=\n---|\n#\s|\n##\s)', text)
+              if m:
+                  worst = ('\n\n## 最壞結果\n\n'
+                           '暴雨再漲時，未封閉或加固的缺板便橋發生翻車事故，至少一名過路人重傷並造成大批貨損；青蠍會趁混亂把「護橋費」坐實成長期勒索，官差其後只追究偷板與鬥毆，木匠一家失去遮雨處，渡口亦因事故被迫停運。這是危機持續失控時的最壞世界狀態，不以單次失敗直接觸發。\n')
+                  text = text[:m.start()] + m.group(1).rstrip() + worst + text[m.end():]
+          write_if_changed(str(p), before, text)
 
-          # 雨渡無銀：修正權威路徑、漏掉的主要結局歷練，以及手札 typo。
-          def fix_rain_ferry(text):
-              original = text
-              text = text.replace('`GM遊玩規則/README.md`', '`GM規則/README.md`')
-              text = text.replace('官銀失失之案', '官銀失竊之案')
-              marker = '# 23.4 結局 D：相信假案\n\n'
-              if marker not in text:
-                  raise SystemExit('雨渡無銀 ending D marker missing')
-              tail = text.split(marker,1)[1].split('# 23.5',1)[0]
-              if '**基礎歷練**' not in tail:
+          # Rain Ferry Without Silver: fix authority path, missing ending-XP line, and handout typo.
+          p = Path('OOTB_劇本_雨渡無銀.md'); text = p.read_text(encoding='utf-8'); before = text
+          text = text.replace('`GM遊玩規則/README.md`', '`GM規則/README.md`')
+          text = text.replace('官銀失失之案', '官銀失竊之案')
+          marker = '# 23.4 結局 D：相信假案\n\n'
+          if marker in text:
+              block = text.split(marker,1)[1].split('# 23.5',1)[0]
+              if '**基礎歷練**' not in block:
                   text = text.replace(marker, marker + '**基礎歷練**：江湖 3、計略 2（總計 5）。\n\n', 1)
-              if text == original:
-                  raise SystemExit('雨渡無銀 no changes')
-              return text
-          edit('OOTB_劇本_雨渡無銀.md', fix_rain_ferry)
+          write_if_changed(str(p), before, text)
 
-          # Remove this one-shot workflow in the same repair commit.
+          # This one-shot workflow must not remain in the repository.
           wf = Path('.github/workflows/quality-audit-current-rules-fixes.yml')
           if wf.exists():
               wf.unlink()
 
-          print('Changed:', *changed, sep='\n- ')
+          print('CHANGED', len(changed))
+          for x in changed: print(' +', x)
+          for x in notes: print(' !', x)
+          if not changed:
+              raise SystemExit('No script fixes matched; refusing empty repair commit')
           PY
           git config user.name 'OOTB Quality Audit'
           git config user.email 'actions@users.noreply.github.com'
