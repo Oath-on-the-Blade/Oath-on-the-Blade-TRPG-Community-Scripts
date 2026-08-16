@@ -1,0 +1,96 @@
+name: Temporary final per-ending sweep
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  sweep:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure per-ending IDs and validate
+        shell: python
+        run: |
+          import pathlib,re,collections
+          files=sorted(pathlib.Path('.').glob('OOTB_*.md'))
+          cn='一二三四五六七八九十'
+          # First, mechanically add only missing explicit ending_id directly under clearly identified ending headings.
+          for p in files:
+            lines=p.read_text(encoding='utf-8').splitlines(); out=[]; seq=0; changed=False
+            for i,line in enumerate(lines):
+              out.append(line)
+              if not re.match(r'^#{2,4}\s+',line): continue
+              mcode=re.search(r'`(END[-A-Z0-9_]+)`',line) or re.search(r'\b(END[-A-Z0-9_]+)\b',line)
+              named=bool(re.match(rf'^#{{2,4}}\s*結局\s*(?:[{cn}]|\d+|[A-Z])',line))
+              if not mcode and not named: continue
+              eid=mcode.group(1) if mcode else None
+              if eid=='END-ABANDON':
+                pass
+              elif not eid:
+                seq+=1; eid=f'END-{seq:02d}'
+              else: seq+=1
+              nearby='\n'.join(lines[i+1:i+9])
+              if 'ending_id' not in nearby:
+                out.append(f'- **ending_id**：`{eid}`'); changed=True
+            if changed: p.write_text('\n'.join(out)+'\n',encoding='utf-8')
+          # Validate full final text.
+          issues=[]; ids=collections.defaultdict(list)
+          legacy=['文書','調查','追蹤','追跡','察覺','觀察','交涉','醫毒','醫藥','格物','機關','工藝','工程','鍛造','木工','石工','手藝','帳務','航海','航運','水路','軍旅','礦物','農務','刀具']
+          for p in files:
+            t=p.read_text(encoding='utf-8'); ls=t.splitlines(); probs=[]
+            m=re.search(r'script_id[^`\n]*`([^`]+)`',t)
+            if m: ids[m.group(1)].append(p.name)
+            else: probs.append('missing script_id')
+            for req in ['劇本版本','replay_policy','連續性']:
+              if req not in t: probs.append('missing '+req)
+            if not re.match(r'^OOTB_(任務|初期任務|可重覆任務|戰役任務)_',p.name): probs.append('bad filename class')
+            for i,line in enumerate(ls,1):
+              if re.search(r'(?:名望|聲譽|口碑|勢力關係|地方聲望|商旅評價|黑市名聲|官聲)\s*[+＋\-－]\s*\d',line): probs.append(f'old reputation L{i}')
+              if re.search(r'名氣\s*[+＋\-－]\s*\d',line): probs.append(f'direct fame L{i}')
+              if re.search(r'(?:俠名|惡名)\s*[\-－]\s*\d',line): probs.append(f'negative xia/e L{i}')
+              for term in legacy:
+                if re.search(rf'(?<![\w】）]){re.escape(term)}\s*(?:DC\s*\d+|檢定|判定|對抗)',line): probs.append(f'legacy skill {term} L{i}')
+            # Global completeness signals.
+            for key,alts in {'truth':['GM專用真相摘要','GM 專用真相摘要','世界真相'],'timeline':['時間線','玩家不介入'],'npc':['NPC#'],'scene':['場景'],'ending':['結局','END-'],'abandon':['任務放棄','放棄條件','END-ABANDON']}.items():
+              if not any(a in t for a in alts): probs.append('completion '+key)
+            # Per-ending checks.
+            heads=[]
+            for i,line in enumerate(ls):
+              if re.search(r'`END[-A-Z0-9_]+`',line) and re.match(r'^#{2,4}\s+',line): heads.append((i,line))
+              elif re.match(r'^#{2,4}\s*END[-A-Z0-9_]+',line): heads.append((i,line))
+              elif re.match(rf'^#{{2,4}}\s*結局\s*(?:[{cn}]|\d+|[A-Z])',line): heads.append((i,line))
+            seen=[]
+            for i,h in heads:
+              window='\n'.join(ls[i:i+90])
+              mid=re.search(r'ending_id[^`\n]*`([^`]+)`',window[:1200])
+              if not mid: probs.append('ending missing ending_id: '+h[:60]); continue
+              seen.append(mid.group(1))
+              # Abandonment can legitimately be 0 reputation but still should explicitly settle/record.
+              if not any(x in window for x in ['社會名譽','俠名','惡名']): probs.append('ending missing reputation settlement: '+mid.group(1))
+              # Nonzero reputation requires a propagation/causal explanation somewhere in the ending block.
+              if re.search(r'(俠名|惡名|【[^】]+】).{0,20}[+＋-][0-9.]',window) and not any(x in window for x in ['傳播','因果','見證','公開']): probs.append('ending missing reputation causality: '+mid.group(1))
+            if len(seen)!=len(set(seen)): probs.append('duplicate ending_id within script')
+            if p.name.startswith('OOTB_可重覆任務_'):
+              for r in ['運行類別','repeatable','小型','independent','重跑基型','game_id','NPC#','LOC#']:
+                if r not in t: probs.append('repeatable missing '+r)
+              if '小型分支' in t and '日常可再發生' not in t and 'variant_id' not in t: probs.append('repeatable missing variant_id')
+              if not re.search(r'社會名譽.{0,180}(前\s*\*?\*?3\s*次|前三次|上限|第\s*4\s*次)',t,re.S): probs.append('repeatable missing reputation cap')
+            if p.name.startswith('OOTB_戰役任務_') and not re.match(r'^OOTB_戰役任務_.+\(\d+\)_.+\.md$',p.name): probs.append('bad campaign filename')
+            if probs: issues.append((p.name,probs))
+          dup={k:v for k,v in ids.items() if len(v)>1}
+          lines=['# Final per-ending sweep','',f'Total scripts: {len(files)}',f'Flagged scripts: {len(issues)}',f'Duplicate script_id groups: {len(dup)}','']
+          for k,v in dup.items(): lines.append(f'- duplicate `{k}`: '+', '.join(v))
+          for p,ps in issues:
+            lines.append('## '+p); lines += ['- '+x for x in ps]
+          pathlib.Path('AUDIT_SWEEP_TMP.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+      - name: Commit sweep changes and report
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add 'OOTB_*.md' AUDIT_SWEEP_TMP.md
+          if ! git diff --cached --quiet; then
+            git commit -m 'Complete per-ending final quality sweep'
+            git push
+          fi
