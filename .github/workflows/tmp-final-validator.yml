@@ -1,0 +1,75 @@
+name: Temporary OOTB final validator
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  validate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate final current HEAD scripts
+        shell: python
+        run: |
+          import re, pathlib, collections
+          files=sorted(pathlib.Path('.').glob('OOTB_*.md'))
+          ids=collections.defaultdict(list); out=[]
+          legacy=['文書','調查','追蹤','追跡','察覺','觀察','交涉','醫毒','醫藥','格物','機關','工藝','工程','鍛造','木工','石工','手藝','帳務','航海','航運','水路','軍旅','礦物','農務','刀具']
+          for p in files:
+            t=p.read_text(encoding='utf-8'); ls=t.splitlines(); issues=[]
+            m=re.search(r'script_id[^`\n]*`([^`]+)`',t)
+            if not m: issues.append('missing:script_id')
+            else: ids[m.group(1)].append(p.name)
+            for req in ['劇本版本','replay_policy','連續性']:
+              if req not in t: issues.append('missing:'+req)
+            if p.name.startswith('OOTB_劇本_'): issues.append('filename:stale-OOTB_劇本_')
+            if not re.match(r'^OOTB_(任務|初期任務|可重覆任務|戰役任務)_',p.name): issues.append('filename:unknown-class')
+            # Common hard mechanical residue.
+            for i,line in enumerate(ls,1):
+              if re.search(r'(?:名望|聲譽|口碑|勢力關係|地方聲望|商旅評價|黑市名聲|官聲)\s*[+＋\-－]\s*\d',line): issues.append(f'old-reputation@L{i}')
+              if re.search(r'名氣\s*[+＋\-－]\s*\d',line): issues.append(f'direct-fame@L{i}')
+              if re.search(r'(?:俠名|惡名)\s*[\-－]\s*\d',line): issues.append(f'negative-xia-e@L{i}')
+              for term in legacy:
+                if re.search(rf'(?<![\w】）]){re.escape(term)}\s*(?:DC\s*\d+|檢定|判定|對抗)',line): issues.append(f'legacy-skill:{term}@L{i}')
+              if 'DC' in line and re.search(r'(工藝|工程|鍛造|木工|石工|手藝|帳務|航海|航運|水路|軍旅|礦物|農務|刀具|外功|武學)／|／(工藝|工程|鍛造|木工|石工|手藝|帳務|航海|航運|水路|軍旅|礦物|農務|刀具|外功|武學)',line): issues.append(f'nonformal-slash@L{i}')
+            # Completion signals from the entire file.
+            for key,alts in {
+              'truth':['GM專用真相摘要','GM 專用真相摘要','世界真相'],
+              'timeline':['時間線','玩家不介入'],
+              'npc':['NPC#'],
+              'scene':['場景'],
+              'ending':['結局','END-'],
+              'abandon':['任務放棄','放棄條件','END-ABANDON'],
+              'reputation':['社會名譽結算','社會名譽運行'],
+            }.items():
+              if not any(a in t for a in alts): issues.append('completion:'+key)
+            # Current check requires ending identity when there are multiple principal endings.
+            ending_heads=[x for x in ls if re.match(r'^#{2,4}\s*(?:結局|END[-－])',x)]
+            if len(ending_heads)>=2 and 'ending_id' not in t: issues.append('ending:missing-ending_id')
+            # Repeatable special gate. variant_id only for branch-based replay; daily-repeat type does not require it.
+            if p.name.startswith('OOTB_可重覆任務_'):
+              for req in ['運行類別','可重覆任務','repeatable','小型','independent','重跑基型','game_id','NPC#','LOC#']:
+                if req not in t: issues.append('repeatable:'+req)
+              branch=('小型分支' in t and '日常可再發生' not in t)
+              if branch and 'variant_id' not in t: issues.append('repeatable:variant_id')
+              if not re.search(r'社會名譽.{0,100}(前\s*\*?\*?3\s*次|前三次|上限|第\s*4\s*次)',t,re.S): issues.append('repeatable:reputation-cap')
+            if p.name.startswith('OOTB_戰役任務_'):
+              if not re.match(r'^OOTB_戰役任務_.+\(\d+\)_.+\.md$',p.name): issues.append('campaign:filename')
+            if issues: out.append((p.name,issues))
+          dup={k:v for k,v in ids.items() if len(v)>1}
+          lines=['# Final temporary validation','',f'Total scripts: {len(files)}',f'Flagged scripts: {len(out)}',f'Duplicate script_id groups: {len(dup)}','']
+          if dup:
+            lines.append('## Duplicate IDs')
+            for k,v in dup.items(): lines.append(f'- `{k}`: '+', '.join(v))
+          for p,iss in out:
+            lines.append('## '+p); lines += ['- '+x for x in iss]
+          pathlib.Path('AUDIT_FINAL_TMP.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+      - name: Commit report
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add AUDIT_FINAL_TMP.md
+          git commit -m 'Record temporary final quality validation'
+          git push
