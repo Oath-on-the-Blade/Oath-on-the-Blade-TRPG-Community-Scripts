@@ -1,0 +1,133 @@
+name: Apply current-rule quality audit fixes
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/quality-audit-current-rules-fixes.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply targeted audit fixes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          changed = []
+
+          def edit(path, fn):
+              p = Path(path)
+              before = p.read_text(encoding='utf-8')
+              after = fn(before)
+              if after == before:
+                  raise SystemExit(f'expected audit change not found: {path}')
+              p.write_text(after, encoding='utf-8')
+              changed.append(path)
+
+          def replace_early_exit_section(text):
+              pat = re.compile(r'(?ms)^(#{2,4}\s*提早退出[^\n]*\n).*?(?=\n---|\n#\s|\n##\s|\Z)')
+              m = pat.search(text)
+              if not m:
+                  raise SystemExit('提早退出 section not found')
+              repl = m.group(1) + '\n玩家若在尚未達成正文任何一個明確結局的成立條件前確認不再處理核心事件，依本檔「任務放棄／推進來源永久失效結局」結算：基礎歷練為 **0**。若離開前其實已達成正文某一主要／部分結局，直接按該結局結算。\n'
+              return text[:m.start()] + repl + text[m.end():]
+
+          # Explicit old early-exit awards that conflict with the current abandonment rule.
+          for f in [
+              'OOTB_劇本_墨雨七榜.md',
+              'OOTB_劇本_萬燈空棺.md',
+              'OOTB_劇本_雪線斷碑.md',
+              'OOTB_劇本_鹽鏡焚契.md',
+          ]:
+              edit(f, replace_early_exit_section)
+
+          def replace_keyword_line(keyword):
+              def fn(text):
+                  lines = text.splitlines(True)
+                  hits = [i for i,l in enumerate(lines) if keyword in l and ('歷練' in l or 'XP' in l or '退出' in l or '離境' in l)]
+                  if not hits:
+                      # allow section text where keyword and XP are on adjacent lines
+                      pos = text.find(keyword)
+                      if pos < 0:
+                          raise SystemExit(f'keyword not found: {keyword}')
+                      end = text.find('\n\n', pos)
+                      if end < 0: end = len(text)
+                      block = text[pos:end]
+                      if not re.search(r'(歷練|XP|點)', block):
+                          raise SystemExit(f'keyword block has no XP: {keyword}')
+                      return text[:pos] + keyword + '：若此時尚未達成正文任何明確結局，視為任務放棄，基礎歷練為 **0**；若已達成明確結局則按該結局結算。' + text[end:]
+                  i = hits[0]
+                  prefix = re.match(r'^(\s*(?:[-*]\s*)?(?:\*\*)?)', lines[i]).group(1)
+                  lines[i] = prefix + keyword + '：若尚未達成正文任何明確結局，視為任務放棄，基礎歷練為 **0**；若已達成明確結局則按該結局結算。\n'
+                  return ''.join(lines)
+              return fn
+
+          edit('OOTB_入門任務_一夜長出的界碑.md', replace_keyword_line('很早退出'))
+          edit('OOTB_入門任務_井底有人敲三聲.md', replace_keyword_line('很早退出'))
+          edit('OOTB_劇本_潮關無聲.md', replace_keyword_line('不涉此關'))
+          edit('OOTB_劇本_灰簿照影.md', replace_keyword_line('只突破封關離境'))
+
+          # 借來的三館名 has a dedicated early-exit/withdrawal award under older rules.
+          def fix_borrowed(text):
+              # Prefer a heading section if present.
+              if re.search(r'(?m)^#{2,4}\s*提早退出', text):
+                  return replace_early_exit_section(text)
+              # Otherwise replace the sentence/block that explicitly awards XP for leaving before a resolved ending.
+              pat = re.compile(r'(?ms)([^\n]*?(?:提早退出|提前退出|離開任務|退出任務)[^\n]*\n?(?:[^\n]*\n){0,3}?[^\n]*(?:歷練|XP)[^\n]*)')
+              m = pat.search(text)
+              if not m:
+                  raise SystemExit('借來的三館名 old exit award not found')
+              repl = '提早退出／放棄：若尚未達成正文任何明確結局，基礎歷練為 **0**；若已達成正文某一主要／部分結局，按該結局結算。'
+              return text[:m.start()] + repl + text[m.end():]
+          edit('OOTB_劇本_借來的三館名.md', fix_borrowed)
+
+          # 雨天不見的橋板：補上獨立、可落地的最壞世界狀態。
+          def fix_bridge(text):
+              if re.search(r'(?m)^##+\s*最壞結果', text):
+                  raise SystemExit('bridge already has worst-result section')
+              pat = re.compile(r'(?ms)(##\s*玩家不介入\s*\n.*?)(?=\n---|\n#\s|\n##\s)')
+              m = pat.search(text)
+              if not m:
+                  raise SystemExit('bridge no-player section not found')
+              worst = ('\n\n## 最壞結果\n\n'
+                       '暴雨再漲時，未封閉或加固的缺板便橋發生翻車事故，至少一名過路人重傷並造成大批貨損；青蠍會趁混亂把「護橋費」坐實成長期勒索，官差其後只追究偷板與鬥毆，木匠一家失去遮雨處，渡口亦因事故被迫停運。這是危機持續失控時的最壞世界狀態，不以單次失敗直接觸發。\n')
+              return text[:m.start()] + m.group(1).rstrip() + worst + text[m.end():]
+          edit('OOTB_入門任務_雨天不見的橋板.md', fix_bridge)
+
+          # 雨渡無銀：修正權威路徑、漏掉的主要結局歷練，以及手札 typo。
+          def fix_rain_ferry(text):
+              original = text
+              text = text.replace('`GM遊玩規則/README.md`', '`GM規則/README.md`')
+              text = text.replace('官銀失失之案', '官銀失竊之案')
+              marker = '# 23.4 結局 D：相信假案\n\n'
+              if marker not in text:
+                  raise SystemExit('雨渡無銀 ending D marker missing')
+              tail = text.split(marker,1)[1].split('# 23.5',1)[0]
+              if '**基礎歷練**' not in tail:
+                  text = text.replace(marker, marker + '**基礎歷練**：江湖 3、計略 2（總計 5）。\n\n', 1)
+              if text == original:
+                  raise SystemExit('雨渡無銀 no changes')
+              return text
+          edit('OOTB_劇本_雨渡無銀.md', fix_rain_ferry)
+
+          # Remove this one-shot workflow in the same repair commit.
+          wf = Path('.github/workflows/quality-audit-current-rules-fixes.yml')
+          if wf.exists():
+              wf.unlink()
+
+          print('Changed:', *changed, sep='\n- ')
+          PY
+          git config user.name 'OOTB Quality Audit'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m 'Fix quality-audit rule conflicts'
+          git push origin HEAD:main
