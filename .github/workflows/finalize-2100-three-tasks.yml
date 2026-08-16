@@ -1,0 +1,65 @@
+name: Temporary final validation for three tasks
+on:
+  push:
+    paths:
+      - '.github/workflows/finalize-2100-three-tasks.yml'
+permissions:
+  contents: write
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply final validation fixes
+        shell: python
+        run: |
+          from pathlib import Path
+          def insert_before(path, marker, text):
+              p=Path(path); s=p.read_text()
+              if marker not in s: raise SystemExit(f'missing {marker} in {path}')
+              p.write_text(s.replace(marker, text + '\n' + marker, 1))
+          def rep(path, old, new):
+              p=Path(path); s=p.read_text()
+              if old not in s: raise SystemExit(f'missing pattern in {path}')
+              p.write_text(s.replace(old,new,1))
+
+          g='OOTB_任務_百戲棚下無人鼓.md'
+          insert_before(g, '若帳簿、蠟紙、<NPC#4>、<NPC#5>以及主索切口均被不可逆毀損／失去', '- 玩家跳過後臺直接去票房／貨倉：其他場景照時間線推進；必要結論仍可由帳簿、割痕、<NPC#4>或<NPC#5>互相補足。\n- 玩家與<NPC#5>合作：若告知主索割錯並承諾不當場私刑，他可主動放人、交代80兩委託並協助疏散，之後仍須接受追責。\n- 全程不戰：可用疏散、談判、付30兩換人、截住<NPC#3>後交捕快完成；不要求擊倒任何敵人。')
+          # World consequences for endings
+          for marker, consequence in [
+            ('- `ending_id`: `baixi-end-01-safe-and-proven`','- **世界後果**：百戲棚停演檢修但未造成重大傷亡；<NPC#3>進入追責程序，<NPC#2>承認失職並保留匠籍審查，<NPC#4>恢復自由。'),
+            ('- `ending_id`: `baixi-end-02-shed-lost-people-saved`','- **世界後果**：西南棚區封閉重建；無死亡使戲班得以續存，<NPC#3>仍被追責，<NPC#2>因早晨隱瞞接受行會處分。'),
+            ('- `ending_id`: `baixi-end-03-one-side-only`','- **世界後果**：被保住的一側結果永久成立；未解的一側留下公開爭議，<NPC#3>可能逃走或棚架傷亡成為後續官面案件。'),
+            ('- `ending_id`: `baixi-end-04-truth-sinks`','- **世界後果**：救援結果照實保存，但破壞案缺乏足夠責任鏈；班主與棚架匠之間的互相猜疑持續，<NPC#3>若仍活著可離開照水鎮。'),
+            ('- `ending_id`: `baixi-end-05-abandoned-collapse`','- **世界後果**：大棚重大坍塌／踩踏按危機成立；戲班停演，傷者由地方救治，<NPC#3>趁亂逃走，後續只依現存證據另案追查。')]:
+              insert_before(g, marker, consequence)
+
+          f='OOTB_任務_千機峽外兩道弩痕.md'
+          rep(f, '- **數值**：【幫派棍手】基礎，若需要較強對抗改用【鏢師】但武器描述仍為短棍與工具。', '- **數值**：【鏢師】；把其刀／槍的基本攻擊機械數值描述為短棍與沉重機括工具，命中、傷害、每回合攻擊次數與【鏢師】條目完全不變。')
+          rep(f, '- 敏捷（身法）DC16：在弩已繃緊時跨過觸線接近安全擋位置；失敗觸發射擊，按【天機暗器師】飛針攻擊加值改作弩矢1d8+4刺擊，目標為實際觸線者，不憑空追蹤。', '- 敏捷（身法）DC16：在弩已繃緊時跨過觸線接近安全擋位置；失敗觸發一次固定弩矢攻擊：**攻擊+7，命中1d8+4刺擊**，只攻擊實際觸線者，不獲得【天機暗器師】的其他能力，也不憑空追蹤。')
+          insert_before(f, '若三架弩、報廢抄錄、三張收據、買賣收條、改裝草圖與所有相關NPC都被不可逆失去', '- 玩家跳過責器亭直接追第三架：可先排危；原器／後改結論之後仍可由第三架結構、<NPC#5>草圖與買賣記錄補回。\n- 高階輕功繞過試索坡護貨人：可直接到弩後方安全位置，但不自動解除回簧；仍須切踏索、卸力或操作安全擋。\n- 玩家與<NPC#4>或<NPC#5>合作：兩人都有避免死人與減輕自身責任的理由，可交停裝指令／改裝草圖並帶路找第三架，合作不抹除其既有責任。\n- 全程不戰：可用停裝指令、證物、說服護貨人、封存器械與責任談判完成，不要求擊倒天機門人或商方護衛。')
+          for marker, consequence in [
+            ('- `ending_id`: `qianji-end-01-tools-and-responsibility`','- **世界後果**：第三架被安全封存；<NPC#3>的偷換、<NPC#4>的危險用途要求與<NPC#5>的省略安全措施分層追責，天機閣亦正式補查報廢品管理。'),
+            ('- `ending_id`: `qianji-end-02-danger-stopped-case-open`','- **世界後果**：山道風險解除，但其中一段責任鏈仍待追；責器亭保留證物，天機閣與驛戶停止當日對峙。'),
+            ('- `ending_id`: `qianji-end-03-one-side-protected`','- **世界後果**：被偏袒一方暫時免於完整追責，另一方公開不滿；第三架若已排除則不再傷人，未排除則危機仍按時間線成立。'),
+            ('- `ending_id`: `qianji-end-04-evidence-lost`','- **世界後果**：責任無法可靠分層，天機閣只能承認報廢品外流而不能完成內部追責；地方對器械來源的爭議持續。'),
+            ('- `ending_id`: `qianji-end-05-third-trigger-fires`','- **世界後果**：第三架走火造成驛隊人馬受傷與驚群；責器亭與驛戶關係惡化，相關人物依仍存證物另案追查。')]:
+              insert_before(f, marker, consequence)
+
+          m='OOTB_任務_孤舟不泊舊渡口.md'
+          insert_before(m, '若契紙、便條、夜工帳、兩名水手、<NPC#4>及纜頭物證全部被不可逆失去', '- 玩家跳過木排場只救船：可以完成救援並保契，責任線未全則進END-02；不強迫回頭補場景。\n- 玩家與<NPC#4>或兩名水手合作：告知第二次已危及人命並承諾不私刑，可換得便條位置／口供並停止進一步毀證。\n- 全程不戰：救舟後以夜工帳、便條、水手口供與<NPC#3>協商即可完成；護衛沒有必須被擊倒的門檻。')
+          for marker, consequence in [
+            ('- `ending_id`: `guzhou-end-01-boat-people-contract`','- **世界後果**：渡舟與公共渡運恢復；<NPC#4>的解纜責任被建立，<NPC#3>停止以失舟作強佔依據，泊位依舊契或自願協商繼續。'),
+            ('- `ending_id`: `guzhou-end-02-rescue-before-case`','- **世界後果**：人船與契紙保住，舊渡可暫時續營；解纜案仍留未決責任，<NPC#4>若逃走則成後續追查對象。'),
+            ('- `ending_id`: `guzhou-end-03-lawful-transfer`','- **世界後果**：泊位按自願交易合法易手／租用，公共渡運的替代安排由交易條件決定；解纜不得再作壓價或強佔依據。'),
+            ('- `ending_id`: `guzhou-end-04-no-proof-after-water`','- **世界後果**：救援成果保存，但解纜責任無法證明；日落泊位爭議按現存契與行會程序處理，沒有新證據憑空出現。'),
+            ('- `ending_id`: `guzhou-end-05-empty-mooring`','- **世界後果**：漂舟傷亡與空泊位按危機成立；木排商可依當時可見狀態申請接管，但日後若真實證據另被找到仍可另案追責。')]:
+              insert_before(m, marker, consequence)
+
+      - name: Commit
+        run: |
+          git config user.name 'OOTB Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add OOTB_任務_百戲棚下無人鼓.md OOTB_任務_千機峽外兩道弩痕.md OOTB_任務_孤舟不泊舊渡口.md
+          git commit -m 'Finalize validation details for three tasks'
+          git push
