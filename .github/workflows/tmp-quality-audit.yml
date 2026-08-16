@@ -1,0 +1,62 @@
+name: Temporary OOTB quality audit
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit scripts
+        shell: python
+        run: |
+          import re, json, pathlib
+          files=sorted(pathlib.Path('.').glob('OOTB_*.md'))
+          fake=['文書','調查','追蹤','察覺','交涉','醫毒','格物','繩結經驗','帳房','查帳','刑名','鑑寶','搜查','觀察','審訊','談判','水性','航海','船藝','機關','鍛造','木工','採藥','讀唇','偵查','踩點','烹飪']
+          out=[]
+          for p in files:
+            t=p.read_text(encoding='utf-8')
+            issues=[]
+            for req in ['script_id','replay_policy','連續性']:
+              if req not in t: issues.append('missing:'+req)
+            pats={
+              'old-reputation-number':r'(?:名望|聲譽|口碑|勢力關係|地方聲望|商旅評價|黑市名聲|官聲)\s*[+＋\-－]\s*\d',
+              'direct-fame-number':r'名氣\s*[+＋\-－]\s*\d',
+              'negative-xia-e':r'(?:俠名|惡名)\s*[\-－]\s*\d',
+              'stale-filename-prefix':r'OOTB_劇本_',
+            }
+            for k,pat in pats.items():
+              hits=re.findall(pat,t)
+              if hits: issues.append(f'{k}:{len(hits)}')
+            for name in fake:
+              pat=rf'(?<![\w】]){re.escape(name)}\s*(?:DC\s*\d+|檢定|判定|對抗)'
+              if re.search(pat,t): issues.append('fake-skill:'+name)
+            settlements=re.findall(r'\*\*社會名譽結算\*\*：([^\n]+)',t)
+            if len(settlements)>=2 and len(set(settlements))==1:
+              issues.append(f'identical-reputation-all-endings:{len(settlements)}')
+            bad_terms=['作證','共犯','受賄','收買','滅口','偽造','私吞','放棄','失敗','見血','血案','屠','殺','惡','黑吃黑','助紂','替假','串供','背叛']
+            suspicious=[]
+            lines=t.splitlines()
+            for i,line in enumerate(lines):
+              if re.match(r'^#{2,4}\s*(?:結局|END)',line) and any(x in line for x in bad_terms):
+                window='\n'.join(lines[i:i+10])
+                m=re.search(r'社會名譽結算.*',window)
+                if m and ('俠名 +0.2x E' in m.group(0) or '俠名 +0.3x E' in m.group(0) or '俠名 +0.4x E' in m.group(0)) and '惡名 +0.0x E' in m.group(0):
+                  suspicious.append(line.strip())
+            if suspicious: issues.append('suspicious-bad-ending-positive-xia:'+ '|'.join(suspicious[:5]))
+            if issues: out.append((str(p),issues))
+          lines=['# Temporary OOTB static audit','',f'Total scripts: {len(files)}',f'Flagged scripts: {len(out)}','']
+          for p,iss in out:
+            lines.append('## '+p)
+            lines += ['- '+x for x in iss]
+          pathlib.Path('AUDIT_TMP.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+      - name: Commit report
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add AUDIT_TMP.md
+          git commit -m 'Temporary quality audit report'
+          git push
