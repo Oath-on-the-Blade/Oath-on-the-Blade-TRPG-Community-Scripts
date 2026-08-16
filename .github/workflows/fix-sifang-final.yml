@@ -21,13 +21,18 @@ jobs:
             '`遊玩規則/02_拿手與非戰鬥.md`': '`遊玩規則/核心/拿手與非戰鬥.md`',
             '`遊玩規則/03_戰鬥.md`': '`遊玩規則/遊玩流程/戰鬥.md`',
             '`遊玩規則/08_輕功.md`': '`遊玩規則/系統與機制/輕功.md`',
-            '。若實際傷亡不是玩家可合理避免（例如玩家已建立通道而第三方突然縱火），GM 將【江南道民間】改為 `0.0x E`，不把不可控後果當道德扣分。': '。',
-            '。若玩家其實公開反對錯抓且有見證，對【江南道民間】改為 `0.0x E`。': '。'
           }
           for a,b in reps.items():
-              if a not in s:
-                  raise SystemExit(f'missing expected text: {a}')
               s = s.replace(a,b)
+          s = s.replace('；若實際傷亡不是玩家可合理避免（例如玩家已建立通道而第三方突然縱火），GM 將【江南道民間】改為 `0.0x E`，不把不可控後果當道德扣分。', '。')
+          old = '- **傳播／成立理由**：官署與民間都看到危機失控，但具體責任解讀分散，因此倍率不高；若玩家其實公開反對錯抓且有見證，對【江南道民間】改為 `0.0x E`。'
+          new = '- **傳播／成立理由**：官署與民間都看到危機失控，但具體責任解讀分散，因此倍率不高。'
+          s = s.replace(old,new)
+          for oldpath in ['遊玩規則/00_遊戲核心.md','遊玩規則/02_拿手與非戰鬥.md','遊玩規則/03_戰鬥.md','遊玩規則/08_輕功.md']:
+              if oldpath in s:
+                  raise SystemExit(f'old path remains: {oldpath}')
+          if '改為 `0.0x E`' in s:
+              raise SystemExit('conditional reputation override remains')
           p.write_text(s)
       - name: Commit fixes and remove workflow
         run: |
