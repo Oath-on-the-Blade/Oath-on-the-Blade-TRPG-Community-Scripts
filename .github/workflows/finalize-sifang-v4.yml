@@ -1,0 +1,29 @@
+name: Finalize 四坊封門前 v4
+on:
+  push:
+    paths:
+      - '.github/workflows/finalize-sifang-v4.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove conditional reputation override
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('OOTB_任務_四坊封門前.md')
+          s = p.read_text()
+          tail = '。若實際傷亡不是玩家可合理避免（例如玩家已建立通道而第三方突然縱火），GM 將【江南道民間】改為 `0.0x E`，不把不可控後果當道德扣分。'
+          s = s.replace(tail, '。')
+          p.write_text(s)
+      - name: Commit and clean
+        run: |
+          git config user.name "OOTB Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add OOTB_任務_四坊封門前.md
+          git rm -f .github/workflows/finalize-sifang-v4.yml
+          git commit -m "Fix 四坊封門前 reputation settlement"
+          git push
