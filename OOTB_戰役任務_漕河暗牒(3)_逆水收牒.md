@@ -10,7 +10,7 @@
 |---|---|
 | 劇本名稱 | 《逆水收牒》 |
 | script_id | `ootb-script-nishui-shoudie-v1` |
-| 劇本版本 | 1.0.1 |
+| 劇本版本 | 1.0.2 |
 | campaign_id | `canal-secret-dispatches` |
 | 戰役線 | 漕河暗牒・第三篇 |
 | replay_policy | `once_per_character` |
@@ -164,7 +164,7 @@
 | 格 | 世界變化 |
 |---|---|
 | 0 | 船仍在西湄下游；六包同船，付款對照完整。 |
-| 1 | 船逆水離埠；用完整1小時整備或高名氣公開追船則從此格開始。 |
+| 1 | 船逆水離埠；用完整1小時整備或名氣3級以上角色公開追船則從此格開始。 |
 | 2 | 到白鷺汊；自由的掮客預設登船；抄手準備拆付款對照。live leak仍active且收到警報時才追加六件。 |
 | 3 | 付款對照切三段，分藏船艙／浮倉／快艇手，仍可全追回。 |
 | 4 | R1／R4各一包轉快艇；自由掮客準備另一艇逃。 |
@@ -189,7 +189,7 @@
 - **自動**：只是短停浮棚，不是總壇。
 - **潛入**：敏捷（隱密）DC14；水下路線仍受正式呼吸／能力限制。
 - **查貨**：智力（識字）DC13對貨號；智力（格物推理）DC14看出付款對照需與貨簿合讀。
-- **看守**：證明其只是收費人後，魅力（說服）DC12可得登船時間；威嚇亦可但高惡名使其他船戶不願作證。
+- **看守**：證明其只是收費人後，魅力（說服）DC12可得登船時間；威嚇亦可，但惡名3級以上角色公開施壓時其他船戶不願主動作證。
 
 ## 6.3 回潮船甲板／貨艙
 - **環境**：主桅繩網、低艙口、窄舷、吊貨網、濕跳板；有高低差、可關艙門／落貨網。
@@ -229,9 +229,9 @@
 
 - 【江南道官府】+2：有第二篇證據時較易取得特定貨號查驗支援，官差願先保帳而非全河封船。
 - 【江南道官府】-2：正式扣船需陪同／更多現場證據；跟蹤、船戶查貨、公開貨簿仍可。
-- 【江南道民間】+2：借船、問路、勸普通鏢師退出灰色護貨的首次合理說服有優勢。
+- 【江南道民間】+2：借船、問路、勸普通鏢師退出灰色護貨的首次合理說服有優勢；該次若優勢正由此相對名譽產生，不再疊同源固定修正。
 - 【江南道民間】-2：船戶要求先付足銀／另找見證，不封交通。
-- 高名氣公開追船：危機起始+1，掮客較早警覺；到北水關時見證者亦較快相信玩家是在追特定涉案貨而非劫船。
+- 名氣3級以上角色公開追船：危機起始+1，掮客較早警覺；到北水關時見證者亦較快相信玩家是在追特定涉案貨而非劫船。
 
 ---
 
@@ -256,9 +256,11 @@
 
 則原定《百牒同潮》的核心「文書混流」已被玩家在世界內真正消除。第三篇仍按下列正式 END 結算；結算後**不強迫開末篇**，可直接完成戰役：
 
+- `preissued_notice_status=all_intercepted`。
+- `early_campaign_resolution=EARLY-RES-A`。
 - 帳證／責任完整且正常水路沒有廣泛停擺：`campaign_resolution=A`，`legitimate_flow_status=restored`。
 - 買家網／部分責任仍有不可恢復缺口，但生產條件已切斷：`campaign_resolution=C`，`legitimate_flow_status=restored/delayed`按實際。
-- final campaign save 記 `early_campaign_resolution: EARLY-RES-A`、三張通知的實際保全狀態、為甚麼末篇不再發生，以及所有人物／state最終值。
+- final campaign save 記三張通知的實際保全狀態、為甚麼末篇不再發生，以及所有人物／state最終值。
 
 若只攔回1–2張，或仍有追加清痕件在路上，末篇按低／實際規模繼續；不得宣告全部危機已消失。
 
@@ -270,6 +272,8 @@
 
 **共同物質規則**：實收銀兩為全隊共同可分割財產，玩家結算時決定分配；未共識則共同持有。六包／帳證不轉為玩家所有，按官面／原所有權保管。
 
+**通知 state 統一寫回**：依本篇實際攔回三張既發通知的數量，0張=`preissued_notice_status=none_intercepted`；1–2張=`partial_intercepted`；3張=`all_intercepted`。除符合 `EARLY-RES-A` 外，所有 END 都寫 `early_campaign_resolution=none`。
+
 ## `END-01`｜逆水得帳
 - **結算類型**：完成。
 - **條件**：收牒行動實質控制；`network_ledger=complete`；`live_leak_identity=confirmed`；`river_broker_status`可確定；已決定是否立即切斷live leak。
@@ -279,7 +283,7 @@
 - **物質**：全隊實收360兩；共同可分割。
 - **社會名譽**：俠名`+0.5x E`；惡名0；【江南道官府】`+0.5x E`；【江南道民間】`+0.4x E`。
 - **傳播**：官面由查驗／帳證知道玩家保住分銷證據；船戶知道玩家針對涉案貨而非亂封水路。
-- **state**：`river_broker_status`按實際；`network_ledger=complete`；`live_leak_identity=confirmed`；`live_leak_access=active/cut_off`按實際；`obsolete_stock_status`只能按實際改善，不重置secured/destroyed。
+- **state**：`river_broker_status`按實際；`network_ledger=complete`；`live_leak_identity=confirmed`；`live_leak_access=active/cut_off`按實際；`preissued_notice_status`按本節統一寫回；`early_campaign_resolution=none`，若同時符合 `EARLY-RES-A` 則改寫為 `EARLY-RES-A`；`obsolete_stock_status`只能按實際改善，不重置secured/destroyed。
 
 ## `END-02`｜收牒止於船
 - **結算類型**：完成／部分成功。
@@ -290,7 +294,7 @@
 - **物質**：全隊實收300兩；共同可分割。
 - **社會名譽**：俠名`+0.4x E`；惡名0；【江南道官府】`+0.4x E`；【江南道民間】`+0.3x E`。
 - **傳播**：官面獲可用但不完整帳證；民間看到特定貨被處理而正常船路仍運作。
-- **state**：`network_ledger=partial`；`live_leak_identity=confirmed/suspected`按實際；其餘按實際。
+- **state**：`network_ledger=partial`；`live_leak_identity=confirmed/suspected`按實際；`river_broker_status`、`live_leak_access`按實際；`preissued_notice_status`按本節統一寫回；`early_campaign_resolution=none`，只有符合 `EARLY-RES-A` 時才改寫。
 
 ## `END-03`｜人失而線未斷
 - **結算類型**：完成／苦澀部分成功。
@@ -301,7 +305,7 @@
 - **物質**：全隊實收240兩；共同可分割。
 - **社會名譽**：俠名`+0.4x E`；惡名0；【江南道官府】`+0.2x E`；【江南道民間】`+0.4x E`。
 - **傳播**：民間見玩家避免無差別扣船；官面因人物／帳失去只形成有限正面評價。
-- **state**：`river_broker_status=escaped/dead/unknown`或實際；`network_ledger=partial/lost`；`live_leak_identity`與`live_leak_access`按證據／行動。
+- **state**：`river_broker_status=escaped/dead/unknown`或實際；`network_ledger=partial/lost`；`live_leak_identity`與`live_leak_access`按證據／行動；`preissued_notice_status`按本節統一寫回；`early_campaign_resolution=none`，只有符合 `EARLY-RES-A` 時才改寫。
 
 ## `END-04`｜回潮散帳
 - **結算類型**：失敗。
@@ -312,7 +316,7 @@
 - **物質**：全隊實收100兩協查酬金；共同可分割。
 - **社會名譽**：俠名`+0.2x E`；惡名0；【江南道官府】0；【江南道民間】`+0.1x E`。
 - **傳播**：只有部分追查成果；沒有足夠官面成功形成正評。
-- **state**：`network_ledger=lost/partial`；其餘三個第三篇state按可確認事實寫值，不留空。
+- **state**：`river_broker_status`、`network_ledger`、`live_leak_identity`、`live_leak_access`均按可確認事實寫值，不留空；`preissued_notice_status`按本節統一寫回；`early_campaign_resolution=none`。
 
 ## `END-05`｜逆水不追
 - **結算類型**：任務放棄。
@@ -320,7 +324,7 @@
 - **完整參與／歷練**：親自建立至少一項新的跨篇可驗證事實者計略1；其他角色0；無額外中途推導。
 - **物質**：無。
 - **社會名譽**：俠名0；惡名0；【江南道官府】0；【江南道民間】0。另有公開劫船／殘酷行為才用derived/variant。
-- **state**：`river_broker_status`、`network_ledger`、`live_leak_identity`、`live_leak_access`均按離場後可確認世界事實寫值。
+- **state**：`river_broker_status`、`network_ledger`、`live_leak_identity`、`live_leak_access`均按離場後可確認世界事實寫值；`preissued_notice_status`按世界自然推進後實際可確認值寫回；`early_campaign_resolution=none`。
 
 ### `variant: river_bloodshed`
 任一 END 下若無必要殺傷已投降船腳／中立船戶：惡名`+0.3x E`；【江南道民間】在原值基礎`-0.4x E`。同一事件只一次。
@@ -331,12 +335,15 @@
 
 除 `EARLY-RES-A` 外，第三篇結算後的新問題是 `<NPC#3@戰役:漕河暗牒>` 已在路上的三張通知，以及他若仍active／受警報而實際追加的清痕件進入北水關正常流程。
 
+- `preissued_notice_status=none_intercepted`：三張既發通知全數仍進末篇。
+- `partial_intercepted`：只有未攔回的1–2張進末篇；已攔回者不得重生。
+- `all_intercepted`：三張全部不再進末篇；若其他 `EARLY-RES-A` 條件不齊，末篇只處理仍存在的追加件／其他制度危機。
 - `live_leak_access=active`：高規模；六張追加件只有在真實觸發條件成立時存在。
-- `cut_off`：只有三張既發通知與既存回收／封卷後果，不生成六張。
+- `cut_off`：沒有新追加件。
 - `live_leak_identity=unknown`：末篇從收發簿／輪值倒推，不阻止開場。
 - `network_ledger=lost`：末篇不能突然得到完整買家名單，改以切斷程序外洩＋剩餘物料生產條件為主。
 
-結算後產生新版 current campaign save，保存本篇 END、四state、戰役 NPC 實例／狀態、三張通知是否被實際截回及 exception data。
+結算後產生新版 current campaign save，保存本篇 END、`river_broker_status`、`network_ledger`、`live_leak_identity`、`live_leak_access`、`preissued_notice_status`、`early_campaign_resolution`、戰役 NPC 實例／狀態及 exception data。
 
 ---
 
@@ -348,5 +355,6 @@
 - 掮客提前被捕／死亡不重置成逃跑。
 - 截停、跟蹤、談判、潛入、登船、折返抓leak都會真實改危機／state。
 - `live_leak_access=cut_off` 真降低末篇規模。
+- `preissued_notice_status` 逐件保留三張既發通知的實際攔回結果，末篇不得重生已攔回文件。
 - `EARLY-RES-A` 在本篇有可直接執行的觸發／結算，不強迫已消失的末篇危機重生。
-- 每個 END 都直接寫四個第三篇state、參與歷練、物質、社會名譽與傳播。
+- 每個 END 都直接寫六個第三篇跨篇接口 state、參與歷練、物質、社會名譽與傳播。
