@@ -24,7 +24,7 @@
 |---|---|---|---|---|
 | 1 | 《河倉三封急牒》 | `ootb-script-hecang-san-feng-jidie-v1` | 1.2.1 | `OOTB_戰役任務_漕河暗牒(1)_河倉三封急牒.md` |
 | 2 | 《西湄舊牒不入爐》 | `ootb-script-ximei-jiudie-burulu-v1` | 1.1.0 | `OOTB_戰役任務_漕河暗牒(2)_西湄舊牒不入爐.md` |
-| 3 | 《逆水收牒》 | `ootb-script-nishui-shoudie-v1` | 1.1.0 | `OOTB_戰役任務_漕河暗牒(3)_逆水收牒.md` |
+| 3 | 《逆水收牒》 | `ootb-script-nishui-shoudie-v1` | 1.1.1 | `OOTB_戰役任務_漕河暗牒(3)_逆水收牒.md` |
 | 4 | 《百牒同潮》 | `ootb-script-baidie-tongchao-v1` | 1.1.0 | `OOTB_戰役任務_漕河暗牒(4)_百牒同潮.md` |
 
 ## 本戰役地方制度定位
@@ -268,7 +268,7 @@ END-04＋無lead：`campaign_resolution=D`、flow按實際，宣告失敗。END-
 
 # 9. 第三篇《逆水收牒》接口
 
-- **狀態**：正式完成；script 1.1.0。
+- **狀態**：正式完成；script 1.1.1。
 - **前置**：只接受第二篇 settlement 已寫定S3-A的`active/open`交接；不在開局重判。
 - **輸入**：第一篇／第二篇相關state、return_boat_lead來源、戰役NPC狀態、exception。
 - **直接使用戰役 NPC**：核心`NPC#2`；`NPC#3`先以帳證／程序痕跡出現；`NPC#1/#4`按前篇狀態提供有限支援／阻力。
