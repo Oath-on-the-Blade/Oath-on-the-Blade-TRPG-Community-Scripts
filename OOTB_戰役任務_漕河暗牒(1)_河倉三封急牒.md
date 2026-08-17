@@ -2,7 +2,7 @@
 
 > Oath on the Blade（OOTB）／《武與俠》「漕河暗牒」第一篇。
 >
-> 1.2.0 在 1.1.0 既有單篇內容上補入新版戰役層承接裁決：END-01～04 可承接第二篇；END-05 放棄後當前戰役正式失敗中斷。除此之外不改寫 1.0.1 已成立的三牒真相、人物責任、危機因果或 campaign state。舊桌若已以本地 `<NPC#3>`／`<NPC#4>` 實例化糧商管事／抄牒手，由總綱 alias 遷移至本版 `NPC#5/#6@戰役:漕河暗牒`，沿用該桌原姓名。
+> 1.2.1 在 1.2.0 既有單篇內容上把西湄來源改為**結算時實際承接證據**：只有本桌真正保住／辨認到可指向「西湄巡倉」批次的來源，才可開第二篇；若所有可辨來源永久失去，完成／部分成功分支在本篇形成 `partly_completed (1/4)`，失敗分支形成 `failed (1/4)`。END-05 放棄仍直接失敗中斷。除此之外不改寫 1.0.1 已成立的三牒真相、人物責任、危機因果或 campaign state。舊桌若已以本地 `<NPC#3>`／`<NPC#4>` 實例化糧商管事／抄牒手，由總綱 alias 遷移至本版 `NPC#5/#6@戰役:漕河暗牒`，沿用該桌原姓名。
 
 ## 劇本規格頭
 
@@ -10,7 +10,7 @@
 |---|---|
 | 劇本名稱 | 《河倉三封急牒》 |
 | script_id | `ootb-script-hecang-san-feng-jidie-v1` |
-| 劇本版本 | 1.2.0 |
+| 劇本版本 | 1.2.1 |
 | campaign_id | `canal-secret-dispatches` |
 | 戰役線 | 漕河暗牒・第一篇 |
 | replay_policy | `once_per_character` |
@@ -154,7 +154,7 @@
 - A附註：安全存糧只餘兩日。
 - 危機2北岸小船帶空糧袋／催糧條。
 
-**所有造假證源若被玩家永久毀掉：**仍可用驛牌、暗艙、青梗驛木籌判定「不能執行柳汊改卸」，但無法形成完整造假鏈；最多進 `END-03`，不憑空補新證據。
+**所有造假證源若被玩家永久毀掉：**仍可用驛牌、暗艙、青梗驛木籌判定「不能執行柳汊改卸」，但無法形成完整造假鏈；最多進 `END-03`，不憑空補新證據。若其中亦包括所有能辨出西湄批次的C紙角／碎片、柳汊租倉收條或其他已在本篇實際建立的同批次來源，結算時必須把 `westmei_watermark_lead` 寫成 `not_established`，不得為開第二篇補造備份。
 
 ---
 
@@ -182,7 +182,7 @@
 - **可能遭遇**：抄牒手＋2【幫派棍手】只想帶拓板走；拓板被控制／兩人低於四分之一氣血即撤，非擊殺勝利成立。
 
 ## 5.4 柳汊碼頭與私倉
-- **作用**：證明預先租倉／八十石卸貨安排。
+- **作用**：證明預先租倉／八十石卸貨安排；租倉收條若實際保住且背面同批次水印可辨，也可成為西湄承接證據。
 - **自動**：牙人有未正式蓋驗「八十石濕糧入倉」空白票，已預填三號糧駁船號。
 - **智力（識字）DC12**：確認預填時間早於假牒送達；失敗時牙人仍承認是糧商管事上午要求先填，只拒絕承認「一定會卸」。
 - **名譽**：對【江南道民間】+2級以上，牙人主動說上午已租私倉兩日；-2級以下先隱瞞，但租金收條仍可由合法查驗／說服取得。
@@ -234,6 +234,7 @@
 - **抄牒手失效**：拓板、裁紙痕、筆法。
 - **驛差失效**：舊稅亭換馬簿／驛牌副號。
 - **玩家殺死／控制跨篇 NPC**：照實保存 `merchant_manager_status`、`forger_at_large` 與 exception data，不為第二篇復活／放走。
+- **西湄來源被毀／失去**：若所有已在本篇存在、可辨西湄批次的紙角／碎片、租倉收條或其他同批次來源均永久失去，照實記 `westmei_watermark_lead=not_established`；不得臨時宣布另有完整副本。
 - **玩家離開核心地區**：GM說明危機會自行走到5；確認後 END-05。
 
 ---
@@ -310,23 +311,50 @@
 - `north_bank_shortage: prevented | one_day | severe`
 - `official_evidence: complete | partial | lost`
 
-**水印鉤子：**任一非放棄結局後，整理C舊紙時發現紙角水印屬三年前已撤「西湄巡倉」批次。若 `official_evidence=lost`，同一批次水印改由柳汊租倉收條背面出現。這只證明舊材料從西湄批次外流，不證明糧商背後有統一主使。
-
 `END-05` 亦照離場後世界實際結果寫完全部 state；不留空。
 
-## 10.1 戰役層承接裁決
+## 10.1 `westmei_watermark_lead`｜結算承接證據
 
-本篇正式結算時，同步依《漕河暗牒》總劇本第二篇解鎖路線 S2-A 完成一次戰役層裁決；下一次開局不重新判。
+這不是額外長期 campaign state，而是本次結算寫入 current `campaign_save` 的**承接裁決證據**：
 
-| ending | campaign status | continuation | 結算時交接 |
-|---|---|---|---|
-| END-01 | `active`；`campaign_progress=1/4` | `open` | 目標第二篇；記錄C舊紙西湄水印來源，匹配S2-A |
-| END-02 | `active`；`campaign_progress=1/4` | `open` | 目標第二篇；記錄C舊紙西湄水印來源，匹配S2-A |
-| END-03 | `active`；`campaign_progress=1/4` | `open` | 目標第二篇；官證不足時亦可用柳汊租倉收條水印，匹配S2-A |
-| END-04 | `active`；`campaign_progress=1/4` | `open` | **單篇失敗但戰役可承接**；按實際官證用C舊紙或柳汊租倉收條建立水印，匹配S2-A |
-| END-05 | `failed`；`campaign_progress=1/4` | `closed` | `campaign_status_reason=abandoned`；無下一階段交接 |
+- `established`：截至正式結算，本桌至少有一個已實際存在、仍可辨認並已被玩家／可承接的官方記錄識別為「三年前已撤西湄巡倉批次」的來源，例如：
+  1. C舊紙本體、紙角或可辨碎片的西湄水印；
+  2. 柳汊租倉收條背面同批次水印；
+  3. 本篇已實際建立、功能相同且不是結算時臨時補造的另一份同批次來源。
+- `not_established`：所有能把本案指向西湄批次的來源都未被辨認、已永久失去／毀至不可辨，或只剩「這是舊紙／另有來源」而沒有可追地點。不得因作者知道西湄真相就把GM私密答案當成玩家下一篇入口。
 
-END-01～04 完成戰役存檔後，GM 向玩家宣告「本戰役可繼續」。END-05 則在《暮鼓離倉》的本篇結局與危機後果落地後，宣告「戰役失敗（1/4）」；不得以世界仍有西湄舊紙問題為理由自動開第二篇。
+`official_evidence=lost` 不自動等於 `not_established`；若柳汊收條等實際來源仍在即可 established。反之，`official_evidence=complete` 也不自動保證 established；若可辨西湄來源在正式結算前被合理永久毀去，照實記 not_established。
+
+## 10.2 戰役層承接裁決
+
+本篇正式結算時，先寫全部第一篇 state，再判 `westmei_watermark_lead`，最後依《漕河暗牒》總劇本 S2-A 完成一次戰役層裁決；下一次開局不重新判。
+
+| ending | `westmei_watermark_lead=established` | `westmei_watermark_lead=not_established` |
+|---|---|---|
+| END-01 | `active (1/4)`，`open`，目標第二篇，匹配S2-A | `partly_completed (1/4)`，`closed`，進「急牒已定」 |
+| END-02 | `active (1/4)`，`open`，目標第二篇，匹配S2-A | `partly_completed (1/4)`，`closed`，進「急牒已定」 |
+| END-03 | `active (1/4)`，`open`，目標第二篇，匹配S2-A | `partly_completed (1/4)`，`closed`，進「急牒已定」 |
+| END-04 | **單篇失敗但 `active (1/4)`**，`open`，目標第二篇，匹配S2-A | 失敗且不可承接：`failed (1/4)`，`closed` |
+| END-05 | `failed (1/4)`，`closed` | `failed (1/4)`，`closed` |
+
+只有表內 active 分支向玩家宣告「本戰役可繼續」，並在 campaign save 保存實際水印來源與S2-A匹配證據。
+
+### 提早戰役結局｜「急牒已定」
+
+只用於 END-01／02／03 已把三牒、糧向與第一篇直接責任正式結算，但 `westmei_watermark_lead=not_established` 的分支。
+
+GM先按該END正常宣讀本篇已完成結果：哪一牒有效、救荒米實際去了哪裡、糧商管事／抄牒手／副吏的直接後果、青梗驛是否及時得糧。再以以下**不提供下一篇導航**的尾巴收住：
+
+> 河倉的最後一冊結案簿合上時，這宗急牒案已沒有未處理的糧，也沒有一封還等你們判真假的文書。只是那張假牒為甚麼能拿到如此像官用的紙，卷末留不下答案。
+>
+> 若你們曾確認它是舊紙，便只剩一句「舊紙另有來路」；若連這一點也未能公證，就只剩「紙料來源不明」。能辨批次的紙角、收條或供貨姓名都已在這場混亂中永久失去，沒有一個地點可再追。
+
+這個尾巴不是新委託、不是第二篇鉤子，也不准GM補出一個西湄字樣。結算：`campaign_status=partly_completed`、`campaign_progress=1/4`、`continuation_status=closed`、reason=`early_campaign_ending`；`campaign_resolution=C`。`legitimate_flow_status`按實際：END-01通常`restored`；END-02通常`delayed`；END-03為`restored|delayed`按糧運結果。GM最後宣告：「戰役部分完成（1/4）。」
+
+### 失敗且不可承接／放棄
+
+- END-04＋`westmei_watermark_lead=not_established`：本篇失糧失敗已落地且沒有合法第二篇入口；`campaign_resolution=D`，`legitimate_flow_status=delayed|disrupted`按實際，reason=`failed_noncontinuable`，GM宣告「戰役失敗（1/4）」。
+- END-05：危機走到5並按世界實際寫完第一篇state；`campaign_resolution=abandoned`、`legitimate_flow_status=disrupted|collapsed`按實際、reason=`abandoned`，GM宣告「戰役失敗（1/4）」。放棄後不得因世界仍有舊紙問題自動開第二篇。
 
 正式結算後依 `GM規則/戰役存檔.md` 產生 current campaign save；其中本版戰役 key `NPC#5/#6` 若由舊1.0.1桌遷移，沿用原實例姓名與狀態。
 
@@ -341,6 +369,7 @@ END-01～04 完成戰役存檔後，GM 向玩家宣告「本戰役可繼續」�
 - 可不戰完成；文書、物證、社交、追蹤、輕功、護糧皆有實際入口。
 - 普通低骰不刪必要資訊；重試需要新證物、協助或狀態改變。
 - 主要 END 逐項有 ending_id、參與歷練、物質狀態、社會名譽與世界後果。
-- END-01～04 都以實際西湄水印世界事實匹配S2-A；END-04雖單篇失敗仍可承接。
-- END-05 一律 `failed/closed`，不產生放棄後自動重返。
-- 第二篇只承接西湄水印與正式 state，不反改第一篇局部責任。
+- END-01～04 只有在 `westmei_watermark_lead=established` 時匹配S2-A；END-04可失敗但承接。
+- END-01～03 若所有西湄來源永久失去，直接「急牒已定」`partly_completed (1/4)`，不補完美備份。
+- END-04無入口與END-05放棄都`failed/closed`，並寫最終campaign state。
+- 第二篇只承接本桌實際保存的西湄來源與正式 state，不反改第一篇局部責任。
