@@ -1,0 +1,81 @@
+name: Phase B normalize generated scripts
+on:
+  push:
+    branches: [audit/2026-08-17-10h-medium-phase-b]
+    paths: [.github/workflows/phase-b-normalize.yml]
+permissions:
+  contents: write
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Normalize stable IDs and lint
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          files = {
+            'OOTB_任務_河堤第七口樁.md': {
+              'npc': {i: f'<NPC#{i}: 姓?-名?>' for i in range(1,6)},
+              'loc': {}
+            },
+            'OOTB_可重覆任務_渡口少一盞燈.md': {
+              'npc': {i: f'<NPC#{i}: 姓?-名?>' for i in range(1,5)},
+              'loc': {1:'<LOC#1: 名?-渡>',2:'<LOC#2: 名?-船棚>',3:'<LOC#3: 名?-洲>'}
+            },
+            'OOTB_可重覆任務_百草外診少一味.md': {
+              'npc': {i: f'<NPC#{i}: 姓?-名?>' for i in range(1,5)},
+              'loc': {1:'<LOC#1: 名?-診棚>',2:'<LOC#2: 名?-藥棧/寄藥院>',3:'<LOC#3: 名?-村/坊>'}
+            },
+          }
+          forbidden_reps = ['【官府】','【民間】','【商賈】','【草莽】','【士紳】','【武林人士】','【鏢行護運】','【幫會黑道】','【走私者】']
+          fake_skill_patterns = [
+            r'(?:文書|調查|追蹤|察覺|交涉|醫毒|格物|搜查|觀察|審訊|談判)\s*(?:DC\s*\d+|檢定|判定|對抗)',
+            r'[力量敏捷體質智力直覺魅力]（(?:文書|調查|追蹤|察覺|交涉|醫毒|格物|搜查|觀察|審訊|談判)）'
+          ]
+          for fn, spec in files.items():
+            p=Path(fn); s=p.read_text(encoding='utf-8')
+            for i, full in spec['npc'].items():
+              s=s.replace(f'<NPC#{i}>', full)
+            for i, full in spec['loc'].items():
+              s=s.replace(f'<LOC#{i}>', full)
+            p.write_text(s, encoding='utf-8')
+
+          errors=[]
+          for fn, spec in files.items():
+            s=Path(fn).read_text(encoding='utf-8')
+            bare=re.findall(r'<NPC#\d+>|<LOC#\d+>', s)
+            if bare: errors.append(f'{fn}: bare stable IDs {sorted(set(bare))}')
+            for x in forbidden_reps:
+              if x in s: errors.append(f'{fn}: retired reputation {x}')
+            for pat in fake_skill_patterns:
+              if re.search(pat,s): errors.append(f'{fn}: possible fake skill {pat}')
+            if 'script_id' not in s or 'replay_policy' not in s or '連續性' not in s:
+              errors.append(f'{fn}: missing core metadata')
+          # Repeatable hard metadata.
+          for fn in ['OOTB_可重覆任務_渡口少一盞燈.md','OOTB_可重覆任務_百草外診少一味.md']:
+            s=Path(fn).read_text(encoding='utf-8')
+            for token in ['運行類別','可重覆任務','repeatable','小型','independent','重跑基型','game_id','PROP#','CLUE#','LOC#']:
+              if token not in s: errors.append(f'{fn}: repeatable token missing {token}')
+          # Sect martial hard tokens.
+          s=Path('OOTB_可重覆任務_百草外診少一味.md').read_text(encoding='utf-8')
+          for token in ['【百草掌法】','[來自〈百草閣〉]','解鎖武學等級至10級','解鎖武學等級至15級','7 日安全空檔','不等於免費升級']:
+            if token not in s: errors.append(f'sect script missing {token}')
+          if errors:
+            raise SystemExit('\n'.join(errors))
+          print('PHASE_B_STATIC_LINT_PASS')
+          PY
+      - name: Commit normalized scripts and self-remove workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/phase-b-normalize.yml
+          git add OOTB_任務_河堤第七口樁.md OOTB_可重覆任務_渡口少一盞燈.md OOTB_可重覆任務_百草外診少一味.md
+          git commit -m "fix: normalize generated script stable IDs"
+          git push origin HEAD:audit/2026-08-17-10h-medium-phase-b
