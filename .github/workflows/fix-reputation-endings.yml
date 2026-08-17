@@ -1,0 +1,50 @@
+name: Fix reputation ending multipliers
+on:
+  push:
+    branches: [fix/2026-08-17-10h-reputation-endings]
+    paths: [.github/workflows/fix-reputation-endings.yml]
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch exact ending multipliers
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          edits = {
+            'OOTB_任務_河堤第七口樁.md': (
+              '- **社會名譽**：一般不自動變化；若角色已公開承諾守堤又在眾目睽睽下無故離開，依現場傳播可使【荊湖道民間】`-0.1x E`，不另創其他數值。',
+              '- **社會名譽**：一般情況為俠名 `0.0x E`、惡名 `0.0x E`、【荊湖道民間】`0.0x E`、【荊湖道官府】`0.0x E`。若角色已公開承諾守堤又在眾目睽睽下無故離開，則俠名 `0.0x E`、惡名 `0.0x E`、【荊湖道民間】`-0.1x E`、【荊湖道官府】`0.0x E`；理由是役夫與下游居民親眼見到公開承諾落空。'
+            ),
+            'OOTB_可重覆任務_渡口少一盞燈.md': (
+              '- **社會名譽**：通常無；只有角色公開承諾護渡後又在船戶親眼見證下惡意破壞燈線，才按實際行為另作本輪負面結算。',
+              '- **社會名譽**：一般放棄為俠名 `0.0x E`、惡名 `0.0x E`、【江南道民間】`0.0x E`。若角色已公開承諾護渡，之後又在船戶親眼見證下故意破壞燈線並造成新的航行危險，則俠名 `0.0x E`、惡名 `0.2x E`、【江南道民間】`-0.2x E`；此負向只由本輪新行為成立。'
+            ),
+            'OOTB_可重覆任務_百草外診少一味.md': (
+              '- **社會名譽**：不自動變化；若角色已以百草閣身份公開接下病患安全責任後無理由惡意破壞診棚或錯發藥，再按實際可傳播行為結算。',
+              '- **社會名譽**：一般放棄為俠名 `0.0x E`、惡名 `0.0x E`、【百草閣】`0.0x E`、【嶺南道民間】`0.0x E`。若角色已以百草閣身份公開接下病患安全責任，之後故意破壞診棚或明知錯籤仍惡意錯發藥，且門派或病患家屬知道，則俠名 `0.0x E`、惡名 `0.2x E`、【百草閣】`-0.3x E`、【嶺南道民間】`-0.2x E`；每個新 `game_id` 只因本輪新的可傳播行為結算。'
+            ),
+          }
+          for fn,(old,new) in edits.items():
+            p=Path(fn); s=p.read_text(encoding='utf-8')
+            if old not in s: raise SystemExit(f'expected text not found: {fn}')
+            p.write_text(s.replace(old,new,1),encoding='utf-8')
+          for fn in edits:
+            s=Path(fn).read_text(encoding='utf-8')
+            if '按實際可傳播行為結算' in s or '按實際行為另作本輪負面結算' in s:
+              raise SystemExit(f'open-ended reputation text remains: {fn}')
+          print('REPUTATION_ENDING_FIX_PASS')
+          PY
+      - name: Commit fix and self-remove
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/fix-reputation-endings.yml
+          git add OOTB_任務_河堤第七口樁.md OOTB_可重覆任務_渡口少一盞燈.md OOTB_可重覆任務_百草外診少一味.md
+          git commit -m "fix: make reputation ending multipliers explicit"
+          git push origin HEAD:fix/2026-08-17-10h-reputation-endings
