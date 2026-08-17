@@ -1,0 +1,174 @@
+name: Finalize retry repeatables
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/finalize-retry-repeatables.yml
+
+permissions:
+  contents: write
+
+jobs:
+  validate-and-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fix and validate final repository markdown
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          files = [
+              Path('OOTB_可重覆任務_織坊夜裡多一匹布.md'),
+              Path('OOTB_可重覆任務_船塢多一道墨線.md'),
+              Path('OOTB_可重覆任務_水輪齒上沒有名字.md'),
+          ]
+
+          # Close the repeat-XP loophole for every outcome, not just successful endings.
+          for p in files:
+              s = p.read_text(encoding='utf-8')
+              s = re.sub(
+                  r'- \*\*歷練\*\*：同一角色第 1、2 個成功 `game_id` 可取得(?:結局所列)?完整結局?基礎歷練；第 3 個成功 `game_id`(?: 的本劇本基礎歷練)?上限(?:為| ) ?1；第 4 個成功事件起(?:，)?本 `script_id` 不再提供基礎歷練。[^\n]*',
+                  '- **歷練**：同一角色第 1、2 個「本劇本實得基礎歷練大於 0」的 `game_id` 可取得結局所列完整基礎歷練；第 3 個有歷練的 `game_id` 本劇本基礎歷練上限為 1；第 4 個有歷練的事件起，本 `script_id` 不再提供基礎歷練。成功、失敗、濫用或放棄只要本輪實得基礎歷練大於 0，都佔用一次歷練獎勵計數；0 歷練事件不佔計數。',
+                  s,
+                  count=1,
+              )
+              # If one wording did not match (weaving has an extra sentence), replace by prefix-to-newline.
+              s = re.sub(
+                  r'- \*\*歷練\*\*：同一角色第 1、2 個成功 `game_id` 可取得[^\n]*\n',
+                  '- **歷練**：同一角色第 1、2 個「本劇本實得基礎歷練大於 0」的 `game_id` 可取得結局所列完整基礎歷練；第 3 個有歷練的 `game_id` 本劇本基礎歷練上限為 1；第 4 個有歷練的事件起，本 `script_id` 不再提供基礎歷練。成功、失敗、濫用或放棄只要本輪實得基礎歷練大於 0，都佔用一次歷練獎勵計數；0 歷練事件不佔計數。\n',
+                  s,
+                  count=1,
+              )
+              # Explicit persistent private-state rule required by repeatable checks.
+              marker = '- **物質**：沒有可重複刷取的特殊裝備、秘笈或唯一物品。'
+              marker2 = '- **物質／特殊來源**：沒有可重複特殊裝備、唯一船材、秘笈或武學來源。'
+              if marker in s:
+                  s = s.replace(marker, marker + '\n- **私人關係／人情／恩義／仇怨／債務／承諾**：不作自動固定獎勵；若由本輪實際行為成立則永久保存，可在不同新事件形成新的持續後果，不因重跑而重置、抵銷或抹除。', 1)
+              if marker2 in s:
+                  s = s.replace(marker2, marker2 + '\n- **私人關係／人情／恩義／仇怨／債務／承諾**：不作自動固定獎勵；若由本輪實際行為成立則永久保存，可在不同新事件形成新的持續後果，不因重跑而重置、抵銷或抹除。', 1)
+              if p.name == 'OOTB_可重覆任務_水輪齒上沒有名字.md':
+                  anchor = '- **門派身份／階位**：本任務不授予天機閣入門身份、不提高門派階位、不把同行外人變成門人。重跑也不改變此規則。'
+                  if '私人關係／人情／恩義／仇怨／債務／承諾' not in s:
+                      s = s.replace(anchor, '- **私人關係／人情／恩義／仇怨／債務／承諾**：不作自動固定獎勵；若由本輪實際行為成立則永久保存，可在不同新事件形成新的持續後果，不因重跑而重置、抵銷或抹除。\n' + anchor, 1)
+              p.write_text(s, encoding='utf-8')
+
+          # Make personal participation explicit in abuse/abandon endings.
+          insertions = {
+              'OOTB_可重覆任務_織坊夜裡多一匹布.md': [
+                  ('- **歷練**：江湖 2、計略 1（基礎總計 3；受重跑上限約束）。歷練只表示經歷，不表示行為獲認可。',
+                   '- **歷練**：江湖 2、計略 1（基礎總計 3；受重跑上限約束）。歷練只表示經歷，不表示行為獲認可。\n- **參與條件**：角色本人實際協助包庇、毀證、私吞或迫使無辜者頂罪時才按本濫用結局取得上述 tag；未參與濫用但先前有合法查驗參與者，只按本人已完成內容給計略 1 或江湖 1，最高 1。'),
+                  ('- **歷練**：接觸後立即離開為 0；若已完成至少一個主要場景才放棄，可按實際參與給計略 1 或江湖 1，二選一。',
+                   '- **歷練**：接觸後立即離開為 0；若已完成至少一個主要場景才放棄，可按實際參與給計略 1 或江湖 1，二選一。\n- **參與條件**：逐角色按本人放棄前實際完成的場景結算；未接觸核心場景者為 0，已完成一個以上主要場景者最多取得一個 1 點 tag。'),
+              ],
+              'OOTB_可重覆任務_船塢多一道墨線.md': [
+                  ('- **歷練**：江湖 2、計略 1（基礎總計 3；受重跑上限約束）。',
+                   '- **歷練**：江湖 2、計略 1（基礎總計 3；受重跑上限約束）。\n- **參與條件**：角色本人實際參與欺瞞船工、毀證催船、私吞新料或迫使無辜者頂罪時才按本濫用結局取得上述 tag；未參與濫用但先前有合法查驗參與者，只按本人已完成內容給計略 1 或江湖 1，最高 1。'),
+                  ('- **歷練**：接任即離開為 0；若完成至少一個主要場景，可按實際參與給計略 1 或江湖 1，二選一。',
+                   '- **歷練**：接任即離開為 0；若完成至少一個主要場景，可按實際參與給計略 1 或江湖 1，二選一。\n- **參與條件**：逐角色按本人放棄前實際完成的場景結算；未到船塢／未接觸核心場景者為 0，已完成一個以上主要場景者最多取得一個 1 點 tag。'),
+              ],
+              'OOTB_可重覆任務_水輪齒上沒有名字.md': [
+                  ('- **歷練**：江湖 2、計略 1（基礎總計 3；受重跑上限約束）。',
+                   '- **歷練**：江湖 2、計略 1（基礎總計 3；受重跑上限約束）。\n- **參與條件**：角色本人實際參與偽造天機閣匠印／維修記錄、欺瞞居民或明知危險仍強開滿流時才按本濫用結局取得上述 tag；未參與濫用但先前有合法查驗參與者，只按本人已完成內容給修行 1、計略 1 或江湖 1 中一項，最高 1。'),
+                  ('- **歷練**：接令後未到現場即放棄為 0；完成至少一個主要場景後放棄，可按實際參與給修行 1、計略 1 或江湖 1 中一項。',
+                   '- **歷練**：接令後未到現場即放棄為 0；完成至少一個主要場景後放棄，可按實際參與給修行 1、計略 1 或江湖 1 中一項。\n- **參與條件**：逐角色按本人放棄前實際完成的場景結算；未到現場者為 0，已完成一個以上主要場景者最多取得一個 1 點 tag。'),
+              ],
+          }
+          for p in files:
+              s = p.read_text(encoding='utf-8')
+              for old, new in insertions[p.name]:
+                  if old not in s:
+                      raise SystemExit(f'expected participation anchor missing: {p}: {old[:30]}')
+                  s = s.replace(old, new, 1)
+              p.write_text(s, encoding='utf-8')
+
+          # Hard checks based only on the final md files.
+          banned = ['名望', '聲譽', '勢力關係', '地方聲望', '商旅評價', '黑市名聲', '官聲', '【官府】', '【民間】', '【商賈】', '【草莽】', '【士紳】', '【武林人士】']
+          allowed_skills = {'體能','身法','巧手','隱密','儒學','道學','佛學','信仰','歷史政治','天文地理','格物推理','醫毒藥理','廚藝','識字','書畫','棋藝','馴獸','洞察','生存','感應','說服','欺瞞','威嚇','表演','奏樂','騎術'}
+          script_ids = {}
+          for p in files:
+              s = p.read_text(encoding='utf-8')
+              for token in banned:
+                  if token in s:
+                      raise SystemExit(f'{p}: retired reputation token: {token}')
+              for req in ['script_id', '`repeatable`', '小型（S=1）', '`independent`', '日常可再發生', 'game_id', 'NPC#', 'LOC#', 'PROP#', 'CLUE#', '# 出發前整備']:
+                  if req not in s:
+                      raise SystemExit(f'{p}: missing repeatable requirement {req}')
+              m = re.search(r'\| script_id \| `([^`]+)`', s)
+              if not m:
+                  raise SystemExit(f'{p}: no script_id')
+              sid = m.group(1)
+              if sid in script_ids:
+                  raise SystemExit(f'duplicate new script_id {sid}')
+              script_ids[sid] = p.name
+              # Every explicit skill handle before a DC must be a whitelist skill.
+              for skill in re.findall(r'（([^（）]+)）DC\s*\d+', s):
+                  if skill not in allowed_skills:
+                      raise SystemExit(f'{p}: non-whitelist skill handle {skill}')
+              blocks = re.split(r'(?=^## 結局：)', s, flags=re.M)[1:]
+              if len(blocks) < 4:
+                  raise SystemExit(f'{p}: too few major endings')
+              ids = []
+              for b in blocks:
+                  for key in ['**ending_id**', '**角色卡顯示名稱**', '**結算類型**', '**歷練**', '**參與條件**', '**銀兩**', '**物質狀態**', '**社會名譽**']:
+                      if key not in b:
+                          raise SystemExit(f'{p}: ending missing {key}: {b[:80]}')
+                  em = re.search(r'\*\*ending_id\*\*：`([^`]+)`', b)
+                  if not em:
+                      raise SystemExit(f'{p}: malformed ending_id')
+                  ids.append(em.group(1))
+                  if '俠名' not in b or '惡名' not in b:
+                      raise SystemExit(f'{p}: ending lacks explicit xia/evil reputation')
+              if len(ids) != len(set(ids)):
+                  raise SystemExit(f'{p}: duplicate ending_id')
+              # Every repeatable quest must explicitly close all persistent reward classes.
+              for key in ['**歷練**', '**銀兩**', '正向相對名譽', '私人關係／人情／恩義／仇怨／債務／承諾']:
+                  if key not in s:
+                      raise SystemExit(f'{p}: reward persistence gap {key}')
+              # Preparation hard check.
+              prep = s[s.index('# 出發前整備'):s.index('# GM 真相')]
+              for key in ['整備類型', '安全空檔', '開始位置', '玩家已知資訊', '攜帶交接']:
+                  if key not in prep:
+                      raise SystemExit(f'{p}: prep gap {key}')
+
+          # Sect-only hard checks.
+          sect = Path('OOTB_可重覆任務_水輪齒上沒有名字.md').read_text(encoding='utf-8')
+          for req in ['天機閣成員', '【天機飛針術】', '[來自〈天機閣〉]', '解鎖武學等級至10級', '永不', '11 級以上', '入門狀態', '實際掌握', '非天機閣同行者不能']:
+              if req not in sect:
+                  raise SystemExit(f'sect reward gap: {req}')
+          if re.search(r'解鎖武學等級至(?:11|12|13|14|15|16|17|18|19|20)級', sect):
+              raise SystemExit('sect task illegally raises source above 10')
+
+          # Repository-wide duplicate script_id check, including the three new files.
+          all_ids = {}
+          for md in Path('.').glob('OOTB_*.md'):
+              text = md.read_text(encoding='utf-8')
+              m = re.search(r'\| script_id \| `([^`]+)`', text)
+              if not m:
+                  continue
+              sid = m.group(1)
+              if sid in all_ids:
+                  raise SystemExit(f'duplicate repository script_id: {sid}: {all_ids[sid]} / {md.name}')
+              all_ids[sid] = md.name
+
+          print('FINAL REPEATABLE VALIDATION PASS')
+          for p in files:
+              text = p.read_text(encoding='utf-8')
+              print(p.name, len(text.encode('utf-8')), 'bytes', text.count('\n') + 1, 'lines')
+
+          # Remove temporary workflow from final tree.
+          Path('.github/workflows/finalize-retry-repeatables.yml').unlink()
+          PY
+      - name: Commit final corrections and cleanup
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix: finalize repeatable quest validation"
+          git push origin HEAD:main
