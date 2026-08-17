@@ -1,0 +1,103 @@
+name: Finalize 17h beginner tasks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/finalize-beginner-1759.yml
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Correct and validate final markdown
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          files = [
+            Path('OOTB_初期任務_陶棚前多了一筐碎碗.md'),
+            Path('OOTB_初期任務_潮退後少了一隻繫舟環.md'),
+            Path('OOTB_初期任務_雨棚後傳來兩聲木裂.md'),
+          ]
+
+          # Tighten only actually-used references and correct the 京畿 city comparison.
+          p = files[0]; s = p.read_text(encoding='utf-8')
+          s = s.replace('：【格物推理】【感應】【洞察】【說服】【威嚇】【體能】【巧手】【識字】', '：【格物推理】【說服】【威嚇】【體能】')
+          p.write_text(s, encoding='utf-8')
+
+          p = files[1]; s = p.read_text(encoding='utf-8')
+          s = s.replace('：【感應】【生存】【天文地理】【格物推理】【體能】【身法】【洞察】【說服】', '：【感應】【生存】【格物推理】【體能】【身法】【洞察】【說服】')
+          p.write_text(s, encoding='utf-8')
+
+          p = files[2]; s = p.read_text(encoding='utf-8')
+          s = s.replace('不固定為洛安城內', '不固定為雍京城內')
+          s = s.replace('：【格物推理】【感應】【洞察】【說服】【威嚇】【體能】【身法】【巧手】', '：【格物推理】【感應】【洞察】【說服】【威嚇】【身法】【巧手】')
+          p.write_text(s, encoding='utf-8')
+
+          banned = ['名望','聲譽','勢力關係','口碑','地方聲望','商旅評價','黑市名聲','官聲','【官府】','【民間】','【商賈】','【草莽】','【士紳】','【武林人士】','【鏢行護運】','【幫會黑道】','【走私者】']
+          allowed = {'體能','身法','巧手','隱密','儒學','道學','佛學','信仰','歷史政治','天文地理','格物推理','醫毒藥理','廚藝','識字','書畫','棋藝','馴獸','洞察','生存','感應','說服','欺瞞','威嚇','表演','奏樂','騎術'}
+          ids = set()
+          for p in files:
+              s = p.read_text(encoding='utf-8')
+              for t in banned:
+                  if t in s: raise SystemExit(f'{p}: retired reputation token {t}')
+              for req in ['script_id','劇本版本','`once_per_character`','`independent`','建議角色等級','歷練基準等級 R','小型（S=1）','# 出發前整備','**整備類型**','24 小時（48 個空檔回合）','**開始位置**','**玩家已知行程與補給資訊**','**出發前交接**','# 世界真相與時間線','# 主要 NPC','# 核心結論與冗餘','# 主要場景','# 危機時鐘','# 偏離與失效處理','# 終局與主要結局']:
+                  if req not in s: raise SystemExit(f'{p}: missing {req}')
+              m = re.search(r'\| script_id \| `([^`]+)`', s)
+              if not m or m.group(1) in ids: raise SystemExit(f'{p}: missing/duplicate new script_id')
+              ids.add(m.group(1))
+              for sk in re.findall(r'（([^（）]+)）DC\s*\d+', s):
+                  if sk not in allowed: raise SystemExit(f'{p}: non-whitelist skill {sk}')
+              blocks = re.split(r'(?=^## 結局：)', s, flags=re.M)[1:]
+              if len(blocks) < 4: raise SystemExit(f'{p}: fewer than four endings')
+              eids=[]
+              for b in blocks:
+                  for key in ['**ending_id**','**角色卡顯示名稱**','**結算類型**','**歷練**','**參與條件**','**銀兩**','**物質狀態**','**社會名譽結算**']:
+                      if key not in b and not (key=='**參與條件**' and '**完整參與條件**' in b):
+                          raise SystemExit(f'{p}: ending missing {key}')
+                  if '俠名' not in b or '惡名' not in b: raise SystemExit(f'{p}: ending reputation incomplete')
+                  em=re.search(r'\*\*ending_id\*\*：`([^`]+)`',b)
+                  if not em: raise SystemExit(f'{p}: malformed ending_id')
+                  eids.append(em.group(1))
+              if len(eids)!=len(set(eids)): raise SystemExit(f'{p}: duplicate ending_id')
+
+          # Geography-specific hard checks.
+          t = files[1].read_text(encoding='utf-8')
+          if '西海道' not in t or '【西海道民間】' not in t or '嶺南道' in t: raise SystemExit('mooring geography not fully migrated')
+          t = files[2].read_text(encoding='utf-8')
+          if '京畿道' not in t or '雍京' not in t or '洛安城內' in t: raise SystemExit('awning geography mismatch')
+
+          # Repository-wide stable script_id uniqueness.
+          all_ids={}
+          for md in Path('.').glob('OOTB_*.md'):
+              text=md.read_text(encoding='utf-8')
+              m=re.search(r'\| script_id \| `([^`]+)`',text)
+              if not m: continue
+              sid=m.group(1)
+              if sid in all_ids: raise SystemExit(f'duplicate repository script_id {sid}: {all_ids[sid]} / {md.name}')
+              all_ids[sid]=md.name
+
+          print('FINAL BEGINNER VALIDATION PASS')
+          for p in files:
+              s=p.read_text(encoding='utf-8')
+              print(p.name, len(s.encode('utf-8')), 'bytes', s.count('\n')+1, 'lines')
+
+          Path('.github/workflows/finalize-beginner-1759.yml').unlink()
+          PY
+      - name: Commit validated state
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix: finalize 17h beginner task validation"
+          git push origin HEAD:main
