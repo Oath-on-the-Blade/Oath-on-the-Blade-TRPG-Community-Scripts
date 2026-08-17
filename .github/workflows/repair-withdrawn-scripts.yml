@@ -1,0 +1,59 @@
+name: Repair withdrawn scripts
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/repair-withdrawn-scripts.yml']
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Restore, repair, and validate obvious reference gaps
+        shell: bash
+        run: |
+          set -euo pipefail
+          git show b474b1c803738198dcec0c204b612e5477c60068:'OOTB_任務_井堡裡的半張星圖.md' > 'OOTB_任務_井堡裡的半張星圖.md'
+          git show 17464f107f70e961c0f414439a06975a9432c6b9:'OOTB_任務_七峰索橋少一枚鐵楔.md' > 'OOTB_任務_七峰索橋少一枚鐵楔.md'
+          git show c5d654751da143858bc74cfc40952a1e67320399:'OOTB_任務_斷塔上留下的燕尾.md' > 'OOTB_任務_斷塔上留下的燕尾.md'
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('OOTB_任務_井堡裡的半張星圖.md')
+          s = p.read_text()
+          old = '- 需要引用的內容庫條目：`內容庫/敵人圖鑑.md`【山賊刀手】【山賊暗器手】【走私客／水手】；`內容庫/拿手.md`【天文地理】【格物推理】【洞察】【生存】【感應】【說服】【威嚇】'
+          new = '- 需要引用的內容庫條目：`內容庫/敵人圖鑑.md`【山賊刀手】【山賊暗器手】【走私客／水手】【江湖殺手】；`內容庫/拿手.md`【天文地理】【格物推理】【識字】【洞察】【生存】【感應】【說服】【威嚇】【體能】【巧手】【醫毒藥理】'
+          assert old in s
+          p.write_text(s.replace(old, new))
+
+          p = Path('OOTB_任務_七峰索橋少一枚鐵楔.md')
+          s = p.read_text()
+          old = '- 需要引用的內容庫條目：`內容庫/敵人圖鑑.md`【天嶽劍客】【山賊刀手】；`內容庫/武學/外功_拳掌.md`【雪嶽拳法】；`內容庫/武學/輕功.md`【玉瀑行】【天風步法】；`內容庫/拿手.md`【體能】【身法】【格物推理】【感應】【洞察】【說服】'
+          new = '- 需要引用的內容庫條目：`內容庫/敵人圖鑑.md`【天嶽劍客】【山賊刀手】；`內容庫/武學/外功_拳掌.md`【雪嶽拳法】；`內容庫/武學/輕功.md`【玉瀑行】；`內容庫/拿手.md`【身法】【格物推理】【感應】【洞察】【說服】【威嚇】'
+          assert old in s
+          s = s.replace(old, new).replace('這句 technically 為真', '這句在字面上為真')
+          p.write_text(s)
+
+          p = Path('OOTB_任務_斷塔上留下的燕尾.md')
+          s = p.read_text()
+          old = '- 需要引用的內容庫條目：`內容庫/武學/外功_暗器.md`【燕尾鏢訣】；`內容庫/敵人圖鑑.md`【江湖殺手】【山賊暗器手】【鏢師】；`內容庫/拿手.md`【身法】【隱密】【格物推理】【歷史政治】【感應】【生存】【說服】'
+          new = '- 需要引用的內容庫條目：`內容庫/武學/外功_暗器.md`【燕尾鏢訣】；`內容庫/敵人圖鑑.md`【江湖殺手】【山賊暗器手】【捕快】；`內容庫/拿手.md`【身法】【格物推理】【洞察】【感應】【說服】【威嚇】'
+          assert old in s
+          s = s.replace(old, new)
+          s = s.replace('威嚇成功也可逼她放下，但她不提供第三冊空腔線索。', '力量或魅力（威嚇）DC13成功也可逼她放下，但她不提供第三冊空腔線索；失敗則她退向塔頂並拒絕再因同一威嚇理由交冊，除非局勢或籌碼實質改變。')
+          p.write_text(s)
+          PY
+          grep -q '【江湖殺手】' 'OOTB_任務_井堡裡的半張星圖.md'
+          grep -q '【識字】' 'OOTB_任務_井堡裡的半張星圖.md'
+          grep -q '【醫毒藥理】' 'OOTB_任務_井堡裡的半張星圖.md'
+          grep -q '【威嚇】' 'OOTB_任務_七峰索橋少一枚鐵楔.md'
+          grep -q '【捕快】' 'OOTB_任務_斷塔上留下的燕尾.md'
+          grep -q '力量或魅力（威嚇）DC13' 'OOTB_任務_斷塔上留下的燕尾.md'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add 'OOTB_任務_井堡裡的半張星圖.md' 'OOTB_任務_七峰索橋少一枚鐵楔.md' 'OOTB_任務_斷塔上留下的燕尾.md'
+          git commit -m '修正並恢復三篇隨機任務'
+          git push
