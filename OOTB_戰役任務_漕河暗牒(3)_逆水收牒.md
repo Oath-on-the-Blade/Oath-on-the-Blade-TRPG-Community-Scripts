@@ -2,7 +2,7 @@
 
 > Oath on the Blade（OOTB）／《武與俠》「漕河暗牒」第三篇。
 >
-> 1.1.0 保留既有回潮船、帳碼、live leak 真相、場景、危機與獎勵；補入結算時的實際末篇解鎖裁決。`live_leak_access` 改為 GM 私密的確定世界值 `active|cut_off`，新增 `additional_notice_status=none|issued` 保存六張追加件是否真的已發；若北水關實際危機入口已不存在，第三篇直接形成 `EARLY-RES-A/B` 提早收束，不為篇數生成第四篇。
+> 1.1.1 保留既有回潮船、帳碼、live leak 真相、場景、危機與獎勵；補入結算時的實際末篇解鎖裁決。`live_leak_access` 為 GM 私密確定世界值 `active|cut_off`，`additional_notice_status=none|issued` 保存六張追加件是否真的已發；所有 ending 在判 EARLY／U4 前都先按本篇實際追回／散失更新 `obsolete_stock_status`。若北水關實際危機入口已不存在，第三篇直接形成 `EARLY-RES-A/B` 提早收束，不為篇數生成第四篇。
 >
 > 第二篇已結清西湄截留案。現在的新問題是：水路掮客已下令把高風險舊料、付款記號與分銷帳碼集中上「回潮船」逆水回收。玩家處理的是**正在發生的收牒物流、分銷責任與現行程序外洩**；不重新證明第二篇任務。
 
@@ -12,7 +12,7 @@
 |---|---|
 | 劇本名稱 | 《逆水收牒》 |
 | script_id | `ootb-script-nishui-shoudie-v1` |
-| 劇本版本 | 1.1.0 |
+| 劇本版本 | 1.1.1 |
 | campaign_id | `canal-secret-dispatches` |
 | 戰役線 | 漕河暗牒・第三篇 |
 | replay_policy | `once_per_character` |
@@ -297,11 +297,12 @@
 
 **共同物質規則**：實收銀兩為全隊共同可分割財產，玩家結算時決定分配；未共識則共同持有。六包／帳證不轉為玩家所有，按官面／原所有權保管。
 
-**通知／接觸 state 統一寫回：**
-- 依本篇實際攔回三張既發通知的數量，0張=`preissued_notice_status=none_intercepted`；1–2張=`partial_intercepted`；3張=`all_intercepted`。
-- `live_leak_access`必須按客觀世界寫`active|cut_off`，不使用unknown。
-- 六張追加件已完成送出才寫`additional_notice_status=issued`；否則`none`。
-- 先寫上述實際值，再按第9節判`early_campaign_resolution=none|EARLY-RES-A|EARLY-RES-B`。
+**所有 ending 共用的 state 寫回順序：**
+1. 依本篇實際攔回三張既發通知的數量，0張=`preissued_notice_status=none_intercepted`；1–2張=`partial_intercepted`；3張=`all_intercepted`。
+2. `live_leak_access`按客觀世界寫`active|cut_off`，不使用unknown。
+3. 六張追加件已完成送出才寫`additional_notice_status=issued`；否則`none`。
+4. **按本篇R1–R3與其他既有危險舊料的實際追回、封存、毀損或再分散結果更新 `obsolete_stock_status`。** 第二篇已`secured/destroyed`不得無因果變差；原`partial/dispersed`可因本篇真實回收改善，也可因危機分流維持／惡化。這一步對END-01～05全部執行。
+5. 再按第9節判`early_campaign_resolution=none|EARLY-RES-A|EARLY-RES-B`，並按第11節決定戰役層結果。
 
 ## `END-01`｜逆水得帳
 - **結算類型**：完成。
@@ -312,7 +313,7 @@
 - **物質**：全隊實收360兩；共同可分割。
 - **社會名譽**：俠名`+0.5x E`；惡名0；【江南道官府】`+0.5x E`；【江南道民間】`+0.4x E`。
 - **傳播**：官面由查驗／帳證知道玩家保住分銷證據；船戶知道玩家針對涉案貨而非亂封水路。
-- **state**：`river_broker_status`按實際；`network_ledger=complete`；`live_leak_identity=confirmed`；`live_leak_access=active/cut_off`按實際；`preissued_notice_status`按本節統一寫回；`additional_notice_status`按實際；`obsolete_stock_status`只能按實際改善，不重置secured/destroyed；最後按第9節寫`early_campaign_resolution`。
+- **state**：`river_broker_status`按實際；`network_ledger=complete`；`live_leak_identity=confirmed`；其餘共用state按本節順序寫回。
 
 ## `END-02`｜收牒止於船
 - **結算類型**：完成／部分成功。
@@ -323,7 +324,7 @@
 - **物質**：全隊實收300兩；共同可分割。
 - **社會名譽**：俠名`+0.4x E`；惡名0；【江南道官府】`+0.4x E`；【江南道民間】`+0.3x E`。
 - **傳播**：官面獲可用但不完整帳證；民間看到特定貨被處理而正常船路仍運作。
-- **state**：`network_ledger=partial`；`live_leak_identity=confirmed/suspected`按實際；`river_broker_status`、`live_leak_access`按實際；`preissued_notice_status`、`additional_notice_status`按實際；最後按第9節寫`early_campaign_resolution`。
+- **state**：`network_ledger=partial`；`live_leak_identity=confirmed/suspected`按實際；`river_broker_status`按實際；其餘共用state按本節順序寫回。
 
 ## `END-03`｜人失而線未斷
 - **結算類型**：完成／苦澀部分成功。
@@ -334,7 +335,7 @@
 - **物質**：全隊實收240兩；共同可分割。
 - **社會名譽**：俠名`+0.4x E`；惡名0；【江南道官府】`+0.2x E`；【江南道民間】`+0.4x E`。
 - **傳播**：民間見玩家避免無差別扣船；官面因人物／帳失去只形成有限正面評價。
-- **state**：`river_broker_status=escaped/dead/unknown`或實際；`network_ledger=partial/lost`；`live_leak_identity`按證據；`live_leak_access`按客觀世界；`preissued_notice_status`、`additional_notice_status`按實際；最後按第9節寫`early_campaign_resolution`。
+- **state**：`river_broker_status=escaped/dead/unknown`或實際；`network_ledger=partial/lost`；`live_leak_identity`按證據；其餘共用state按本節順序寫回。
 
 ## `END-04`｜回潮散帳
 - **結算類型**：失敗。
@@ -345,7 +346,7 @@
 - **物質**：全隊實收100兩協查酬金；共同可分割。
 - **社會名譽**：俠名`+0.2x E`；惡名0；【江南道官府】0；【江南道民間】`+0.1x E`。
 - **傳播**：只有部分追查成果；沒有足夠官面成功形成正評。
-- **state**：`river_broker_status`、`network_ledger`、`live_leak_identity`、`live_leak_access`均按可確認世界事實寫值，不留空；`preissued_notice_status`、`additional_notice_status`按實際；最後按第9節寫`early_campaign_resolution`。
+- **state**：`river_broker_status`、`network_ledger`、`live_leak_identity`均按可確認世界事實寫值，不留空；其餘共用state按本節順序寫回。
 
 ## `END-05`｜逆水不追
 - **結算類型**：任務放棄。
@@ -353,7 +354,7 @@
 - **完整參與／歷練**：親自建立至少一項新的跨篇可驗證事實者計略1；其他角色0；無額外中途推導。
 - **物質**：無。
 - **社會名譽**：俠名0；惡名0；【江南道官府】0；【江南道民間】0。另有公開劫船／殘酷行為才用derived/variant。
-- **state**：`river_broker_status`、`network_ledger`、`live_leak_identity`、`live_leak_access`均按離場後客觀世界寫值；`preissued_notice_status`按世界自然推進後實際可確認值寫回；`additional_notice_status`按是否已實際送出寫回；`early_campaign_resolution=none`。
+- **state**：`river_broker_status`、`network_ledger`、`live_leak_identity`按離場後客觀世界寫值；其餘共用state按本節順序寫回；`campaign_resolution=abandoned`、`legitimate_flow_status`按離場後船貨／北水關實際後果寫`delayed|disrupted|collapsed`。
 
 ### `variant: river_bloodshed`
 任一 END 下若無必要殺傷已投降船腳／中立船戶：惡名`+0.3x E`；【江南道民間】在原值基礎`-0.4x E`。同一事件只一次。
@@ -364,7 +365,7 @@
 
 本篇完成第10節單篇 ending 與全部實際 state 後，在**同一次結算**依序執行：
 
-1. END-05 → `failed (3/4)`、`closed`、reason=`abandoned`，無第四篇。
+1. END-05 → `failed (3/4)`、`closed`、reason=`abandoned`，`campaign_resolution=abandoned`，`legitimate_flow_status`沿第10節實際值，無第四篇。
 2. 非放棄：先檢查`EARLY-RES-A`；成立則按第9節`partly_completed (3/4)`。
 3. A不成立：檢查第四篇是否至少有一條 U4 路線；若全部不存在，寫`EARLY-RES-B`並按第9節部分完成／失敗收束。
 4. A/B皆不成立且至少有一條U4 → `early_campaign_resolution=none`，END-01／02／03／04均為`active (3/4)`；END-04是**單篇失敗但戰役可承接**。
@@ -376,7 +377,7 @@
 - **U4-1｜既發B件仍在路上**：`preissued_notice_status=none_intercepted|partial_intercepted`。
 - **U4-2｜追加C件已實際送出**：`additional_notice_status=issued`。
 - **U4-3｜過廣D命令仍會生效**：第二篇 `cover_official_position=obstructing` 且其既存／已下過廣命令未因例外失效。
-- **U4-4｜危險舊料仍未受控**：第二／三篇 `obsolete_stock_status=partial|dispersed`，北水關候驗貨群仍有需要精準辨認／扣留的涉案實物。
+- **U4-4｜危險舊料仍未受控**：第10節已更新後的 `obsolete_stock_status=partial|dispersed`，北水關候驗貨群仍有需要精準辨認／扣留的涉案實物。
 
 第一篇`grain_loss`／`north_bank_shortage`在第四篇決定廣封的民生成本，`official_evidence`決定既有官面證據強度；它們必須保留在交接，但不單獨解鎖第四篇。
 
@@ -389,7 +390,7 @@ active 分支的 current campaign save 必須保存目標第四篇、實際匹�
 - `EARLY-RES-B`／END-04：按本篇失敗世界後果落地後宣告「戰役失敗（3/4）」。
 - END-05：按離場後船貨／帳碼自然分流結果落地後宣告「戰役失敗（3/4）」。
 
-結算後產生新版 current campaign save，保存本篇 END、`river_broker_status`、`network_ledger`、`live_leak_identity`、`live_leak_access`、`preissued_notice_status`、`additional_notice_status`、`early_campaign_resolution`、戰役 NPC 實例／狀態、exception，以及本次戰役層裁決。
+結算後產生新版 current campaign save，保存本篇 END、`river_broker_status`、`network_ledger`、`live_leak_identity`、`live_leak_access`、`preissued_notice_status`、`additional_notice_status`、更新後`obsolete_stock_status`、`early_campaign_resolution`、戰役 NPC 實例／狀態、exception，以及本次戰役層裁決。
 
 ---
 
@@ -403,7 +404,8 @@ active 分支的 current campaign save 必須保存目標第四篇、實際匹�
 - `live_leak_access`只寫客觀`active|cut_off`，不以玩家未知造成GM state unknown。
 - `additional_notice_status`保存六張追加件是否真的已發；第四篇不得從active臨場推測生成。
 - `preissued_notice_status`逐件保留三張既發通知的實際攔回結果，第四篇不得重生已攔回文件。
-- `EARLY-RES-A/B` 都有可直接執行的條件與玩家可見收束，不強迫已消失的末篇危機重生。
+- `obsolete_stock_status`在所有ending都先按第三篇實際回收／散失更新，U4-4讀更新後值。
+- `EARLY-RES-A/B`都有可直接執行的條件與玩家可見收束，不強迫已消失的末篇危機重生。
 - END-04在至少一條U4成立時仍可作失敗但active；所有U4都不存在時才failed收束。
-- END-05 一律 `failed/closed`，不自動開第四篇。
-- 每個 END 都直接寫七個第三篇跨篇接口 state、參與歷練、物質、社會名譽與傳播。
+- END-05 一律 `failed/closed`並寫`campaign_resolution=abandoned`，不自動開第四篇。
+- 每個 END 都直接寫第三篇跨篇接口 state、參與歷練、物質、社會名譽與傳播。
