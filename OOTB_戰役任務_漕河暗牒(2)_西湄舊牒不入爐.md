@@ -2,6 +2,8 @@
 
 > Oath on the Blade（OOTB）／《武與俠》「漕河暗牒」第二篇。
 >
+> 1.1.0 保留既有西湄撤倉真相、場景、危機、獎勵與三個 campaign state；新增結算時的 `return_boat_lead` 承接證據裁決。只有實際取得能指向回潮船／逆水路線的入口才可開第三篇；沒有入口時，本篇直接形成部分完成或失敗的提早戰役收束。
+>
 > 本篇承接第一篇已成立的「西湄巡倉舊紙水印」問題，但本篇任務是**結清西湄撤倉截留案與現存危險舊料**；抓到水路掮客不是本篇成功必要條件。
 
 ## 劇本規格頭
@@ -10,11 +12,11 @@
 |---|---|
 | 劇本名稱 | 《西湄舊牒不入爐》 |
 | script_id | `ootb-script-ximei-jiudie-burulu-v1` |
-| 劇本版本 | 1.0.1 |
+| 劇本版本 | 1.1.0 |
 | campaign_id | `canal-secret-dispatches` |
 | 戰役線 | 漕河暗牒・第二篇 |
 | replay_policy | `once_per_character` |
-| 連續性 | `independent`；承接 current campaign save 的第一篇 ending/state，通常在第一篇後2–5日發生，可正常整備。 |
+| 連續性 | `independent`；只由第一篇結算已裁定 `active/open`、目標為本篇且匹配總綱 S2-A 的 current campaign save 進入；通常在第一篇後2–5日發生，可正常整備。開局只載入既有交接，不重新裁決第一篇能否承接。 |
 | 出發前整備 | 一般 |
 | 出發前安全空檔 | 24 小時（48 個空檔回合） |
 | 類型 | 舊案追證、撤倉清冊、材料追查、限時護證、官面遮掩 |
@@ -45,7 +47,7 @@
 
 # 0. 開局載入與整備
 
-開局先載入最新 current campaign save：`chapter_01_ending`、`forger_at_large`、`merchant_manager_status`、`grain_loss`、`north_bank_shortage`、`official_evidence`，以及 `NPC#5/#6@戰役:漕河暗牒` 已實例姓名／狀態與 exception data。不得重置第一篇死亡、被捕、合作、逃亡、證物遺失或缺糧後果。
+開局先載入上一階段結算指定的 current campaign save：`chapter_01_ending`、`forger_at_large`、`merchant_manager_status`、`grain_loss`、`north_bank_shortage`、`official_evidence`，以及 `NPC#5/#6@戰役:漕河暗牒` 已實例姓名／狀態與 exception data。不得重置第一篇死亡、被捕、合作、逃亡、證物遺失或缺糧後果；亦不在此重新計算 S2-A。
 
 ## 出發前整備
 - **類型**：一般。
@@ -157,7 +159,7 @@
 2. 小渡今日寄艙牌：「回潮船、逆水、戌前離」。
 3. 已買走舊收條背面留雙折水線＋艙號。
 
-D 是第三篇入口；本篇成功不要求在西湄抓到 `<NPC#2@戰役:漕河暗牒>`。
+D 是**第三篇必要承接入口**；本篇成功本身不保證D一定被玩家取得，也不要求在西湄抓到 `<NPC#2@戰役:漕河暗牒>`。
 
 ---
 
@@ -233,11 +235,11 @@ D 是第三篇入口；本篇成功不要求在西湄抓到 `<NPC#2@戰役:漕�
 
 - `<NPC#1@戰役:漕河暗牒>` 死亡／失蹤／拒絕：重量差、過磅副冊、夾層／纖維、領工證詞仍在；無本人供詞時只按實際證據定 complete/partial。
 - `<NPC#4@戰役:漕河暗牒>` 已死亡／撤職：不另造同功能遮掩官；簽押原頁仍在，`cover_official_position=removed`。
-- 玩家抓／殺收牒中介：回潮船寄艙牌、今日小渡登記、雙折水線仍提供第三篇方向。
+- 玩家抓／殺收牒中介：回潮船寄艙牌、今日小渡登記、雙折水線**若實際取得**仍可提供第三篇方向；不得因中介失效自動判`return_boat_lead=established`。
 - 玩家燒最後一包：`obsolete_stock_status=destroyed`；未核對前燒毀會降低實物證據，不補完美備份。
 - 玩家公開全部舊案：`<NPC#4@戰役:漕河暗牒>` 可直接 `exposed`，收牒行動加速1格；是合法路線。
 - 玩家封死西湄渡口：可合法執行時，每危機格都累積民運／救急延誤；結局照實反映。
-- 玩家提前追回潮船：GM 明示「離開西湄即按目前完成程度結算本篇，不會留到下一篇補」；確認後先結算，再可提前開第三篇。
+- 玩家提前追回潮船：GM 明示「離開西湄即按目前完成程度結算本篇，不會留到下一篇補」；確認後先結算。只有本次結算已確認 `return_boat_lead=established` 並裁定 `active/open`，才可把第三篇作下一個新 `game_id`。
 
 ---
 
@@ -304,11 +306,52 @@ D 是第三篇入口；本篇成功不要求在西湄抓到 `<NPC#2@戰役:漕�
 
 ---
 
-# 10. 第三篇承接
+# 10. 戰役層承接裁決與提早收束
 
-只要隊伍選擇繼續戰役，下一篇原因來自**已發生的收牒反應**：雙折水線、今日寄艙牌或中介口供至少一項指向「回潮船」；`<NPC#2@戰役:漕河暗牒>` 已下令把高風險舊料／帳碼集中到逆水回收線。即使掮客本人被提前控制，既發指令仍運作。
+本篇先依第9節完整結算西湄任務，再在**同一次正式結算**判斷第三篇是否有實際入口。下一次開局只載入此裁決，不重新判。
 
-第二篇本地任務已正式結算；第三篇不是回頭補「誰截留西湄舊料」。結算後依 `GM規則/戰役存檔.md` 產生新版 current campaign save，保存 ending、三個 state、戰役 NPC 實例／狀態與 exception data。
+## 10.1 `return_boat_lead`
+
+這是本次結算的承接證據，不另造長期平行 campaign state；寫入 current `campaign_save` 的承接裁決／解鎖證據：
+
+- `established`：玩家在本篇實際取得至少一項足以指向「回潮船／其逆水路線」的資料：
+  1. 收牒中介口供／回購單明示買回後送回潮船；
+  2. 小渡今日寄艙牌明示「回潮船、逆水、戌前離」；
+  3. 雙折水線能與艙號／裝船紀錄相連，足以追到同一逆水回收線。
+- `not_established`：上述入口全部未取得、已毀或只剩不足以定位的模糊痕跡。只知道「三年前重大短少」或「有人正在收舊票」不等於知道第三篇往哪裡追。
+
+不得因 END-01／02／03 是好結果便自動補船名；亦不得因 END-04 是失敗便自動否定玩家實際取得的回潮船資料。
+
+## 10.2 ending → campaign status
+
+| ending | `return_boat_lead=established` | `return_boat_lead=not_established` |
+|---|---|---|
+| END-01 | `active (2/4)`，`open`，目標第三篇，匹配S3-A | `partly_completed (2/4)`，`closed`，進「西湄封卷」 |
+| END-02 | `active (2/4)`，`open`，目標第三篇，匹配S3-A | `partly_completed (2/4)`，`closed`，進「西湄封卷」 |
+| END-03 | `active (2/4)`，`open`，目標第三篇，匹配S3-A | `partly_completed (2/4)`，`closed`，進「西湄封卷」 |
+| END-04 | **單篇失敗但 `active (2/4)`**，`open`，目標第三篇，匹配S3-A | 失敗且不可承接：`failed (2/4)`，`closed` |
+| END-05 | `failed (2/4)`，`closed` | `failed (2/4)`，`closed` |
+
+S3-A 的本桌解鎖證據必須同時保存：第一篇非放棄 ending／西湄水印前史、本篇 ending、本篇實際 `return_boat_lead=established` 來源，以及本篇裁定 `active/open`。只有表內 active 分支才向玩家宣告「本戰役可繼續」。
+
+## 10.3 提早戰役結局｜「西湄封卷」
+
+只用於 END-01／02／03 已完成／部分完成西湄本篇任務，但 `return_boat_lead=not_established` 的分支。
+
+GM 玩家可見宣讀內容按本桌實際細節替換方括號：
+
+> 西湄的舊卷終於重新合上。三年前少掉的紙、簽得太早的名、今日想把舊事壓回卷箱的人，都已留下各自能留下的答案。[最後一包被封存／已散失／已毀]，[渡船恢復／短暫延誤後恢復]，這宗撤倉舊案在你們手上真正有了結算。
+>
+> 黃昏最後一班小渡離岸前，船夫從濕木板下掃出半張爛透的舊寄艙紙。墨字已被水吃掉，只剩一道折了兩次的水線；船名、艙號、去向，一個也辨不回來。
+
+先宣讀第一段的完成感，再以第二段作**謎面尾巴**。這張殘紙不能定位回潮船、不能觸發追船、不能由 GM 補回缺字；它不是新委託。結算：`campaign_status=partly_completed`、`campaign_progress=2/4`、`continuation_status=closed`、`campaign_status_reason=early_campaign_ending`；`campaign_resolution=C`，`legitimate_flow_status=restored/delayed`按實際。GM 最後宣告：「戰役部分完成（2/4）。」
+
+## 10.4 失敗且不可承接
+
+- END-04＋`return_boat_lead=not_established`：按本篇已發生的焚毀／散失／封卷／人員去向落實世界後果，`campaign_resolution=D`、flow按實際，宣告「戰役失敗（2/4）」；不得在失敗後補造回潮船票。
+- END-05：按離場後危機走完並寫三state，`campaign_status_reason=abandoned`，宣告「戰役失敗（2/4）」；放棄後原戰役不自動重返。
+
+正式結算後依 `GM規則/戰役存檔.md` 產生新版 current campaign save，保存 ending、三個 state、戰役 NPC 實例／狀態、exception、`return_boat_lead` 承接證據及本次戰役層結果。
 
 ---
 
@@ -321,4 +364,6 @@ D 是第三篇入口；本篇成功不要求在西湄抓到 `<NPC#2@戰役:漕�
 - 普通低骰不刪必要資訊；重試有新工具／證物／協助／位置等實質改變。
 - 可查卷、查物、問人、攔貨、談判、追船，無固定場景順序。
 - 每個 ending 都直接寫三個本篇 state、參與歷練、物質狀態、社會名譽與傳播理由。
-- 第三篇由收牒反應／付款寄艙痕跡接出，不靠本篇拒絕結算。
+- 第三篇只由實際 `return_boat_lead=established` 的收牒反應／付款寄艙痕跡接出，不靠玩家一句「想繼續」或本篇拒絕結算。
+- END-01～03 無第三篇入口時有可直接宣讀的 `partly_completed (2/4)`「西湄封卷」，先完成再留謎面。
+- END-04 無入口與 END-05 放棄都 `failed/closed`，不補造回線。
