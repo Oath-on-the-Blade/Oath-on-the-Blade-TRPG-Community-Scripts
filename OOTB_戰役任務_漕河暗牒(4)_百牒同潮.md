@@ -2,6 +2,8 @@
 
 > Oath on the Blade（OOTB）／《武與俠》「漕河暗牒」末篇。
 >
+> 1.1.0 保留既有北水關文書分流、制度危機、場景、終局與獎勵；改為只由第三篇結算已裁定的 `active/open + U4` 交接進入。新增讀取 `additional_notice_status`，C1–C6 只在第三篇已實際寫 `issued` 時存在；`EARLY-RES-A/B` 均不開本篇。末篇 END-01～03 為 `completed (4/4)`，END-04／05 則依新版戰役規則為 `failed (4/4)`。
+>
 > 本篇不是「揭露真正幕後黑手」。玩家已一路碰到不同責任：地方犯案、舊料截留、水路分銷、現行程序外洩與官面遮掩。末篇把這些因果接到澄州北水關一個正在運作的制度危機上，讓玩家**辨明、止損、追責並恢復可核驗流動**。
 
 ## 劇本規格頭
@@ -10,11 +12,11 @@
 |---|---|
 | 劇本名稱 | 《百牒同潮》 |
 | script_id | `ootb-script-baidie-tongchao-v1` |
-| 劇本版本 | 1.0.2 |
+| 劇本版本 | 1.1.0 |
 | campaign_id | `canal-secret-dispatches` |
 | 戰役線 | 漕河暗牒・末篇 |
 | replay_policy | `once_per_character` |
-| 連續性 | `continuous`；第三篇結算後同一水路日內，尚未被攔回的清痕通知已進北水關正常文書流。若 `early_campaign_resolution=EARLY-RES-A`，本篇不開場。 |
+| 連續性 | `continuous`；只由第三篇正式結算已裁定 `campaign_status=active`、`continuation_status=open`、目標本篇且至少匹配 U4-1～U4-4 一條的 current campaign save 進入。若 `early_campaign_resolution=EARLY-RES-A|EARLY-RES-B`，本篇不開場。開局只載入已裁定交接，不重新判第三篇是否可承接。 |
 | 出發前整備 | 連續 |
 | 出發前安全空檔 | 1小時（2個空檔回合） |
 | 類型 | 官文分流、轉驗危機、證物保全、制度抉擇、終局追責 |
@@ -29,10 +31,10 @@
 | 主要地區 | 江南道澄州北水關轉驗場、收發簿房、候驗貨棚、北閘碼頭、文房副舍 |
 | 地理定位 | 北水關轉驗場是本戰役新增的澄州北面地方轉運／二次核驗設施，負責支河進出貨單、臨時補驗與涉案貨轉驗，不改 Handbook 主要城市／中央官署正典。 |
 | 涉及勢力 | 江南道地方官府、北岸救荒運輸、普通船戶／貨戶、暗牒供應鏈殘餘人物；正式相對名譽只用【江南道官府】【江南道民間】。 |
-| 核心衝突 | 北水關同時收到真正補驗命令、前篇查扣要求、可能存在的過度廣泛封存命令，以及現職校牒吏用來清痕的轉驗文件；全部燒掉／全關封死會傷真救荒與商運，而照流程全做又會把涉案貨與文房證據洗散。 |
+| 核心衝突 | 北水關同時收到真正補驗命令、前篇查扣要求、可能存在的過度廣泛封存命令，以及現職校牒吏已實際送入流程的清痕文書；全部燒掉／全關封死會傷真救荒與商運，而照流程全做又會把涉案貨與文房證據洗散。 |
 | 核心任務目標 | 在北水關全面停擺或危險材料／證物錯誤放走前，區分真正需要執行的補驗／撤驗／查扣與清痕／錯轉文書，阻止剩餘危險材料與痕跡再分散，建立live leak與遮掩責任到證據可承受程度，並建立可追責又不需無限停運的臨時轉驗方案；本篇內回答整個漕河暗牒機制。 |
 | 任務放棄條件 | GM 說明離開後北水關會依危機自行封關／錯轉；全隊仍確認不再處理文書分流、涉案貨或轉驗秩序，即 `END-05` 並完成戰役最終放棄。 |
-| GM 真相摘要 | `<NPC#3@戰役:漕河暗牒: 姓?-名?>` 在第三篇開始前已把三張形式上屬普通補驗／撤驗範圍的通知夾進例行 outgoing bundle，想把自己接觸過的三冊抄本移往北水關再封回。若第三篇危機2後仍active且真正收到警報，他另追加六張：兩張把真副簽序號越出原批准範圍，對新目標無效；四張在忙亂流程取得普通副簽，形式有效但以誤導理由指定涉案包轉送。 `<NPC#4@戰役:漕河暗牒: 姓?-名?>` 若仍obstructing，另有真正有效但過度廣泛的「所有西湄相關紙貨暫停」命令；若cooperative則改針對性保全；exposed/removed則沒有其新增命令。危機不是「九張都是假」，而是效力、權限、目的與貨流後果交疊。 |
+| GM 真相摘要 | `<NPC#3@戰役:漕河暗牒: 姓?-名?>` 在第三篇開始前已把三張形式上屬普通補驗／撤驗範圍的通知夾進例行 outgoing bundle，想把自己接觸過的三冊抄本移往北水關再封回。第三篇只有在他仍active、真正收到警報且六張追加件已完成送出時，才寫 `additional_notice_status=issued`；此時兩張把真副簽序號越出原批准範圍，對新目標無效，四張在忙亂流程取得普通副簽，形式有效但以誤導理由指定涉案包轉送。若該state為`none`，六張完全不存在。 `<NPC#4@戰役:漕河暗牒: 姓?-名?>` 若仍obstructing且其過廣命令實際有效，另有真正有效但過度廣泛的「所有西湄相關紙貨暫停」命令；若cooperative則改針對性保全；exposed/removed則沒有其新增命令。危機不是「九張都是假」，而是效力、權限、目的與貨流後果交疊。 |
 | 預期戰鬥 | 0–2場。只有 `river_broker_status=escaped` 時才有殘餘搬貨人試取回包裹；detained/dead/cooperative時不生成替代戰鬥。live leak不是武林首領，終局不強迫Boss戰。 |
 | 重要武學／秘笈 | 無 |
 | 重要裝備／丹藥／毒藥 | 無特殊永久獎勵；收發簿、抄冊、涉案包、封條、程序通知皆為證物／任務物。 |
@@ -45,21 +47,24 @@
 
 # 0. 開局載入與連續整備
 
-先載入 current campaign save：
+先載入上一階段正式結算指定的 current campaign save：
+- 戰役交接：`campaign_status=active`、`continuation_status=open`、目標本篇、上一輪已匹配U4路線；
 - 第一篇：`chapter_01_ending`、`grain_loss`、`north_bank_shortage`、`official_evidence`；
 - 第二篇：`westmei_diversion_proof`、`obsolete_stock_status`、`cover_official_position`；
-- 第三篇：`river_broker_status`、`network_ledger`、`live_leak_identity`、`live_leak_access`、`preissued_notice_status`、`early_campaign_resolution`；
+- 第三篇：`river_broker_status`、`network_ledger`、`live_leak_identity`、`live_leak_access`、`preissued_notice_status`、`additional_notice_status`、`early_campaign_resolution`；
 - `NPC#1–#6@戰役:漕河暗牒` 已實例姓名／實際狀態；
 - 所有exception data；
 - 第三篇 `continuity_handoff`：位置、傷勢、已保全副本／暫時持有物、同行官差。
 
-若 `early_campaign_resolution=EARLY-RES-A`，**停止開本篇**，按第三篇已完成的戰役收束保存即可。不得把dead→alive、detained→escaped、destroyed→intact、lost→complete重置。
+第一篇`forger_at_large`／`merchant_manager_status`仍由campaign save保存，但本篇不把它們當必要讀取條件；若其exception確實改變當前人物／證物，透過exception data承接。
+
+若 `early_campaign_resolution=EARLY-RES-A|EARLY-RES-B`，或上一輪不是`active/open`／目標並非本篇，**停止開本篇**，沿用第三篇已正式宣告的戰役收束。這只是載入既有裁決，不在開局重新計算U4。不得把dead→alive、detained→escaped、destroyed→intact、lost→complete重置。
 
 ## 出發前整備
 - **類型**：連續。
 - **安全空檔**：1小時（2個空檔回合）。
 - **開始位置**：北水關外錨地／第三篇實際結算位置。
-- **世界原因**：`preissued_notice_status` 所指未被攔回的既發通知已進轉驗場；live leak仍active且先前已觸發警報時，追加件亦同日到達。
+- **世界原因**：上一輪已裁定至少一條U4實際危機存在；未被攔回的既發通知、已實際送出的追加件、仍有效過廣命令或未受控危險舊料正在北水關流程中作用。
 - **可正常取得**：普通食水、乾糧、燈油、繩索、紙墨、普通船位；官用封條只由有權限者使用。
 - **玩家已知**：今日有救荒糧、普通紙貨、稅貨、前篇涉案包同時候驗；盲目全封會拖真貨。
 - **危機**：用完整1小時／2回合整備令危機從1開始；立即進場從0開始。沒有自動短休。
@@ -71,9 +76,9 @@
 
 - `north_bank_shortage=severe`或`grain_loss=80_or_more`：全關停運更快造成救荒後果；若全封，`legitimate_flow_status`至少`disrupted`。
 - `official_evidence`、`westmei_diversion_proof`、`network_ledger`各是不同證據層；越完整越易採精準保全，但部分／lost不封死末篇本地證據。
-- `obsolete_stock_status=secured/destroyed`：涉案實物量下降，不新增大批西湄舊紙；焦點轉文件／已售碎批。
-- `partial/dispersed`：候驗棚有較多回收包，需按貨號精準扣留。
-- `cover_official_position=obstructing`：`<NPC#4@戰役:漕河暗牒>` 有一份真有效但過廣的「西湄相關紙貨全部暫停」命令。
+- `obsolete_stock_status=secured/destroyed`：涉案實物量下降，不新增大批西湄舊紙；焦點轉文件／已售碎批。若本篇是靠其他U4路線解鎖，不能因舊料已安全便生成新舊料。
+- `partial/dispersed`：候驗棚有較多回收包，需按貨號精準扣留；可作U4-4入口。
+- `cover_official_position=obstructing`：只承接**已在第三篇結算確認仍會生效的**過廣「西湄相關紙貨全部暫停」命令；若命令未下或已失效，不因state字面臨場補發。
 - `cooperative`：他提供針對已知貨號／卷箱的保全清單。
 - `exposed/removed`或實際已dead：不能再主導封關；接手官員只承接職務，不承接其私人遮掩知識／動機。
 - `river_broker_status=cooperative/detained`：`<NPC#2@戰役:漕河暗牒>` 供述可協助辨貨號／聯絡法，但非唯一來源。
@@ -81,11 +86,13 @@
 - `dead`：不新增「副掮客」繼承全部知識。
 - `live_leak_identity=confirmed`：可直接以 `<NPC#3@戰役:漕河暗牒>` 為調查／控制對象，仍需處理已發文件。
 - `suspected/unknown`：由收發簿、輪值、領紙與送件痕跡倒推。
-- `live_leak_access=cut_off`：不生成六張追加件；已拘留／停職人物不突然自由出現。
-- `active`：只有第三篇真觸發警報時才存在最多六張追加件。
+- `live_leak_access=cut_off`：人物不再新增文件；已拘留／停職人物不突然自由出現。
+- `active`：只表示結算時仍有接觸權；**不決定C類是否存在**。
 - `preissued_notice_status=none_intercepted`：B1–B3三張全數到場。
 - `partial_intercepted`：只有第三篇未攔回的1–2張B類到場；已攔回者不存在。
-- `all_intercepted`：B類為0；若 `early_campaign_resolution=none`，本篇只處理仍已存在的C／D／涉案貨與制度後果，不重生B類。
+- `all_intercepted`：B類為0，不重生。
+- `additional_notice_status=issued`：C1–C6六張已在第三篇實際送出，按既成文件處理。
+- `additional_notice_status=none`：C類為0；即使live leak仍active，也不得在本篇臨場補出六張。
 
 ---
 
@@ -106,33 +113,33 @@ B類的**實際到場數量完全由 `preissued_notice_status` 決定**：`none_
 - B2：輪值傳抄簿暫封七日。
 - B3：領紙／退紙登記列錯欄重抄。
 
-## C類｜最多六張追加清痕通知
-只在第三篇已實際判定 `live_leak_access=active` 且收到警報時存在。
+## C類｜六張已發追加清痕通知
+**只在 `additional_notice_status=issued` 時存在；`none`時C類為0。** 不再以 `live_leak_access` 或「第三篇似乎有警報」在本篇倒推生成。
 - **C1–C2**：把只批准「三冊普通抄本轉驗」的真副簽序號套到另兩涉案包；真序號、超範圍，故對新目標無效。
 - **C3–C6**：混入忙亂例行批次，副簽者被誤導為一般錯欄／覆驗；形式有效，但目標／理由基於故意不完整資訊。正確處理是保全文書、暫停目標、核副簽與交接，不必把它們當純假件撕掉。
 
 ## D類｜cover official命令
-- `obstructing`：D1「所有西湄相關紙貨暫停」；真有效但過廣。
+- `obstructing`且前篇交接明列過廣命令仍有效：D1「所有西湄相關紙貨暫停」；真有效但過廣。
 - `cooperative`：D2「按已知貨號＋收發簿異常精準保全」。
-- `exposed/removed/dead`：無其新增當日命令。
+- `exposed/removed/dead`，或obstructing但過廣命令實際未下／已失效：無其新增當日D1。
 
 ---
 
 # 3. 世界真相與不介入
 
-`<NPC#3@戰役:漕河暗牒>` 不是用九張紙「控制全關」，而是利用正常制度忙亂與信任，把自己痕跡從澄州原文房移走／封回，並令部分回收證物在合法轉驗中錯轉。若成功，程序外洩更難追責；若仍active也可繼續賣更新。
+`<NPC#3@戰役:漕河暗牒>` 不是用九張紙「控制全關」，而是利用正常制度忙亂與信任，把自己痕跡從澄州原文房移走／封回，並令部分回收證物在合法轉驗中錯轉。若成功，程序外洩更難追責；若仍active也可繼續賣更新，但本篇只處理已成立的文書／物料／制度危機，不預寫未發的未來文件。
 
-`<NPC#4@戰役:漕河暗牒>` 若obstructing則想用全封降低官面風險，不是替live leak清痕；兩人行為可同時造成停擺，但不是同一陰謀。
+`<NPC#4@戰役:漕河暗牒>` 若有仍有效D1則想用全封降低官面風險，不是替live leak清痕；兩人行為可同時造成停擺，但不是同一陰謀。
 
-**不介入**：實際尚存B件照有效外觀移冊；存在C時兩包回收物錯轉、四份痕跡被封／重抄；D1存在時場方擴大停運；自由live leak危機4後取走／毀一段交接證明並離場；broker escaped時殘餘搬貨人取一包。最終責任證據變弱，且北水關因過度封關造成民生／商運損失。
+**不介入**：實際尚存B件照有效外觀移冊；`additional_notice_status=issued`時兩包回收物可錯轉、四份痕跡被封／重抄；有效D1存在時場方擴大停運；自由live leak危機4後取走／毀一段交接證明並離場；broker escaped時殘餘搬貨人取一包。最終責任證據變弱，且北水關可能因過度封關造成民生／商運損失。
 
 ---
 
 # 4. 主要 NPC
 
 ## `<NPC#3@戰役:漕河暗牒: 姓?-名?>`｜程序外洩者
-- **出現條件**：active且自由時，危機2可按campaign save實際位置親自到場「協助校卷」或透過跑腿人；不瞬移。
-- **知道**：B/C真正目的、自己賣過的更新、哪些抄冊指向自己。
+- **出現條件**：`live_leak_access=active`且自由時，危機2可按campaign save實際位置親自到場「協助校卷」或透過跑腿人；不瞬移。
+- **知道**：已存在B／C真正目的、自己賣過的更新、哪些抄冊指向自己。
 - **不知道**：玩家保住多少第三篇帳碼／掮客供了多少。
 - **誤解**：把出售程序合理化成「辦事習慣」，把移冊稱作止損整理。
 - **利益**：目標冊被轉走；避免被定通同造假；敗露時保生計／家人。
@@ -141,7 +148,8 @@ B類的**實際到場數量完全由 `preissued_notice_status` 決定**：`none_
 - **戰鬥**：【平民／路人】，不得升Boss。
 
 ## `<NPC#4@戰役:漕河暗牒: 姓?-名?>`｜遮掩責任者
-- `obstructing`：堅持D1全封；用具體貨號／冗餘核驗方案，魅力（說服）DC16可促縮窄；`westmei_diversion_proof=complete`且`network_ledger=complete`時有優勢。
+- `obstructing`且D1已成立：堅持全封；用具體貨號／冗餘核驗方案，魅力（說服）DC16可促縮窄；`westmei_diversion_proof=complete`且`network_ledger=complete`時有優勢。
+- `obstructing`但D1未成立／已失效：仍可口頭主張全封，但不能無因果把一份未發命令變成既成文件；其新決策按現場角色行動處理。
 - `cooperative`：主動提供D2與舊責任資料。
 - `exposed/removed/dead`：不復職／復活；舊命令／紀錄仍在。
 
@@ -163,7 +171,7 @@ B類的**實際到場數量完全由 `preissued_notice_status` 決定**：`none_
 - **名譽**：江南道民間+2級以上願接受「先核三項再放」短延誤；-2級以下要求另一公證見證，不無理搶關。
 
 ## `<NPC#4: 姓?-名?>`｜校牒吏跑腿／送件人
-只在C存在時重要；知道受 `<NPC#3@戰役:漕河暗牒>` 指示插六件並說「都是同一副簽」，不知供應鏈。被指出C1–C2範圍錯誤後直接承認交件來源，不死扛。
+只在`additional_notice_status=issued`時重要；知道受 `<NPC#3@戰役:漕河暗牒>` 指示插六件並說「都是同一副簽」，不知供應鏈。被指出C1–C2範圍錯誤後直接承認交件來源，不死扛。C類不存在時本NPC不因劇本需要被硬生成功能相同的送件人。
 
 ---
 
@@ -171,31 +179,31 @@ B類的**實際到場數量完全由 `preissued_notice_status` 決定**：`none_
 
 ## A｜危機不是「全部公文是假」
 1. 主事副簽權限簿逐項列批准範圍。
-2. 收發簿顯示A/B/C/D來自不同流程／時間。
+2. 收發簿顯示A／實際尚存B／實際已發C／D來自不同流程／時間。
 3. A類貨號與真救荒／查扣實物對上。
 
-## B｜B/C把 `<NPC#3@戰役:漕河暗牒>` 職務接觸變成清痕工具
-至少兩項：
-1. 收發簿：B/C由其桌號／跑腿鏈進入。
+## B｜已存在B/C與 `<NPC#3@戰役:漕河暗牒>` 職務接觸構成清痕工具
+至少兩項，按實際存在的文書選：
+1. 收發簿：尚存B／已發C由其桌號／跑腿鏈進入。
 2. 領紙／退紙簿：B2/B3與其近月接觸重合。
 3. C1–C2副簽原頁：真副簽只批三冊，卻套另兩包。
-4. 跑腿供述／本人反應。
+4. C存在時跑腿供述／本人反應。
 5. 第三篇程序抄條／欠銀單／掮客供述（若已得）。
 
-即使第三篇identity=unknown，本地1＋2＋3仍可confirmed；若B因 `all_intercepted` 不到場，C存在時用C鏈，C亦不存在時以第三篇已成立的程序抄條／欠銀單、北水關現存領退紙／輪值紀錄與實際職務接觸建立最低責任，不重生B/C。
+即使第三篇identity=unknown，本地既存資料可按實際成立confirmed；若B因 `all_intercepted` 不到場而C=`none`，本篇之所以仍能開始必須是U4-3或U4-4，程序外洩責任只可用第三篇已成立的程序抄條／欠銀單、北水關現存領退紙／輪值紀錄與實際職務接觸建立到證據支持程度，不重生B/C來補責任。
 
 ## C｜`<NPC#4@戰役:漕河暗牒>` 遮掩責任與live leak不同
 - 三年前簽押／第二篇封卷（若保住）證其責任層。
-- D1若存在，是現在選擇全封止損；命令真，不代表參與賣程序。
+- D1若實際存在，是現在選擇全封止損；命令真，不代表參與賣程序。
 - 他不知道B/C真正清痕目的；證明後可迫其表態合作／續壓。
 
 ## D｜完整暗牒機制
 1. 第一篇：獨立地方買家用真舊紙造假，自負本案責任。
 2. 第二篇：`<NPC#1@戰役:漕河暗牒>` 截留西湄舊料；`<NPC#4@戰役:漕河暗牒>` 當年失職、後來遮掩。
 3. 第三篇：`<NPC#2@戰役:漕河暗牒>` 分銷舊料並購買現行更新。
-4. 末篇：`<NPC#3@戰役:漕河暗牒>` 的更新／已存在清痕痕跡證明「舊材料＋現行程序」是可信假牒可持續的條件。
+4. 末篇：`<NPC#3@戰役:漕河暗牒>` 的更新與本桌實際仍在作用的文書／職務痕跡共同證明「舊材料＋現行程序」是可信假牒可持續的條件。
 
-前篇證據若lost，只陳述實際成立部分；末篇至少可本地建立程序外洩者、制度漏洞與仍在作用的實際後果，不推第五篇。
+前篇證據若lost，只陳述實際成立部分；末篇至少可本地建立程序外洩者、制度漏洞與本桌仍在作用的實際後果，不推第五篇。
 
 ---
 
@@ -203,9 +211,9 @@ B類的**實際到場數量完全由 `preissued_notice_status` 決定**：`none_
 
 | 格 | 世界變化 |
 |---|---|
-| 0 | A、依`preissued_notice_status`尚存B、D到場；C依state可能尚未到。救荒船第一候驗位。 |
-| 1 | 尚存B開始移冊；若B=0則改為既存涉案貨／D類核驗開始推進；完整1小時整備則從此格。 |
-| 2 | active且第三篇真觸發警報時C到場；自由live leak可來協助。cut_off無C。 |
+| 0 | A、依`preissued_notice_status`尚存B、實際存在的D到場；C依`additional_notice_status`決定是否已在批次中。救荒船第一候驗位。 |
+| 1 | 尚存B開始移冊；若B=0則改為既存涉案貨／D類／C類核驗開始推進；完整1小時整備則從此格。 |
+| 2 | `additional_notice_status=issued`時C批次開始被處理；`none`時沒有C。自由live leak可按實際位置來協助。 |
 | 3 | 尚存B可有一冊被移副舍；C存在時一個影響包開始錯棚；救荒船錯過第一輪放閘。 |
 | 4 | 自由live leak開始取／毀交接痕跡；broker escaped時殘餘搬貨人取一包；久候人群爭吵。 |
 | 5 | 無可執行分流方案時，主事準備全關至次日；救荒／普通貨同受阻。 |
@@ -220,16 +228,16 @@ B類的**實際到場數量完全由 `preissued_notice_status` 決定**：`none_
 ## 7.1 主驗桌
 - **作用**：把文書分「效力、範圍、目的」。
 - **到達**：四疊急件、三本權限簿、排隊貨牌；「百牒」是整個轉驗場日常文書量，不是百張謎題。
-- **自動**：A／D格式正常；尚存B格式正常；C存在時C1–C2序號亦真。
+- **自動**：A／實際存在的D格式正常；尚存B格式正常；C存在時C1–C2序號亦真。
 - **智力（識字）DC13**：核格式；**智力（歷史政治）DC14**：核批准層級；**智力（格物推理）DC15**：辨真序號超範圍。
 - **一次成功範圍**：一類／一批，不一骰解全場。
 - **失敗**：多耗20分鐘或去權限簿房核第二來源；不刪答案。
-- **直接成立**：拿原批准頁即可客觀確認C1–C2超範圍。
+- **直接成立**：C存在時拿原批准頁即可客觀確認C1–C2超範圍。
 
 ## 7.2 收發簿房
 - **作用**：文件→live leak交接鏈。
 - **自動**：每批有時間、桌號、送件人。
-- **智力（識字）DC12**：找同批次；**智力（格物推理）DC14**：尚存B／C與同桌號重疊；**智力（書畫）DC15**：支持抄寫習慣，不單項定罪。
+- **智力（識字）DC12**：找同批次；**智力（格物推理）DC14**：尚存B／已發C與同桌號重疊；**智力（書畫）DC15**：支持抄寫習慣，不單項定罪。
 - **危機4**：有人可拿走一頁交接副紙；原總簿仍在，失副紙不抹全部事實。
 
 ## 7.3 候驗貨棚
@@ -237,7 +245,7 @@ B類的**實際到場數量完全由 `preissued_notice_status` 決定**：`none_
 - **自動**：救荒糧、普通紙料、回收包、稅貨四類。
 - **完整貨號**：直接定位。
 - **部分帳碼**：智力（格物推理）DC14或直覺（感應）DC13按包布、雙折水線、時序縮小；失敗多查一棚／20分鐘，不瞬移涉案包。
-- **舊料secured/destroyed**：只極少已售回收碎批，不新增大包。
+- **舊料secured/destroyed**：只極少已售回收碎批，不新增大包；若本篇非U4-4解鎖，不為場景需要改回partial。
 
 ## 7.4 北閘碼頭與救荒船
 - **作用**：把合法貨流成本變操作決策。
@@ -248,7 +256,7 @@ B類的**實際到場數量完全由 `preissued_notice_status` 決定**：`none_
 
 ## 7.5 文房副舍／live leak對質
 只在本人自由／到場或玩家主動核其痕跡時使用。
-- **自動**：實際尚存B／C、或既有職務紀錄與其近月接觸重合；已在第三篇攔回的文件不重新出現在此。
+- **自動**：實際尚存B／已發C，或既有職務紀錄與其近月接觸重合；已在第三篇攔回／未曾發出的文件不重新出現在此。
 - **對質**：兩項本地獨立證據＋一項前篇證據足令其無法合理否認核心；說服只決定合作程度。
 - **逃追**：危機4自由逃，敏捷（身法）DC14穿貨棚追，或直覺（感應）DC14判方向；失敗使其離場，不刪文書證據。
 - **已cut_off/detained/dead**：只核桌號／已發文件／既有紀錄，不讓本人出現。
@@ -263,7 +271,7 @@ B類的**實際到場數量完全由 `preissued_notice_status` 決定**：`none_
 # 8. 可落地終局方案
 
 ## 精準分流
-判C1–C2超範圍無效；實際尚存B／C3–C6保全文書、凍目標、核副簽；只扣已知貨號／異常包；救荒／普通貨三項短核放行；live leak停接觸／拘留／正式調查，cover official按實際責任。可達A。
+C存在時判C1–C2超範圍無效；實際尚存B／已發C3–C6保全文書、凍目標、核副簽；只扣已知貨號／異常包；救荒／普通貨三項短核放行；live leak停接觸／拘留／正式調查，cover official按實際責任。可達A。
 
 ## 全面封關
 所有相關紙貨／文房＋部分普通貨全封至次日。能止當日外流但真救荒／商運付成本；核心答案成立時可達B，不視為無成本最佳解。
@@ -275,15 +283,15 @@ B類的**實際到場數量完全由 `preissued_notice_status` 決定**：`none_
 
 ---
 
-# 9. 偏離、例外與提早收束
+# 9. 偏離、例外與前篇正式收束
 
-- `<NPC#3@戰役:漕河暗牒>` 提前死亡：不復活。只有死亡前實際已發且未攔回的B／C存在；收發簿、領紙／退紙、輪值、第三篇證據可追責。末篇聚焦已發件／制度漏洞／剩餘物料。
-- 若第三篇已 `early_campaign_resolution=EARLY-RES-A`：本篇不開始，不生成新危機；以campaign save已記戰役結果為最終。
-- `<NPC#4@戰役:漕河暗牒>` 死亡／撤職／合作：按state；不生第二遮掩官。
-- `network_ledger=lost`：不能點全買家；本篇仍可本地確認live leak／制度清痕。完整買家網可永久缺失，對應C/D，不憑空出帳。
+- `<NPC#3@戰役:漕河暗牒>` 提前死亡：不復活。只有死亡前實際已發且未攔回的B與`additional_notice_status=issued`時已發C存在；收發簿、領紙／退紙、輪值、第三篇證據可追責。末篇聚焦已發件／制度漏洞／剩餘物料。
+- 若第三篇已 `early_campaign_resolution=EARLY-RES-A|EARLY-RES-B`：本篇不開始，不生成新危機；以campaign save已記戰役結果為最終。
+- `<NPC#4@戰役:漕河暗牒>` 死亡／撤職／合作：按state／exception；不生第二遮掩官，也不補發未成立D1。
+- `network_ledger=lost`：不能點全買家；本篇仍可本地確認live leak／制度清痕到實際證據程度。完整買家網可永久缺失，對應C/D，不憑空出帳。
 - 玩家燒所有可疑文書：核對前燒可能同時毀A類真件；收發簿／實際移貨仍在，但不重建超出痕跡支持的文字。
 - 玩家公開整條真相：官民反應加速，cover official壓案空間可能下降，live leak自由時較早逃；公開不自動使證據complete。
-- 玩家自行護救荒貨離關：已核貨號／來源且不帶涉案包，可是「先保流動」；未核就強運所有貨，可能C/D並留程序爭議。
+- 玩家自行護救荒貨離關：已核貨號／來源且不帶涉案包，可以是「先保流動」；未核就強運所有貨，可能C/D並留程序爭議。
 - 所有上游人物已死亡：仍可收束，因材料、帳碼、文房痕跡可成立機制；不需要Boss活著。
 - 關鍵文書被玩家提前拿走／公開／毀：收發簿、送件人、實際移冊／貨物位置是既存第二層痕跡；文件本體失去降低公證度，不把已發生行動抹掉。
 
@@ -305,7 +313,8 @@ B類的**實際到場數量完全由 `preissued_notice_status` 決定**：`none_
 - **物質**：全隊實收480兩（地方官面300＋鄉約／船戶180）；共同可分割。
 - **社會名譽**：俠名`+0.6x E`；惡名0；【江南道官府】`+0.6x E`；【江南道民間】`+0.5x E`。
 - **傳播**：官面由北水關核簿／查扣／結案紀錄知道；民間由救荒船、候驗船戶知道玩家精準止牒而保流動。
-- **state**：`campaign_resolution=A`；`legitimate_flow_status=restored`；`live_leak_access=cut_off`；`preissued_notice_status`保留第三篇值；其他人物／物品按實際。
+- **state**：`campaign_resolution=A`；`legitimate_flow_status=restored`；`live_leak_access=cut_off`；`preissued_notice_status`、`additional_notice_status`保留第三篇既成值；其他人物／物品按實際。
+- **campaign status**：`completed`；`campaign_progress=4/4`；`continuation_status=closed`；reason=`final_stage`。
 
 ## `END-02`｜封關止牒
 - **戰役結果**：B。
@@ -317,7 +326,8 @@ B類的**實際到場數量完全由 `preissued_notice_status` 決定**：`none_
 - **物質**：全隊實收360兩；原可得120兩民間謝儀因延誤未取得。
 - **社會名譽**：俠名`+0.4x E`；惡名0；【江南道官府】`+0.5x E`；【江南道民間】`-0.1x E`。
 - **傳播**：官面認為止血／保證據成功；船戶／北岸居民直接承受廣泛延誤。
-- **state**：`campaign_resolution=B`；`legitimate_flow_status=delayed/disrupted`按實際；`live_leak_access`按實際，通常cut_off；`preissued_notice_status`保留第三篇值。
+- **state**：`campaign_resolution=B`；`legitimate_flow_status=delayed/disrupted`按實際；`live_leak_access`按實際，通常cut_off；`preissued_notice_status`、`additional_notice_status`保留第三篇既成值。
+- **campaign status**：`completed`；`campaign_progress=4/4`；`continuation_status=closed`；reason=`final_stage`。
 
 ## `END-03`｜斷鏈留缺
 - **戰役結果**：C。
@@ -329,7 +339,8 @@ B類的**實際到場數量完全由 `preissued_notice_status` 決定**：`none_
 - **物質**：全隊實收360兩；共同可分割。
 - **社會名譽**：俠名`+0.4x E`；惡名0；【江南道官府】`+0.3x E`；【江南道民間】`+0.3x E`。
 - **傳播**：官民都知道主要危機被止而仍有追責缺口；評價中等正面，不把缺證寫成完美勝利。
-- **state**：`campaign_resolution=C`；`legitimate_flow_status=restored/delayed`按實際；`preissued_notice_status`保留第三篇值；缺口保留final save。
+- **state**：`campaign_resolution=C`；`legitimate_flow_status=restored/delayed`按實際；`preissued_notice_status`、`additional_notice_status`保留第三篇既成值；缺口保留final save。
+- **campaign status**：`completed`；`campaign_progress=4/4`；`continuation_status=closed`；reason=`final_stage`。
 
 ## `END-04`｜同潮散牒
 - **戰役結果**：D。
@@ -341,8 +352,9 @@ B類的**實際到場數量完全由 `preissued_notice_status` 決定**：`none_
 - **物質**：全隊實收120兩見證／協查酬金；若玩家直接故意重大毀證／劫貨，則未取得。
 - **社會名譽**：俠名`+0.2x E`；惡名0；【江南道官府】`-0.1x E`；【江南道民間】0。
 - **傳播**：官面卷錄知道處置未止住；民間觀感分歧，不自動獎懲。
-- **state**：`campaign_resolution=D`；`legitimate_flow_status=disrupted/collapsed`按實際；`preissued_notice_status`保留第三篇值；未解人物／物品保存。
+- **state**：`campaign_resolution=D`；`legitimate_flow_status=disrupted/collapsed`按實際；`preissued_notice_status`、`additional_notice_status`保留第三篇既成值；未解人物／物品保存。
 - **答案仍成立**：失敗是沒止住，不是作者 withholding 真相。
+- **campaign status**：`failed`；`campaign_progress=4/4`；`continuation_status=closed`；reason=`failed_noncontinuable`。到了末篇不會把失敗強改成completed。
 
 ## `END-05`｜北關離席
 - **戰役結果**：`abandoned`。
@@ -351,7 +363,8 @@ B類的**實際到場數量完全由 `preissued_notice_status` 決定**：`none_
 - **完整參與／歷練**：親自建立至少一項本篇新核心事實者計略1；其他0；無額外中途推導。
 - **物質**：無；無應收欠款／證物所有權。
 - **社會名譽**：俠名0；惡名0；【江南道官府】0；【江南道民間】0。離場前另有公開暴力／毀證／搶貨才用derived/variant。
-- **state**：`campaign_resolution=abandoned`；`legitimate_flow_status=disrupted/collapsed`依危機6不介入結果；`preissued_notice_status`保留第三篇值；人物／貨物照世界推進。
+- **state**：`campaign_resolution=abandoned`；`legitimate_flow_status=disrupted/collapsed`依危機6不介入結果；`preissued_notice_status`、`additional_notice_status`保留第三篇既成值；人物／貨物照世界推進。
+- **campaign status**：`failed`；`campaign_progress=4/4`；`continuation_status=closed`；reason=`abandoned`。
 
 ### `variant: public_coercion`
 任一 END 下若公開重傷已投降／無武裝船戶，或恐怖手段強運未核貨：惡名`+0.3x E`；【江南道民間】在原值基礎`-0.4x E`。同一行為一次。
@@ -360,7 +373,7 @@ B類的**實際到場數量完全由 `preissued_notice_status` 決定**：`none_
 
 # 11. 戰役最終回答與 campaign save
 
-任何非放棄結局結束時，玩家至少可依實際成立證據回答：
+END-01～04 結束時，玩家至少可依實際成立證據回答到該ending所支持程度：
 - 第一篇造假者是獨立地方利益者，不是幕後傀儡；
 - 真舊官紙源自西湄撤倉截留；
 - 水路掮客把材料／外觀知識拆售不同買家；
@@ -368,7 +381,13 @@ B類的**實際到場數量完全由 `preissued_notice_status` 決定**：`none_
 - 遮掩官員是失職／壓案責任，不等於參與分贓；
 - 可持續解法是切斷材料／現行情報／分銷條件並建立可核驗流動，而不是抓一個虛構總主使或永久封漕。
 
-正式結算產生最後 current campaign save：戰役狀態`completed`；保存四篇每個ending、全部state最終值、`NPC#1–#6@戰役:漕河暗牒`實例姓名／狀態、關鍵卷宗／帳證／舊料狀態、`exception_status`、`campaign_resolution`、`legitimate_flow_status`。戰役完結仍保留私密存檔。
+正式結算產生最後 current campaign save：
+- END-01／02／03：`campaign_status=completed`、`campaign_progress=4/4`；
+- END-04／05：`campaign_status=failed`、`campaign_progress=4/4`；
+- 全部均`continuation_status=closed`，無下一階段交接；
+- 保存四篇每個ending、全部state最終值、`NPC#1–#6@戰役:漕河暗牒`實例姓名／狀態、關鍵卷宗／帳證／舊料狀態、`exception_status`、`campaign_resolution`、`legitimate_flow_status`與第三篇既成通知state。
+
+GM按ending宣讀本篇完整終局後，明確宣告「戰役完成（4/4）」或「戰役失敗（4/4）」。戰役完結仍保留GM私密campaign save。
 
 ---
 
@@ -376,10 +395,12 @@ B類的**實際到場數量完全由 `preissued_notice_status` 決定**：`none_
 
 - A/B/C/D文書真相固定，不由骰點改真假。
 - 「形式有效但目的惡意」與「真序號超權限」都有世界資料可辨。
-- `preissued_notice_status` 精確決定B類0–3張；第三篇已攔回文件不得重生。
-- cut_off真減少C類；第三篇已完全消除危機時，本篇不開。
+- `preissued_notice_status`精確決定B類0–3張；第三篇已攔回文件不得重生。
+- `additional_notice_status`精確決定C類0或6張；`active`不再被當作「一定有C」的代用旗標。
+- `EARLY-RES-A/B`已在第三篇正式收束時，本篇不開；開局不重新判U4。
 - broker非escaped不生成搬貨戰；live leak已dead/detained不突然出現。
 - `network_ledger=lost`不恢復完整買家網。
 - 救荒／普通貨有可直接執行精準核驗；全封有真成本。
-- 關鍵人／物失效由既存簿冊、交接、貨號或提前收束承接，不用換皮NPC／憑空備份。
-- 每個 END 都寫campaign state、參與歷練、物質、社會名譽與傳播。
+- 關鍵人／物失效由既存簿冊、交接、貨號或前篇提前收束承接，不用換皮NPC／憑空備份。
+- END-01～03為`completed (4/4)`；END-04失敗與END-05放棄均`failed (4/4)`，不因到達末篇自動改成completed。
+- 每個 END 都寫campaign state、戰役層狀態、參與歷練、物質、社會名譽與傳播。
