@@ -2,14 +2,14 @@
 
 ## 劇本規格頭
 - `script_id`: `ootb-campaign-chenghe-old-seals-stage-3`
-- 劇本版本：1.0.0
+- 劇本版本：1.0.1
 - `campaign_id`: `ootb-campaign-chenghe-old-seals-001`
 - `replay_policy`: `once_per_character`
 - 連續性：`continuous`，末篇
 - 一般冒險；2–5名 PC；建議6–9級；R=7；大型；5–7小時
 - 地區：京畿道通京大渠外圍糧運轉口
 - 可能社會名譽：俠名、惡名、【京畿道民間】、【京畿道官府】、【河洛道官府】
-- 需要引用內容庫：【走私客／水手】【江湖殺手】【官兵長槍手】【平民／路人】；【識字】【格物推理】【洞察】【感應】【說服】【威嚇】【體能】【身法】【隱密】
+- 需要引用內容庫：【走私客／水手】【江湖殺手】【官兵長槍手】【平民／路人】；【識字】【格物推理】【感應】【說服】【威嚇】【體能】【身法】【隱密】
 
 ## 解鎖與開場
 只有第2階段 `night-ledger-complete` 或 `night-route-only` 且 `boat_route_known=true` 才能開始。載入全部 `campaign_save`；戰役 NPC 死亡、被捕、失蹤照實保留，不復活。
