@@ -2,13 +2,13 @@
 
 ## 劇本規格頭
 - `script_id`: `ootb-campaign-chenghe-old-seals-stage-2`
-- 劇本版本：1.0.2
+- 劇本版本：1.0.3
 - `campaign_id`: `ootb-campaign-chenghe-old-seals-001`
 - `replay_policy`: `once_per_character`
 - 連續性：`continuous`，承接第一階段可承接 ending
 - 一般冒險；2–5名 PC；建議5–8級；R=6；中型；4–6小時
 - 地區：河洛道澄河至京畿外圍大渠轉口
-- 可能社會名譽：俠名、惡名、【河洛道民間】、【河洛道官府】、【京畿道官府】
+- 可能社會名譽：俠名、惡名、【河洛道官府】、【京畿道官府】
 - 需要引用內容庫：【走私客／水手】【江湖殺手】【平民／路人】；【識字】【格物推理】【生存】【感應】【洞察】【說服】【隱密】【體能】
 
 ## 開場與帶入
