@@ -2,7 +2,7 @@
 
 ## 劇本規格頭
 - `script_id`: `ootb-campaign-chenghe-old-seals-stage-3`
-- 劇本版本：1.0.1
+- 劇本版本：1.0.2
 - `campaign_id`: `ootb-campaign-chenghe-old-seals-001`
 - `replay_policy`: `once_per_character`
 - 連續性：`continuous`，末篇
@@ -71,7 +71,10 @@ T+10h到。若巡檢合作，合法封船直接成立；否則玩家可公開攔
 責任鏈與漏洞成立，但超過一半糧已售散。歷練：責任鏈80、封漏洞60、追查散貨40=180。報酬80兩實付。俠名+0.2xE；【京畿道官府】+0.4xE；【京畿道民間】-0.2xE；【河洛道官府】+0.2xE；惡名0。`final_grain_status=sold, campaign_status=completed`。
 
 ### `canal-deal`｜「渠口照舊開門」｜完成／轉向
-玩家主動接受 #4 或 #1 的利益，讓可阻止的貨物與關鍵帳離開。歷練：控制局面70、高風險轉向60=130；只有實際參與交易者取得轉向 tag。物質：對方最多實付共同利益220兩；未實收只記應收，不進角色財物。俠名0、惡名+0.6xE；【京畿道民間】-0.5xE、【京畿道官府】-0.6xE、【河洛道官府】-0.3xE；需有腳夫／巡吏目擊或後續帳證才傳播，若完全秘密則相對名譽不憑空變化，改記私人把柄。`final_grain_status=sold, campaign_status=completed`。
+玩家主動接受 #4 或 #1 的利益，讓可阻止的貨物與關鍵帳離開。歷練：控制局面70、高風險轉向60=130；只有實際參與交易者取得轉向 tag。物質：對方最多實付共同利益220兩；未實收只記應收，不進角色財物。
+- 若有腳夫／巡吏目擊，或後續帳證足以讓交易傳開：俠名0、惡名+0.6xE；【京畿道民間】-0.5xE、【京畿道官府】-0.6xE、【河洛道官府】-0.3xE。
+- 若交易完全秘密，且沒有任何可傳播帳證或目擊者：俠名0、惡名0；【京畿道民間】、【京畿道官府】、【河洛道官府】均0.0xE；改記與交易對方之間的私人把柄，不自行建立新名譽數值。
+`final_grain_status=sold, campaign_status=completed`。
 
 ### `canal-abandon`｜「最後一船進了大渠」｜放棄／戰役失敗
 主要 tag 前退出。小處置每項30、最高60；無固定報酬；社會名譽全0，除非另有公開行為。`final_grain_status=lost, campaign_status=failed, campaign_progress=3/3`。
