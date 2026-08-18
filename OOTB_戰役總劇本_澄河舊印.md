@@ -2,11 +2,14 @@
 
 ## 戰役規格頭
 - `campaign_id`: `ootb-campaign-chenghe-old-seals-001`
-- 總劇本版本：1.0.0
-- 戰役狀態：規劃中
+- 總劇本版本：1.0.1
+- 戰役狀態：已完結
 - 規劃階段：3
-- 已正式發布階段：無
-- 當前規劃下一階段：第1階段《河倉封條多了一道舊印》
+- 已正式發布階段：
+  - 第1階段：`ootb-campaign-chenghe-old-seals-stage-1`｜`OOTB_戰役任務_澄河舊印(1)_河倉封條多了一道舊印.md`
+  - 第2階段：`ootb-campaign-chenghe-old-seals-stage-2`｜`OOTB_戰役任務_澄河舊印(2)_夜航船沒有掛河倉燈.md`
+  - 第3階段：`ootb-campaign-chenghe-old-seals-stage-3`｜`OOTB_戰役任務_澄河舊印(3)_大渠口最後一批平糶糧.md`
+- 當前規劃下一階段：無；三個規劃階段均已正式發布
 - 共同起點：河洛道洛安北面的澄河糧運支線
 - 主要地理：河洛道洛安—澄河—京畿道通京大渠外圍
 - 等級走向：第1階段4–7級；第2階段5–8級；第3階段6–9級
@@ -81,7 +84,7 @@
 
 ## 階段接口
 ### 第1階段《河倉封條多了一道舊印》
-- 狀態：規劃。
+- 狀態：已發布；`script_id`: `ootb-campaign-chenghe-old-seals-stage-1`；正式檔名：`OOTB_戰役任務_澄河舊印(1)_河倉封條多了一道舊印.md`。
 - 直接 NPC：#1、#2、#3。
 - 為何現在發生：第三批裝船前，一名驗封腳夫發現同一車糧有新舊兩道封痕。
 - 玩家介入：河倉監事需要不屬倉吏體系的江湖人先查是否有人偷換封條。
@@ -95,7 +98,7 @@
   - `seal-abandon`：放棄 → 提早戰役結局，`campaign_status=failed`。
 
 ### 第2階段《夜航船沒有掛河倉燈》
-- 狀態：規劃。
+- 狀態：已發布；`script_id`: `ootb-campaign-chenghe-old-seals-stage-2`；正式檔名：`OOTB_戰役任務_澄河舊印(2)_夜航船沒有掛河倉燈.md`。
 - 階段解鎖：第1階段 ending 為 `seal-proof-saved` OR `seal-proof-lost`；且玩家已知道「舊印對應一條水運帳鏈」。
 - 直接 NPC：依 state 使用 #1、#2；首次登場 #4。
 - 為何現在發生：尚未被扣住的帳頁顯示一艘夜航船會在兩日內經澄河轉大渠。
@@ -109,7 +112,7 @@
   - `night-abandon`：放棄 → failed。
 
 ### 第3階段《大渠口最後一批平糶糧》
-- 狀態：規劃。
+- 狀態：已發布；`script_id`: `ootb-campaign-chenghe-old-seals-stage-3`；正式檔名：`OOTB_戰役任務_澄河舊印(3)_大渠口最後一批平糶糧.md`。
 - 階段解鎖：第2階段 ending 為 `night-ledger-complete` OR `night-route-only`；且 `boat_route_known=true`。
 - 直接 NPC：#1–#4 按存檔狀態；死亡／失蹤者不復活。
 - 為何現在發生：最後一批糧將在一日內抵京畿外圍渠口；#4 會按是否受警訊決定接貨或滅帳。
