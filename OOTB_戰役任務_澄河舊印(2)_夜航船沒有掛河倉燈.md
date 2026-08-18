@@ -2,7 +2,7 @@
 
 ## 劇本規格頭
 - `script_id`: `ootb-campaign-chenghe-old-seals-stage-2`
-- 劇本版本：1.0.1
+- 劇本版本：1.0.2
 - `campaign_id`: `ootb-campaign-chenghe-old-seals-001`
 - `replay_policy`: `once_per_character`
 - 連續性：`continuous`，承接第一階段可承接 ending
@@ -12,7 +12,7 @@
 - 需要引用內容庫：【走私客／水手】【江湖殺手】【平民／路人】；【識字】【格物推理】【生存】【感應】【洞察】【說服】【隱密】【體能】
 
 ## 開場與帶入
-只有第一階段 `seal-proof-saved` 或 `seal-proof-lost` 且已知道舊印對應水運帳鏈才解鎖。GM 載入 `campaign_save`，沿用所有 `NPC#…@戰役:澄河舊印` 實例姓名與狀態；死亡者不復活。若 #1/#2 不可出場，其證據功能由第一階段已存在的帳頁、泊位牌、封紙與船戶承擔。
+只有第一階段 ending 為 `seal-proof-saved` 或 `seal-proof-lost`，且 `boat_lead_known=true` 才解鎖。這個 state 必須已在第一階段正式結算時寫入 `campaign_save`，本篇開局不重新計算。GM 載入 `campaign_save`，沿用所有 `NPC#…@戰役:澄河舊印` 實例姓名與狀態；死亡者不復活。若 #1/#2 不可出場，其證據功能由第一階段已存在的帳頁、泊位牌、封紙與船戶承擔。
 
 玩家已知：一艘沒有掛河倉燈的租船會在兩日內經澄河轉向通京大渠外圍；需要確認貨、路線與接貨節點。這不是必須抓 #1 的追捕任務。
 
@@ -70,4 +70,4 @@ C「#4 是知情接貨者但非舊印源頭」：雙槽木籌；渠口預留倉�
 小型調查每項30，最高60；無報酬；社會名譽全0。`campaign_status=failed, campaign_progress=2/3`。
 
 ## GM 最後核對
-正式結算時保存 `ledger_chain`、`boat_route_known`、`canal_fence_warned`、`public_scandal` 與所有戰役 NPC 狀態；只有兩個可承接 ending 進第3階段。
+正式結算時保存 `ledger_chain`、`boat_route_known`、`canal_fence_warned`、`public_scandal` 與所有戰役 NPC 狀態；第2階段開場必須讀取既有 `boat_lead_known=true`，且只有兩個可承接 ending 進第3階段。
