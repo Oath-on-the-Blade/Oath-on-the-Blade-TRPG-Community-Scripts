@@ -2,7 +2,7 @@
 
 ## 劇本規格頭
 - `script_id`: `ootb-campaign-chenghe-old-seals-stage-1`
-- 劇本版本：1.0.1
+- 劇本版本：1.0.2
 - `campaign_id`: `ootb-campaign-chenghe-old-seals-001`
 - `replay_policy`: `once_per_character`
 - 連續性：`continuous`；第一階段，無前篇短期資源
@@ -21,7 +21,7 @@
 `<NPC#1@戰役:澄河舊印: 姓?-名?>` 與 `<NPC#2@戰役:澄河舊印: 姓?-名?>` 用十年前廢式舊印把18車平糶糧中的6車改記成「水損轉運」。#3 不是共犯，只因怕倉務漏洞曝光而先壓消息。玩家接案時距夜裝船6小時。無介入：T+2h #2 取走改簿原頁；T+4h #1 的4名【惡少打手】進後倉推車；T+6h 兩艘租船離岸；翌晨 #1 熔掉三枚舊印。
 
 ## 戰役帶入
-第一階段預設 campaign state 初值：`old_seal_exposed=false`、`grain_saved=false`、`broker_status=free`、`former_clerk_status=free`、`ledger_chain=false`。總綱 NPC 姓名在本桌首次實例化後寫入 `campaign_save`。
+第一階段預設 campaign state 初值：`old_seal_exposed=false`、`grain_saved=false`、`broker_status=free`、`former_clerk_status=free`、`ledger_chain=false`、`boat_lead_known=false`。總綱 NPC 姓名在本桌首次實例化後寫入 `campaign_save`。
 
 ## 主要 NPC
 ### `<NPC#1@戰役:澄河舊印: 姓?-名?>`｜洛安糧牙
@@ -72,16 +72,16 @@ T+4h前可見六車集中。兩名 PC 可力量（體能）DC13用20分鐘把卡
 
 ## 終局與結算
 ### `seal-proof-saved`｜「六車糧留在倉裡」｜成功
-成立：確認舊印屬廢式且六車未出河。歷練 tag：辨明舊印60、保糧70、建立責任鏈50，總180；角色至少實際參與其中一 tag 才取該 tag。共同報酬90兩，官府實付、共同持有可分割。俠名+0.4xE、惡名0；【河洛道民間】+0.4xE、【河洛道官府】+0.3xE，腳夫、倉吏與正式倉簿形成傳播。寫入 `old_seal_exposed=true, grain_saved=true`；若取得任一批次帳則 `ledger_chain=true`。可承接第2階段，`campaign_status=active`。
+成立：確認舊印屬廢式且六車未出河。歷練 tag：辨明舊印60、保糧70、建立責任鏈50，總180；角色至少實際參與其中一 tag 才取該 tag。共同報酬90兩，官府實付、共同持有可分割。俠名+0.4xE、惡名0；【河洛道民間】+0.4xE、【河洛道官府】+0.3xE，腳夫、倉吏與正式倉簿形成傳播。寫入 `old_seal_exposed=true, grain_saved=true`；若取得任一批次帳則 `ledger_chain=true`。正式結算時由 #3（若其不可履職則由副監事）把已成立責任鏈與當晚轉運簿／泊位簿交叉核對，直接確定「兩日內會經澄河轉大渠、且不掛河倉燈」的租船與泊位，寫入 `boat_lead_known=true`。可承接第2階段，`campaign_status=active`。
 
 ### `seal-proof-lost`｜「印認出了，船已離岸」｜部分成功
-成立：舊印責任成立但至少一半目標糧已出河。歷練：辨印60、責任鏈50、追船線索40=150。實際參與相應 tag 才取。報酬60兩實付。俠名+0.2xE；【河洛道民間】+0.1xE；【河洛道官府】+0.2xE；惡名0。`old_seal_exposed=true, grain_saved=false`，可承接第2階段。
+成立：舊印責任成立但至少一半目標糧已出河。歷練：辨印60、責任鏈50、追船線索40=150。實際參與相應 tag 才取。報酬60兩實付。俠名+0.2xE；【河洛道民間】+0.1xE；【河洛道官府】+0.2xE；惡名0。`old_seal_exposed=true, grain_saved=false`。正式結算時由已離岸船的泊位記錄、租船簿與既有責任鏈直接固定同一條夜航船線索，寫入 `boat_lead_known=true`。可承接第2階段，`campaign_status=active`。
 
 ### `seal-wrong-blame`｜「倉門關了，舊印仍在水上」｜部分完成／提早戰役結局
-成立：玩家在未建立 #1/#2 責任鏈下正式把 #3 定為主責並交案。歷練：查倉50、完成官面交案40=90。報酬40兩應收未收，待地方覆核。俠名0、惡名+0.1xE；【河洛道官府】-0.2xE；【河洛道民間】0。`campaign_status=partly_completed, campaign_progress=1/3`；不解鎖第2階段。玩家可見收束依總綱固定文字執行。
+成立：玩家在未建立 #1/#2 責任鏈下正式把 #3 定為主責並交案。歷練：查倉50、完成官面交案40=90。報酬40兩應收未收，待地方覆核。俠名0、惡名+0.1xE；【河洛道官府】-0.2xE；【河洛道民間】0。`boat_lead_known=false, campaign_status=partly_completed, campaign_progress=1/3`；不解鎖第2階段。玩家可見收束依總綱固定文字執行。
 
 ### `seal-abandon`｜「夜船照常開」｜放棄
-完成主要 tag 前退出。已完成小調查每項30，最高60；無固定報酬；社會名譽全0，除非另有公開傷害行為。`campaign_status=failed, campaign_progress=1/3`。
+完成主要 tag 前退出。已完成小調查每項30，最高60；無固定報酬；社會名譽全0，除非另有公開傷害行為。`boat_lead_known=false, campaign_status=failed, campaign_progress=1/3`。
 
 ## GM 最後核對
 必要真相不鎖單骰；#1/#2/#3 的責任不能互換；同一6小時時鐘包含整備。正式結算後把 NPC 實例姓名、狀態、state 與本 ending 是否可承接寫入 `campaign_save`。
