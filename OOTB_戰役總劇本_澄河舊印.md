@@ -2,7 +2,7 @@
 
 ## 戰役規格頭
 - `campaign_id`: `ootb-campaign-chenghe-old-seals-001`
-- 總劇本版本：1.0.1
+- 總劇本版本：1.0.2
 - 戰役狀態：已完結
 - 規劃階段：3
 - 已正式發布階段：
@@ -77,6 +77,7 @@
 - `broker_status`: `free / captured / dead / missing`。
 - `former_clerk_status`: `free / protected / captured / dead / missing`。
 - `ledger_chain`: 是否取得足以串聯批次的帳鏈。
+- `boat_lead_known`: 第1階段正式結算時是否已固定一艘兩日內經澄河轉大渠、且不掛河倉燈的租船線索；只有第1階段兩個可承接 ending 會寫入 true。
 - `boat_route_known`: 是否確認第三批水路與時點。
 - `canal_fence_warned`: `<NPC#4>` 是否已得警訊。
 - `public_scandal`: 是否已形成跨地公開風聲。
@@ -90,18 +91,18 @@
 - 玩家介入：河倉監事需要不屬倉吏體系的江湖人先查是否有人偷換封條。
 - 獨立目標：確認異常來源、處理待運糧與當晚偷運。
 - 局部真相：#1、#2 用舊印把平糶糧改記水損轉運；#3 只是壓消息。
-- 可改 state：`old_seal_exposed`、`grain_saved`、#1/#2 狀態、`ledger_chain` 初值。
+- 可改 state：`old_seal_exposed`、`grain_saved`、#1/#2 狀態、`ledger_chain` 初值、`boat_lead_known`。
 - 主要 ending：
-  - `seal-proof-saved`：證據成立且保糧 → 可承接第2階段，`campaign_status=active`。
-  - `seal-proof-lost`：證據成立但糧已出河 → 可承接第2階段，`campaign_status=active`。
-  - `seal-wrong-blame`：玩家在無責任鏈下把 #3 定罪並正式結案 → 提早戰役結局，`campaign_status=partly_completed`；玩家可見收束「倉門關了，舊印仍在水上」。
-  - `seal-abandon`：放棄 → 提早戰役結局，`campaign_status=failed`。
+  - `seal-proof-saved`：證據成立且保糧 → 正式結算時由已成立責任鏈與轉運簿／泊位簿固定夜航船線索，`boat_lead_known=true`；可承接第2階段，`campaign_status=active`。
+  - `seal-proof-lost`：證據成立但糧已出河 → 正式結算時由已離岸船的泊位記錄、租船簿與責任鏈固定同一夜航船線索，`boat_lead_known=true`；可承接第2階段，`campaign_status=active`。
+  - `seal-wrong-blame`：玩家在無責任鏈下把 #3 定罪並正式結案 → `boat_lead_known=false`；提早戰役結局，`campaign_status=partly_completed`；玩家可見收束「倉門關了，舊印仍在水上」。
+  - `seal-abandon`：`boat_lead_known=false`；放棄 → 提早戰役結局，`campaign_status=failed`。
 
 ### 第2階段《夜航船沒有掛河倉燈》
 - 狀態：已發布；`script_id`: `ootb-campaign-chenghe-old-seals-stage-2`；正式檔名：`OOTB_戰役任務_澄河舊印(2)_夜航船沒有掛河倉燈.md`。
-- 階段解鎖：第1階段 ending 為 `seal-proof-saved` OR `seal-proof-lost`；且玩家已知道「舊印對應一條水運帳鏈」。
+- 階段解鎖：第1階段 ending 為 `seal-proof-saved` OR `seal-proof-lost`；且 `boat_lead_known=true`。承接裁決在第1階段正式結算時寫入 `campaign_save`，第2階段開局只讀取、不重算。
 - 直接 NPC：依 state 使用 #1、#2；首次登場 #4。
-- 為何現在發生：尚未被扣住的帳頁顯示一艘夜航船會在兩日內經澄河轉大渠。
+- 為何現在發生：第1階段固定的夜航船線索指出一艘租船會在兩日內經澄河轉大渠。
 - 獨立目標：在不必先抓到 #1 的情況下確認船貨、轉運路線與京畿接貨節點。
 - 局部真相：船戶只受雇運貨；真正可串案的是船艙批次記號、#2 格式與 #4 的接貨暗記。
 - 可改 state：`ledger_chain`、`boat_route_known`、`canal_fence_warned`、`public_scandal`。
@@ -115,7 +116,7 @@
 - 狀態：已發布；`script_id`: `ootb-campaign-chenghe-old-seals-stage-3`；正式檔名：`OOTB_戰役任務_澄河舊印(3)_大渠口最後一批平糶糧.md`。
 - 階段解鎖：第2階段 ending 為 `night-ledger-complete` OR `night-route-only`；且 `boat_route_known=true`。
 - 直接 NPC：#1–#4 按存檔狀態；死亡／失蹤者不復活。
-- 為何現在發生：最後一批糧將在一日內抵京畿外圍渠口；#4 會按是否受警訊決定接貨或滅帳。
+- 為甚麼現在發生：最後一批糧將在一日內抵京畿外圍渠口；#4 會按是否受警訊決定接貨或滅帳。
 - 獨立目標：保住／追回糧食、完成責任鏈、決定如何公開制度漏洞。
 - 局部真相：#4 是知情收貨者而非舊印源頭；#1/#2 的既有責任不被改寫。
 - 最終 state：`final_grain_status`、各 NPC 狀態、是否保留完整制度證據。
@@ -138,7 +139,7 @@
 ## 跨篇韌性
 - #1 死亡／被捕：帳頁、#2、船艙批次記號仍可承擔後續，不創造替代主謀。
 - #2 死亡／失蹤：舊簿原頁、舊印物證與退休倉吏對格式的辨認可替代其知識功能。
-- #3 死亡／失勢：地方副監事只接管行政權，不取代其個人認知或責任。
+- #3 死亡／失勢：地方副監事只接管行政權，不取代其個人認知或責任；若第1階段已成立可承接 ending，副監事可用同一批倉務記錄完成 `boat_lead_known` 的行政核對。
 - #4 提前逃走：渠口帳牌、雇腳夫與預留倉位仍使末篇可處理糧與責任；但活捉機會消失。
 - 關鍵舊印被毀：已完成的拓印、封紙纖維與舊簿格式可保留「廢式」結論；若玩家在取得任何記錄前主動毀盡全部來源，按相應提早收束，不憑空補證。
 
