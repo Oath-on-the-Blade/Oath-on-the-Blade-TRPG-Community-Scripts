@@ -2,7 +2,7 @@
 
 ## 劇本規格頭
 - `script_id`: `ootb-campaign-chenghe-old-seals-stage-3`
-- 劇本版本：1.0.3
+- 劇本版本：1.0.4
 - `campaign_id`: `ootb-campaign-chenghe-old-seals-001`
 - `replay_policy`: `once_per_character`
 - 連續性：`continuous`，末篇
@@ -79,7 +79,7 @@ T+10h開始。若巡檢合作，合法封住已知私倉／轉售車隊直接成
 - 若交易完全秘密，且沒有任何可傳播帳證或目擊者：俠名0、惡名0；【京畿道民間】、【京畿道官府】、【河洛道官府】均0.0xE；改記與交易對方之間的私人把柄，不自行建立新名譽數值。
 `final_grain_status=sold, campaign_status=completed`。
 
-### `canal-abandon`｜「最後一船進了大渠」｜放棄／戰役失敗
+### `canal-abandon`｜「最後一批進了大渠」｜放棄／戰役失敗
 主要 tag 前退出。小處置每項30、最高60；無固定報酬；社會名譽全0，除非另有公開行為。`final_grain_status=lost, campaign_status=failed, campaign_progress=3/3`。
 
 ## 戰役收束
