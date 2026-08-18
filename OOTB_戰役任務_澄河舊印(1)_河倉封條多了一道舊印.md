@@ -2,10 +2,10 @@
 
 ## 劇本規格頭
 - `script_id`: `ootb-campaign-chenghe-old-seals-stage-1`
-- 劇本版本：1.0.2
+- 劇本版本：1.0.3
 - `campaign_id`: `ootb-campaign-chenghe-old-seals-001`
 - `replay_policy`: `once_per_character`
-- 連續性：`continuous`；第一階段，無前篇短期資源
+- 連續性：`independent`；戰役第一階段，無前篇承接與短期資源
 - 冒險類型：一般冒險
 - 建議人數：2–5名 PC
 - 建議等級：4–7級；歷練基準 R=5；中型；4–5小時
