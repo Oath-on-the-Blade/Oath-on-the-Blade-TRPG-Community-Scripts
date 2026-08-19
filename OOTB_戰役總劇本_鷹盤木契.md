@@ -10,7 +10,7 @@
 |---|---|
 | 戰役名稱 | 《鷹盤木契》 |
 | campaign_id | `yingpan-timber-contract` |
-| 總劇本版本 | 1.1.3 |
+| 總劇本版本 | 1.1.4 |
 | 戰役狀態 | 已完結；第 1–6 階段均已有正式最終劇本檔 |
 | 已正式發布的階段劇本 | 第1篇《斷橋下多了十二根官木》；第2篇《夜筏沒有掛修路燈》；第3篇《山鋸坊只收帶白漆的木》；第4篇《封山牌後新開了四條拖木道》；第5篇《州城修橋庫還欠著三百根木》；第6篇《洪汛前最後一排木筏》 |
 | 當前規劃下一階段 | 無；第6篇為正式末篇 |
@@ -133,13 +133,13 @@
 |---|---|---|---|
 | `bridge_safe` | false | 第一篇斷橋與河道是否已處置到不再即時危及行旅 | 第1篇 |
 | `batch_mark_recovered` | false | 是否保住至少一件可辨「白漆＋雙切口」官木批次來源 | 第1篇 |
-| `raft_route_known` | false | 是否取得可指向南灣夜筏調包點的可靠路線／時點 | 第1–2篇 |
+| `raft_route_known` | false | 是否取得可指向南灣夜筏調包點的可靠路線／時點 | 第1篇 |
 | `raft_boss_status` | `at_large` | `at_large / cooperating / detained / dead / unknown` | 第2篇 |
 | `sawmill_link_known` | false | 是否取得山鋸坊與夜筏收貨的可靠連結 | 第2篇 |
-| `ledger_chain` | false | 是否建立「驗木批次—夜筏—山鋸坊」三段可互相核對的記錄鏈 | 第3篇起 |
+| `ledger_chain` | false | 是否建立「驗木批次—夜筏—山鋸坊」三段可互相核對的記錄鏈 | 第3篇 |
 | `woodcutter_trust` | false | 白脊山普通伐木工是否願與玩家合作 | 第3–4篇 |
 | `forest_boundary_proof` | false | 是否取得伐界外拖木道／樹號的客觀證據 | 第4篇 |
-| `public_shortage` | false | 公共修路是否出現實際缺料／關鍵缺口 | 各篇可改 |
+| `public_shortage` | false | 公共修路是否出現實際缺料／關鍵缺口 | 第3、5篇 |
 | `cover_official_exposed` | false | 是否建立 `NPC#4` 後續知情遮掩，而非只證明早期失職 | 第5篇 |
 | `contractor_case_ready` | false | 是否已建立承包商故意虛增／轉料核心責任，且已有至少一項合法供料方案可把真正工程需求與責任處理分開 | 第5篇 |
 | `final_supply_plan` | `unset` | `unset / reclaim_and_replace / reserve_transfer / phased_priority / failed`；末篇實際完成的合法供料／分期安排 | 第6篇 |
@@ -175,7 +175,7 @@
 - 狀態：正式最終檔。
 - script_id：`ootb-script-yingpan-3-sawmill-white-paint-v1`
 - 解鎖：第2篇已裁定可續；作者層 `sawmill_link_known=true`。
-- 輸出：`ledger_chain`、`woodcutter_trust`，並固定 `NPC#2`／`NPC#1` 的實際責任來源。
+- 輸出：`ledger_chain`、`woodcutter_trust`、`public_shortage`，並固定 `NPC#2`／`NPC#1` 的實際責任來源。
 - `END-01`：`ledger_chain=true OR woodcutter_trust=true` → 第4篇 `active`。
 - `END-02`：任一 true → `active`；兩者皆 false 但鋸坊已止收 → `partly_completed (3/6)`。
 - `END-03`：若 `ledger_chain=true OR woodcutter_trust=true` → `active`；兩者皆 false → `failed (3/6)`。
