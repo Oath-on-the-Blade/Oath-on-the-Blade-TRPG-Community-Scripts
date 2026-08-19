@@ -10,7 +10,7 @@
 |---|---|
 | 戰役名稱 | 《鷹盤木契》 |
 | campaign_id | `yingpan-timber-contract` |
-| 總劇本版本 | 1.1.0 |
+| 總劇本版本 | 1.1.1 |
 | 戰役狀態 | 已完結；第 1–6 階段均已有正式最終劇本檔 |
 | 已正式發布的階段劇本 | 第1篇《斷橋下多了十二根官木》；第2篇《夜筏沒有掛修路燈》；第3篇《山鋸坊只收帶白漆的木》；第4篇《封山牌後新開了四條拖木道》；第5篇《州城修橋庫還欠著三百根木》；第6篇《洪汛前最後一排木筏》 |
 | 當前規劃下一階段 | 無；第6篇為正式末篇 |
@@ -178,7 +178,7 @@
 - 輸出：`ledger_chain`、`woodcutter_trust`，並固定 `NPC#2`／`NPC#1` 的實際責任來源。
 - `END-01`：`ledger_chain=true OR woodcutter_trust=true` → 第4篇 `active`。
 - `END-02`：任一 true → `active`；兩者皆 false 但鋸坊已止收 → `partly_completed (3/6)`。
-- `END-03`：普通工人／副簿至少留一條通往白脊山的來源 → `active`；否則 `failed (3/6)`。
+- `END-03`：若 `ledger_chain=true OR woodcutter_trust=true` → `active`；兩者皆 false → `failed (3/6)`。
 - `END-04` 放棄 → `failed (3/6)`。
 - 提早收束《白漆在鋸齒前停住》：封存／結薪完成，最後四道新拖痕消失在霧裡，不開第4篇。
 
