@@ -10,7 +10,7 @@
 |---|---|
 | 戰役名稱 | 《鷹盤木契》 |
 | campaign_id | `yingpan-timber-contract` |
-| 總劇本版本 | 1.1.2 |
+| 總劇本版本 | 1.1.3 |
 | 戰役狀態 | 已完結；第 1–6 階段均已有正式最終劇本檔 |
 | 已正式發布的階段劇本 | 第1篇《斷橋下多了十二根官木》；第2篇《夜筏沒有掛修路燈》；第3篇《山鋸坊只收帶白漆的木》；第4篇《封山牌後新開了四條拖木道》；第5篇《州城修橋庫還欠著三百根木》；第6篇《洪汛前最後一排木筏》 |
 | 當前規劃下一階段 | 無；第6篇為正式末篇 |
@@ -165,7 +165,7 @@
 - 狀態：正式最終檔。
 - script_id：`ootb-script-yingpan-2-night-raft-no-lamp-v1`
 - 解鎖：第1篇 current `campaign_save` 已裁定本篇；作者層路線 `batch_mark_recovered=true OR raft_route_known=true`。
-- 輸出：`raft_boss_status`、`sawmill_link_known`、`public_shortage`。
+- 輸出：`raft_boss_status`、`sawmill_link_known`。
 - `END-01`／`END-02`：`sawmill_link_known=true` → 第3篇 `active`。
 - `END-03`：仍保住收貨記號／航單令 `sawmill_link_known=true` → `active`；否則 `failed (2/6)`。
 - `END-04` 放棄 → `failed (2/6)`。
