@@ -2,7 +2,7 @@
 
 ## 劇本規格頭
 - `script_id`: `ootb-related-qianji-recall-three-villages-001`
-- 劇本版本：1.0.2
+- 劇本版本：1.0.3
 - `replay_policy`: `once_per_character`
 - 連續性：`independent`
 - 關聯類型：後傳／後續；關聯前作《千機峽外兩道弩痕》
@@ -26,6 +26,8 @@
 - `qianji-end-02-danger-stopped-case-open`：用本篇基準狀態。
 - `qianji-end-03-one-side-protected`／`qianji-end-04-evidence-lost`：村民對門派口頭說法更戒備，必須看器號／物證；不提高DC。
 - `qianji-end-05-third-trigger-fires`：第三村已先卸下一枚非承力普通護蓋放在車旁，但水工安全未改變。
+- `qianji-end-06-abandon`：按本篇基準狀態；前作放棄不額外懲罰本篇玩家，也不預設任何責任已被查清。
+- 沒有前作、舊存檔只有無法識別的歷史標籤：按本篇基準狀態。
 
 前作`<NPC#1@千機峽外兩道弩痕: 姓?-名?>`可重登場，保留原NPC編號；若存檔使其合理不能到場，以本篇NPC#2完整代行。現行正典千機峽位於雲東道；舊存檔若曾保存舊版道名，只視為舊文字標籤，不創造世界內搬遷。
 
