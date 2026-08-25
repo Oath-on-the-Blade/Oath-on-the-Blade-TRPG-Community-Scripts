@@ -15,6 +15,7 @@
 | 《北槽轉運場第十三秤總是輕三斤》 | `ootb-task-beicao-transfer-thirteenth-scale-001` | 《北槽路上多了一道夜柵》 | 後續／轉運與重量查核制度後果 | 非必要；可獨立運行 |
 | 《北槽轉運場十五枚車轄有四枚先裂了》 | `ootb-task-beicao-transfer-linchpin-cracks-001` | 《北槽轉運場第十三秤總是輕三斤》 | 後續／輕車轉運器材安全後果 | 非必要；可獨立運行 |
 | 《北槽轉運場九匹代騾有兩匹掛錯了鈴》 | `ootb-task-beicao-transfer-nine-mules-wrong-bells-001` | 《北槽轉運場十五枚車轄有四枚先裂了》 | 後續／替代運力與交接制度後果 | 非必要；可獨立運行 |
+| 《北槽東切道二十四捆冬草有六捆發了白》 | `ootb-task-beicao-eastcut-white-fodder-001` | 《北槽轉運場九匹代騾有兩匹掛錯了鈴》 | 後續／代運補給與批次交接制度後果 | 非必要；可獨立運行 |
 
 ## 關連圖
 
@@ -25,6 +26,7 @@
         └─→ 北槽轉運場第十三秤總是輕三斤
             └─→ 北槽轉運場十五枚車轄有四枚先裂了
                 └─→ 北槽轉運場九匹代騾有兩匹掛錯了鈴
+                    └─→ 北槽東切道二十四捆冬草有六捆發了白
 ```
 
 ## 共同背景基線
@@ -35,7 +37,8 @@
 - 《北槽轉運場第十三秤總是輕三斤》承接《北槽路上多了一道夜柵》之後形成的重車轉運／重量查核習慣；前作 ending 只改變信任、文書便利與普通現場資源，不改本篇秤器作弊真相。
 - 《北槽轉運場十五枚車轄有四枚先裂了》直接承接轉運場輕車使用與前篇持久 state；前篇 state 只改變查核便利、車流量與普通備用車資源，不改本篇車轄器材事故真相。
 - 《北槽轉運場九匹代騾有兩匹掛錯了鈴》直接承接車轄事件後可能出現的替代運力與交接習慣；前篇 state 只改變查閱便利、代運壓力與備用馱騾數，不改本篇代騾識別錯配的客觀真相。
-- `beicao_transfer_yard_short_closure = true`、`beicao_light_cart_service_slowdown = true`、`beicao_pack_mule_service_slowdown = true` 都是短期 state；只有當前存檔仍顯示相應普通檢修／重核未完成時，後作才可把它們當作有效 overlay，不得永久化。
+- 《北槽東切道二十四捆冬草有六捆發了白》直接承接代運增加後的草料補給與批次交接壓力；前篇 state 只改變收貨／領草查閱便利、程序態度與舊批安全草餘量，不改本篇載具污染的客觀真相。
+- `beicao_transfer_yard_short_closure = true`、`beicao_light_cart_service_slowdown = true`、`beicao_pack_mule_service_slowdown = true`、`beicao_eastcut_feed_service_slowdown = true` 都是短期 state；只有當前存檔仍顯示相應普通檢修／重核／補草未完成時，後作才可把它們當作有效 overlay，不得永久化。
 
 ## Branch／state 路由
 
@@ -66,33 +69,39 @@
 - `beicao_light_cart_service_slowdown = true` 且該短期 state 當前仍有效：新篇九匹代騾之外只有 1 匹普通備用馱騾可即時調度；若該短期 state 已失效，使用新篇無前作基線的 3 匹備騾。
 - 以上 overlay 可同時成立；只有 `beicao_cart_repair_liability_unresolved = true/false` 彼此互斥。它們不改新篇換鈴與無授權代騾的客觀答案。
 
+### 《北槽轉運場九匹代騾有兩匹掛錯了鈴》→《北槽東切道二十四捆冬草有六捆發了白》
+- `beicao_pack_mule_identity_chain_restored = true`：驛務已把牲口識別與所領草料批次分欄記錄；新篇只要確認一個污染捆號，即可直接從出發表追到松坡同批草捆。此 state 不證明污染原因。
+- `beicao_pack_mule_hire_liability_unresolved = true`：工人對再次查夜班交接較敏感；新篇查看夜間完整收貨簿原件前需提出一項具體白晶／車板異常，或完成正文 `魅力（說服）DC13`。失敗只增加查閱成本，不刪除文書。
+- `beicao_pack_mule_hire_liability_unresolved = false`：白草驛願直接開放本批收貨簿、馱隊領草表與車腳畫押頁原件。
+- `beicao_pack_mule_service_slowdown = true` 且該短期 state 當前仍有效：新篇上一批已核對安全乾草由 12 捆降為 8 捆，使全面停用新草時的替代補給更緊；若短期 state 已失效，使用 12 捆無前作基線。
+- 以上 overlay 可同時成立；只有 `beicao_pack_mule_hire_liability_unresolved = true/false` 彼此互斥。它們不改新篇「六捆因未洗載具受污染」的客觀答案。
+
 ## 《北槽轉運場第十三秤總是輕三斤》新增持久 state
-
 以下 state 只由該篇正文相應 ending 建立，不由本目錄自行創造結局：
-
 - `beicao_transfer_scale_sealed_check = true`：第十三秤及其他秤採用可核對的支點封存檢查；屬可累積制度 state。
 - `beicao_transfer_fraud_unresolved = true/false`：表示該篇轉運秤作弊責任是否仍未證實；不同值互斥，以最新合法結局寫回為準。
 - `beicao_transfer_yard_short_closure = true`：轉運場短期只處理輕車／騾運至完成普通檢修；不是永久關閉，也不自動封死本樹後續。
 
 ## 《北槽轉運場十五枚車轄有四枚先裂了》新增持久 state
-
 以下 state 只由該篇正文相應 ending 建立：
-
 - `beicao_cart_linchpin_batch_recalled = true`：該篇已知風險車轄與相應車輛完成安全召回／封存；屬可累積安全處置 state。
 - `beicao_cart_repair_liability_unresolved = true/false`：該篇器材誤發／發現後隱瞞責任是否仍未證實；兩值互斥，以最新合法結局寫回為準。
 - `beicao_light_cart_service_slowdown = true`：轉運場短期降低輕車出庫速度，直至普通安全覆核與替換件補齊；不是永久關閉，不自動封死本樹其他節點。
 
 ## 《北槽轉運場九匹代騾有兩匹掛錯了鈴》新增持久 state
-
 以下 state 只由該篇正文相應 ending 建立：
-
 - `beicao_pack_mule_identity_chain_restored = true`：九匹原租騾與本次額外代騾已採外觀／蹄鐵／鈴牌／收條交叉核對；屬可累積交接制度 state。
 - `beicao_pack_mule_hire_liability_unresolved = true/false`：本篇無授權代騾與換鈴責任是否仍未證實；兩值互斥，以最新合法結局寫回為準。
 - `beicao_pack_mule_service_slowdown = true`：因本篇延誤而短期重核九匹並補派急貨；普通重核完成後失效，不代表永久降低北槽運力。
-- 本篇目前沒有預寫下一個關連節點；任何 ending 都不因出自本篇而自動關閉既有樹內節點。日後若新篇直接讀取上述 state，應把《北槽轉運場九匹代騾有兩匹掛錯了鈴》列為直接來源。
+
+## 《北槽東切道二十四捆冬草有六捆發了白》新增持久 state
+以下 state 只由該篇正文相應 ending 建立：
+- `beicao_feed_batch_traceability_restored = true`：東切道本地草料交接採「捆號＋車層／接觸面＋領用去向」可核批次追溯；屬可累積制度 state，不自動升格成朔北道全境制度。
+- `beicao_feed_contamination_liability_unresolved = true/false`：本篇載具污染與接貨漏報責任是否仍未證實；兩值互斥，以最新合法結局寫回為準。
+- `beicao_eastcut_feed_service_slowdown = true`：因本篇問題草封存／牲口觀察而短期降低東切道草料出庫速度；安全補草與普通查驗完成後失效，不代表永久降低北槽運力。
+- 本篇目前沒有預寫下一個關連節點；任何 ending 都不因出自本篇而自動關閉既有樹內節點。日後若新篇直接讀取上述 state，應把《北槽東切道二十四捆冬草有六捆發了白》列為直接來源。
 
 ## 維護
-
 本樹穩定根是《風口失馬群》；不可因後續《北槽借印》或其他節點較突出而另立第二份樹目錄文檔。新增後續應依實際讀取的專用 state 掛到最近直接來源；若只共享白草驛／北槽地區，則不構成直接關連。
 
-新增後續若直接讀取《北槽轉運場九匹代騾有兩匹掛錯了鈴》的代騾識別、責任或短期代運 state，應把該篇列作直接來源；不得越過它只掛更早祖先作方便 anchor。
+新增後續若直接讀取《北槽東切道二十四捆冬草有六捆發了白》的草料批次、責任或短期補給 state，應把該篇列作直接來源；不得越過它只掛更早祖先作方便 anchor。
