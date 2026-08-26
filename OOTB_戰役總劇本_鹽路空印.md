@@ -3,10 +3,10 @@
 ## 戰役規格
 - 戰役名：鹽路空印
 - `campaign_id`: `ootb_campaign_empty_salt_seals_20260825`
-- 總劇本版本：1.0.0
+- 總劇本版本：1.1.0
 - 戰役狀態：連載中
 - 已正式發布階段：無
-- 本輪完成草稿階段：第一至第三階段；第四階段待後續完成
+- 本輪完成草稿階段：第一至第三階段；第四階段待完成
 - 當前規劃：共4階段
 - 共同起點：隴東道赤關以西的官鹽轉運線
 - 主要地理：隴東道赤關、九折關及東關商路沿線普通井堡／轉運站
@@ -78,6 +78,7 @@
 - `debt_note_secured`: `false/true/destroyed`。
 - `ledger_chain_exposed`: `false/true`｜是否已把空票由單次違規提升為可重覆鏈條證據。
 - `warehouse_record_status`: `intact/partial/destroyed`。
+- `warehouse_record_detail`: `both/old_ticket_only/payment_chain_only/none`｜第三階段實際保住哪一類制度證據；`intact=both`、`destroyed=none`，`partial` 必須是兩種 `*_only` 之一。
 - `merchant_status`: `free/detained/dead/missing`。
 - `public_scope`: `local/official/public`｜事件目前只在局部、官面或已廣泛公開。
 - `campaign_status`: `active/partly_completed/failed/completed`。
@@ -112,19 +113,26 @@
 - 解鎖：第二階段結算時 `empty_salt_02_upstream` AND `ledger_chain_exposed=true`。`porter_cooperating`不是必要條件；債據、車號與買家付款痕跡可替代。
 - 為甚麼現在：鹽商察覺鏈條曝光，開始撤走空車、底冊與可辨認印樣。
 - 局部真相：鹽商真正要保的是可重覆漏洞，因此寧可棄貨也要切斷票據鏈。
-- 可改 state：`merchant_status`、`warehouse_record_status`、`public_scope`。
+- 可改 state：`merchant_status`、`warehouse_record_status`、`warehouse_record_detail`、`public_scope`。
 - endings：
-  - `empty_salt_03_records_saved`：保住至少部分底冊並確認焚庫指令來源 → 可承接第四階段，`active`。
-  - `empty_salt_03_merchant_stopped_no_record`：攔下鹽商但全部制度證據永久失去 → 提早收束 `partly_completed`；玩家可見「人留下了，印從帳上消失」。
-  - `empty_salt_03_abandoned`：`failed`。
+  - `empty_salt_03_records_saved`：保住至少一類底冊並確認焚庫指令來源 → 可承接第四階段，`active`；A+B都在寫 `intact/both`，只保A寫 `partial/old_ticket_only`，只保B寫 `partial/payment_chain_only`。
+  - `empty_salt_03_merchant_stopped_no_record`：攔下鹽商但兩類制度證據永久失去 → `destroyed/none`，提早收束 `partly_completed`；玩家可見「人留下了，印從帳上消失」。
+  - `empty_salt_03_abandoned`：`destroyed/none`、`failed`。
 
-### 第四階段｜《赤關盤鹽日》｜待後續完成
-- 狀態：已規劃、未交付。
-- 解鎖：第三階段 `empty_salt_03_records_saved` AND `warehouse_record_status` 為 `intact` 或 `partial`。
-- 為甚麼現在：月末盤鹽將把所有未核差額正式寫入官面；各方只能在盤點前決定供詞、證物與責任切分。
+### 第四階段｜《赤關盤鹽日》｜已規劃、待完成
+- `script_id`: `ootb_campaign_empty_salt_seals_04_20260825`
+- 預定檔名：`OOTB_戰役任務_鹽路空印(04)_赤關盤鹽日.md`
+- 解鎖：第三階段結算時已凍結 `empty_salt_03_records_saved`，且此前完整路線同時保存 `seal_mismatch_proved=true` AND `ledger_chain_exposed=true` AND `warehouse_record_status` 為 `intact` 或 `partial` AND `warehouse_record_detail!=none`。下一篇開局只載入該次結算已裁定的第四階段解鎖，不重新計算。
+- 為甚麼現在：月末盤鹽將把所有未核差額正式寫入官面；各方只能在盤點封冊前決定供詞、證物與責任切分。
+- 玩家介入：前三階段的正式查驗與保全紀錄令PC成為能把不同來源證物對回同一批次的人；官面請其在封冊前提交可核驗的責任分層。
 - 任務目標：讓官面能區分暴雨合法損耗、最初違規補帳與後續牟利走私，並處理仍存活／自由的主要人物。
+- 局部真相：盤鹽日沒有新黑手；最後衝突是既有三層責任如何被官面分類，以及地方舊票驗核程序是否被修正。
 - 核心接觸：戰役制度漏洞與三層責任全部進入可裁定狀態。
-- 末篇所有正式收束映射 `campaign_status=completed`；放棄仍為 `failed`。
+- 讀取 state：前三篇全部既有 state，尤其 `warehouse_record_detail`、三名主要人物狀態與 `public_scope`。
+- 主要 endings：
+  - `empty_salt_04_separated`：三層責任及局部驗核漏洞均被可核驗地分開處理 → 末篇正式收束，`campaign_status=completed`、`campaign_progress=4/4`。
+  - `empty_salt_04_convenient_close`：官面採取較方便的單一責任收束，但PC仍令舊票／驗印漏洞停止再被使用 → 苦澀末篇收束，`completed`、`4/4`。
+  - `empty_salt_04_abandoned`：盤鹽封冊前放棄且沒有完成可用交接 → `failed`、`4/4`。
 
 ## 提早戰役結局
 ### 帳平了一頁，路仍照走
@@ -147,8 +155,8 @@
 - 來源：`empty_salt_03_merchant_stopped_no_record`。
 - 性質：部分完成。
 - 已回答：鹽商參與空票牟利；其當前路線被阻止。
-- 永久失去：底冊與制度證據全毀，無法在盤鹽日區分三層責任而不靠作者補發明。
-- state：`partly_completed`、`3/4`。
+- 永久失去：兩類底冊與制度證據全毀，無法在盤鹽日區分三層責任而不靠作者補發明。
+- state：`warehouse_record_status=destroyed`、`warehouse_record_detail=none`、`campaign_status=partly_completed`、`campaign_progress=3/4`。
 - 玩家可見收束：關門落鎖，涉事商人走不了；可火後的紙灰沒有留下哪一張票先被重壓。案子抓住了人，卻沒能留下足以改掉下一次漏洞的帳。
 
 ## 跨篇關鍵依賴與韌性
@@ -156,6 +164,8 @@
 - NPC#2死亡／失蹤：第二階段以兩本腳行簿、債據、車號與普通腳夫口供替代；只有所有這些來源均被玩家主動毀去，才進提早收束。
 - NPC#3提前被捕：第三階段改成阻止其受僱人焚庫；不要求他逃到終局。
 - 債據毀損：付款車號與腳行雙簿仍可建立上游鏈；`debt_note_secured`不是第三階段唯一解鎖。
-- 轉運庫底冊全毀：第三階段可完成「攔人」但不能合法開第四階段，使用既定提早收束。
+- 第三階段只保住A舊票底冊：`warehouse_record_detail=old_ticket_only`；第四階段以第二階段已正式固定的上游付款／預排車號查驗紀錄補足後段牟利鏈。
+- 第三階段只保住B付款對照：`warehouse_record_detail=payment_chain_only`；第四階段以第一階段已正式固定的舊票底號、暴雨損耗簿與書吏查驗紀錄補足早期補帳時段。
+- 轉運庫兩類底冊全毀：第三階段可完成「攔人」但不能合法開第四階段，使用既定提早收束。
 - 玩家提前公開全案：`public_scope=public`，後篇 NPC 不再能安靜撤證，改用公開否認、法律物權與證人保護；不改寫已成立真相。
 - 玩家與任何責任者合作：合作只改其狀態與證據取得方式，不洗掉既有行為。
