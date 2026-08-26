@@ -3,7 +3,7 @@
 ## 戰役規格
 - 戰役名：鹽路空印
 - `campaign_id`: `ootb_campaign_empty_salt_seals_20260825`
-- 總劇本版本：1.2.0
+- 總劇本版本：1.3.0
 - 戰役狀態：已完結
 - 已正式發布階段：第一至第四階段
 - 已完成階段：第一至第四階段
@@ -59,9 +59,14 @@
 
 ### `salt_office`｜隴東地方鹽運官面
 - `actor_key`: `salt_office`
-- 非單一NPC。
-- 利益：恢復帳貨一致、避免整條東關鹽路停擺。
-- 反應：只有取得可核驗的批次、票號或實貨差異才會擴大封查；不因江湖傳聞直接抓人。
+- 非單一NPC；由井堡值守、值房書吏及末篇盤鹽主簿等不同官面執行者承擔，不建立單一戰役 NPC key。
+- 身份／位置：隴東地方鹽運與赤關查驗、盤鹽制度共同體。
+- 初始認知：知道本月出現票貨差額、舊票號重現與商路堵塞風險；不知道三層責任如何切分，也不知道腳行與鹽商已把補帳漏洞商品化。
+- 初始誤解：在證據不足時傾向把未分來源差額暫列到原經手值房，因這是最易核帳的行政做法，不等於已裁定全部責任。
+- 核心利益：恢復帳貨一致、保存可核驗責任，同時避免整條東關鹽路因單案停擺。
+- 當前計畫：先扣異常批次、按票號與實貨擴大查驗；月底把仍未分來源差額封入盤鹽冊。
+- 資源：值房帳冊、書吏、盤鹽程序、合法扣押與抄錄權；限制是必須有可核驗批次／票號／實貨差異，不能因江湖傳聞無限扣貨或直接判刑。
+- 反應：取得可核驗差異才擴大封查；證據能分離私人合法帳物時縮小留置範圍；末篇若得到三層責任表與可執行驗核修正，正式寫入地方值房程序。
 
 ## 戰役級 NPC Registry
 | Key | 姓名欄 | 身份／功能 | actor_key | 首次規劃登場 | 首次正式登場 |
@@ -88,9 +93,13 @@
 ### 第一階段｜《井堡多出一車已驗官鹽》｜已完成
 - `script_id`: `ootb_campaign_empty_salt_seals_01_20260825`
 - 檔名：`OOTB_戰役任務_鹽路空印(01)_井堡多出一車已驗官鹽.md`
+- 輸入 state：無既有 `campaign_save`；開局建立並保存 `NPC#1`、`NPC#2`、`NPC#3` 的戰役實例姓名，`seal_mismatch_proved=false`。
+- 直接使用戰役 NPC：`NPC#1@戰役:鹽路空印`、`NPC#2@戰役:鹽路空印`。
 - 為甚麼現在：井堡盤秤發現一車票號正確但重量、封條次序不合。
 - 玩家介入：受井堡與鹽運值房臨時委託，在不封死整條商路前核清這一批貨。
+- 任務目標：固定本批票貨矛盾、保存腳行換包接口，並避免把整條合法商路無限封死。
 - 局部真相：本批貨由腳行利用副監過去留下的舊驗印規則換包；副監沒有下令偷這批鹽。
+- 核心接觸：首次證明「真驗印不等於本批貨真實」，並建立副監補帳與本批換包可分離的責任邊界。
 - 可改 state：`seal_mismatch_proved`、`deputy_status`、`porter_status`、`debt_note_secured`、`public_scope`。
 - 主要 endings：
   - `empty_salt_01_chain`：證明票貨矛盾且保留腳行線索 → 可承接第二階段，`campaign_status=active`。
@@ -99,9 +108,15 @@
 
 ### 第二階段｜《兩本腳行簿只差一筆車腳》｜已完成
 - `script_id`: `ootb_campaign_empty_salt_seals_02_20260825`
+- 檔名：`OOTB_戰役任務_鹽路空印(02)_兩本腳行簿只差一筆車腳.md`
 - 解鎖：第一階段結算時 `empty_salt_01_chain` AND `seal_mismatch_proved=true`；`porter_status` 可為任何值，因名冊、債據與腳夫口供有替代接口。
+- 輸入 state：`seal_mismatch_proved=true`、`deputy_status`、`porter_status`、`debt_note_secured`、`public_scope`，以及第一階段已凍結的第二階段解鎖結果。
+- 直接使用戰役 NPC：`NPC#2@戰役:鹽路空印`、`NPC#3@戰役:鹽路空印`。
 - 為甚麼現在：第一階段留下的車次矛盾使鹽商開始收債並催最後兩批。
+- 玩家介入：地方鹽運要求PC趁車次未散前續核腳行；PC持有前篇正式查驗抄件與可合法追查的車次接口。
+- 任務目標：建立雙簿／工錢鏈，固定至少一項上游付款或預排車號接口，並按知情程度區分普通腳夫責任。
 - 局部真相：腳行掌事確實把驗印漏洞出售給鹽商，但其家人與普通腳夫並非共同策劃者。
+- 核心接觸：把單次換包提升為可重覆交易鏈，首次把上游鹽商的付款／債務控制接入戰役核心因果。
 - 可改 state：`porter_cooperating`、`debt_note_secured`、`ledger_chain_exposed`、`merchant_status`、`public_scope`。
 - endings：
   - `empty_salt_02_upstream`：建立債務＋換包鏈 → 可承接第三階段，`active`。
@@ -110,9 +125,15 @@
 
 ### 第三階段｜《九折關前有人先買走空車》｜已完成
 - `script_id`: `ootb_campaign_empty_salt_seals_03_20260825`
+- 檔名：`OOTB_戰役任務_鹽路空印(03)_九折關前有人先買走空車.md`
 - 解鎖：第二階段結算時 `empty_salt_02_upstream` AND `ledger_chain_exposed=true`。`porter_cooperating`不是必要條件；債據、車號與買家付款痕跡可替代。
+- 輸入 state：`seal_mismatch_proved=true`、`ledger_chain_exposed=true`、三名主要人物狀態、`porter_cooperating`、`debt_note_secured`、`public_scope`，以及第二階段已凍結的第三階段解鎖結果。
+- 直接使用戰役 NPC：`NPC#3@戰役:鹽路空印`、`NPC#1@戰役:鹽路空印`。
 - 為甚麼現在：鹽商察覺鏈條曝光，開始撤走空車、底冊與可辨認印樣。
+- 玩家介入：第二階段已固定上游撤證方向，地方鹽運可提供與票號相關帳物的有限扣押依據，PC有理由立即追往九折關前。
+- 任務目標：阻止制度證物被搬走／焚毀，至少保住A舊票底冊或B付款對照中的一類，並確認撤證安排與鹽商鏈條相連。
 - 局部真相：鹽商真正要保的是可重覆漏洞，因此寧可棄貨也要切斷票據鏈。
+- 核心接觸：把「最初補帳」與「後續牟利」的時間斷點保存為末篇可裁定的制度證據，或因證據全毀形成正式提早收束。
 - 可改 state：`merchant_status`、`warehouse_record_status`、`warehouse_record_detail`、`public_scope`。
 - endings：
   - `empty_salt_03_records_saved`：保住至少一類底冊並確認焚庫指令來源 → 可承接第四階段，`active`；A+B都在寫 `intact/both`，只保A寫 `partial/old_ticket_only`，只保B寫 `partial/payment_chain_only`。
@@ -122,13 +143,15 @@
 ### 第四階段｜《赤關盤鹽日》｜已完成
 - `script_id`: `ootb_campaign_empty_salt_seals_04_20260825`
 - 檔名：`OOTB_戰役任務_鹽路空印(04)_赤關盤鹽日.md`
-- 解鎖：第三階段結算時已凍結 `empty_salt_03_records_saved`，且此前完整路線同時保存 `seal_mismatch_proved=true` AND `ledger_chain_exposed=true` AND `warehouse_record_status` 為 `intact` 或 `partial` AND `warehouse_record_detail!=none`。下一篇開局只載入該次結算已裁定的第四階段解鎖，不重新計算。
+- 解鎖：第三階段結算時已凍結 `empty_salt_03_records_saved`，且此前完整路線同時保存 `seal_mismatch_proved=true` AND `ledger_chain_exposed=true` AND `warehouse_record_status` 為 `intact` 或 `partial` AND `warehouse_record_detail!=none`。本篇開局只載入該次結算已裁定的第四階段解鎖，不重新計算。
+- 輸入 state：前三篇全部既有 state，尤其 `warehouse_record_status`、`warehouse_record_detail`、三名主要人物狀態與 `public_scope`，以及第三階段已凍結的第四階段解鎖結果。
+- 直接使用戰役 NPC：`NPC#1@戰役:鹽路空印`、`NPC#2@戰役:鹽路空印`、`NPC#3@戰役:鹽路空印`；任何一人均可因既有 state 不在場，且有正式案卷替代。
 - 為甚麼現在：月末盤鹽將把所有未核差額正式寫入官面；各方只能在盤點封冊前決定供詞、證物與責任切分。
 - 玩家介入：前三階段的正式查驗與保全紀錄令PC成為能把不同來源證物對回同一批次的人；官面請其在封冊前提交可核驗的責任分層。
-- 任務目標：讓官面能區分暴雨合法損耗、最初違規補帳與後續牟利走私，並處理仍存活／自由的主要人物。
+- 任務目標：讓官面能區分暴雨合法損耗、最初違規補帳與後續牟利走私，並提出足以停止舊票重用的地方驗核修正。
 - 局部真相：盤鹽日沒有新黑手；最後衝突是既有三層責任如何被官面分類，以及地方舊票驗核程序是否被修正。
-- 核心接觸：戰役制度漏洞與三層責任全部進入可裁定狀態。
-- 讀取 state：前三篇全部既有 state，尤其 `warehouse_record_detail`、三名主要人物狀態與 `public_scope`。
+- 核心接觸：戰役制度漏洞與三層責任全部進入可裁定狀態；末篇直接決定漏洞是否停止及責任是否完整分列。
+- 可改 state：`campaign_status`、`campaign_progress`、`public_scope`及三名主要人物的最終狀態；既有已凍結證據 state 不因末篇重擲而消失。
 - 主要 endings：
   - `empty_salt_04_separated`：三層責任及局部驗核漏洞均被可核驗地分開處理 → 末篇正式收束，`campaign_status=completed`、`campaign_progress=4/4`。
   - `empty_salt_04_convenient_close`：官面採取較方便的單一責任收束，但PC仍令舊票／驗印漏洞停止再被使用 → 苦澀末篇收束，`completed`、`4/4`。
@@ -148,7 +171,7 @@
 - 性質：部分完成。
 - 已回答：腳行確曾利用驗印漏洞；本地換包線被切斷。
 - 永久失去：上游付款／買家接口不足以合法開第三階段。
-- state：`partly_completed`、`2/4`。
+- state：`campaign_status=partly_completed`、`campaign_progress=2/4`。
 - 玩家可見收束：幾輛空車被扣在赤關外，腳夫重新找活；但那些預付銀的真正來處只剩幾筆無名舊債，沒有一條足以再追的路。
 
 ### 人留下了，印從帳上消失
