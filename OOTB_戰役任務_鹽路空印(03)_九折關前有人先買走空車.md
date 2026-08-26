@@ -2,7 +2,7 @@
 
 ## 劇本規格
 - `script_id`: `ootb_campaign_empty_salt_seals_03_20260825`
-- 劇本版本：1.0.0
+- 劇本版本：1.1.0
 - 運行類別：戰役階段
 - `replay_policy`: `once_per_character`
 - 連續性：`continuous`
@@ -74,8 +74,13 @@
 - 若發生衝突：3名受僱護貨人用【江湖新手】，目的為拖時間讓一車離開，不追殺撤退者。任一人重傷即撤；NPC#5在官面物權確認後不再主動戰鬥。
 - 火已點燃時，力量（體能）DC15，10分鐘可把尚未著火的B箱拖出；失敗需增加一人協助或改用車繩，否則同方法不可原地重擲。
 
-## 多目標取捨
-PC可分組追車與保庫。若至少保住A或B其中一箱，加上前兩篇既有證據，`warehouse_record_status=partial`，仍足以承接第四階段；兩箱都保住為`intact`。兩箱全毀為`destroyed`，即使抓到NPC#3也只能使用本篇提早收束，因第四階段需要可區分責任時段的制度證據。
+## 多目標取捨與跨篇證物寫回
+PC可分組追車與保庫。兩類會被第四階段讀取的制度證物必須逐類記錄：
+- A半年前舊票底冊保住、B付款對照也保住：`warehouse_record_status=intact`、`warehouse_record_detail=both`。
+- 只保住A：`warehouse_record_status=partial`、`warehouse_record_detail=old_ticket_only`；第四階段以第二階段已正式固定的上游付款／預排車號查驗紀錄補足後段牟利鏈。
+- 只保住B：`warehouse_record_status=partial`、`warehouse_record_detail=payment_chain_only`；第四階段以第一階段已正式固定的舊票底號、暴雨損耗簿與書吏查驗紀錄補足早期補帳時段。
+- A+B全毀：`warehouse_record_status=destroyed`、`warehouse_record_detail=none`；即使抓到NPC#3也只能使用本篇提早收束，不能憑空生成第四階段證物。
+C為普通合法商帳，不是第四階段必要證物；保全C只影響本篇物權與民間名譽後果。
 
 ## 終局
 ### `ending_id: empty_salt_03_records_saved`｜舊帳沒有全燒掉
@@ -85,7 +90,7 @@ PC可分組追車與保庫。若至少保住A或B其中一箱，加上前兩篇�
 - 參與：至少參與兩個核心場景，且在追車、保證、辨帳、交涉或衝突有實質貢獻；中途加入按實際最多5點。
 - 物質：全隊40兩風險查驗酬謝，實際取得，由地方鹽運與關驛共同既有查緝支出支付；共同可分割，玩家分配。帳冊與涉案貨物留置官面。
 - 俠名+0.2xE；惡名若先以致命武力攻擊已停止阻攔者且被可靠識別+0.2xE，否則0；【隴東道官府】+0.3xE；【隴東道民間】若保住合法商帳C不被無差別沒收+0.1xE，否則0。
-- 寫回：`warehouse_record_status=intact/partial`；依實際寫`merchant_status`、`public_scope`；`campaign_status=active`、`campaign_progress=3/4`；第四階段解鎖。
+- 寫回：依「多目標取捨與跨篇證物寫回」固定 `warehouse_record_status` 與 `warehouse_record_detail`；依實際寫`merchant_status`、`public_scope`；`campaign_status=active`、`campaign_progress=3/4`；第四階段解鎖只在本篇結算時判定一次並寫入`campaign_save`。
 
 ### `ending_id: empty_salt_03_merchant_stopped_no_record`｜人留下了，印從帳上消失
 - 完成結局；提早戰役結局。
@@ -93,14 +98,14 @@ PC可分組追車與保庫。若至少保住A或B其中一箱，加上前兩篇�
 - 基礎歷練：行旅4、江湖2（總計6）。
 - 物質：全隊30兩，實際取得，同一查緝支出；共同可分割。
 - 俠名+0.1xE；惡名依暴力條件；【隴東道官府】+0.1xE；【隴東道民間】0.0xE。
-- 戰役：`partly_completed`、`3/4`。玩家可見：關門落鎖，涉事商人走不了；可火後的紙灰沒有留下哪一張票先被重壓。案子抓住了人，卻沒能留下足以改掉下一次漏洞的帳。
+- 寫回：`warehouse_record_status=destroyed`、`warehouse_record_detail=none`；`campaign_status=partly_completed`、`campaign_progress=3/4`。玩家可見：關門落鎖，涉事商人走不了；可火後的紙灰沒有留下哪一張票先被重壓。案子抓住了人，卻沒能留下足以改掉下一次漏洞的帳。
 
 ### `ending_id: empty_salt_03_abandoned`｜任由舊帳出關
-- 任務放棄；0歷練、0物質；名譽均0；`campaign_status=failed`、`3/4`。
+- 任務放棄；0歷練、0物質；名譽均0；寫回`warehouse_record_status=destroyed`、`warehouse_record_detail=none`、`campaign_status=failed`、`campaign_progress=3/4`。
 
 ## 偏離與韌性
 - NPC#3已被捕／死亡：撤證仍由其已付訂金與短札推進；本篇不是靠他逃跑才能成立。
 - NPC#1失能：書吏＋暴雨簿替代日期確認。
 - 玩家先救帳不追人：完全合法，可達最佳承接；抓人不是唯一目標。
 - 玩家只追人不救帳：可完成本篇局部阻截，但若A+B全毀，按提早收束，不憑空生成第四階段證據。
-- 玩家公開直播式宣揚全案：`public_scope=public`，NPC#5更傾向停火保物權，NPC#3若自由則改走法律否認；不改真相。
+- 玩家公開宣揚全案：`public_scope=public`，NPC#5更傾向停火保物權，NPC#3若自由則改走法律否認；不改真相。
