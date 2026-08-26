@@ -70,7 +70,7 @@
 ## 主要 ending／state → 後續映射
 - 《外峰六枚驗橋印…》任何 ending 或無紀錄都可進入《外峰新橋夜簿…》。
 - 《外峰新橋夜簿…》任何 ending 或無紀錄都可進入《外峰新橋下維修吊台卡在半空》；只有實際存在的三項前作 state 形成 overlay，前作不是必要前置。
-- 《外峰新橋下維修吊台卡在半空》的 `bridge-cradle-full-rescue` 建立完整救援、故障鏈與本地限載／雙人覆核 state；`bridge-cradle-rescue-only` 保存救援成功但責任與程序未完整釐清；`bridge-cradle-casualty` 保存實際傷亡與事故前已成立查驗；`bridge-cradle-abandon` 只保存離場前客觀成立內容。
+- 《外峰新橋下維修吊台卡在半空》的 `bridge-cradle-full-rescue` 建立完整救援、故障鏈與本地限載／雙人覆核 state；`bridge-cradle-rescue-only` 保存救援成功但責任與程序未完整釐清；`bridge-cradle-casualty` 保存實際傷亡與事故前已成立查驗；`bridge-cradle-abandon` 由山務保守接管後保存 `bridge_cradle_rescue_completed=true`、`bridge_cradle_casualty=false`，但 `bridge_hoist_failure_traced=false`、`bridge_cradle_load_rule_clarified=false`。
 - 《外峰新橋夜簿…》任何 ending 或無紀錄都可進入《北坡三張補簽頁…》。
 - 《北坡三張補簽頁…》任何 ending 或無紀錄都可進入《外峰三道封橋牌…》；只有已存在的三項 state 形成 overlay，前作不是必要前置。
 - 《外峰三道封橋牌…》`bridge-board-safe-handoff` 建立交接已釐清與北坡重車封控；`bridge-board-safe-only` 建立重車封控但交接未釐清；`bridge-board-heavy-incident` 保存實際橋損與已成立調查 state；`bridge-board-abandon` 只保存離場前實際成立內容。
