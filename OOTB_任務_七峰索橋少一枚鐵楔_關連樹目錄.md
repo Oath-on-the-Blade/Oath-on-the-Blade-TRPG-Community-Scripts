@@ -17,6 +17,7 @@
 | 《北坡三張補簽頁有一張早了一刻》 | `ootb-linked-tianyue-backdated-slip-001` | 《外峰新橋夜簿少了一趟車》 | 後續／補簽制度後果 | 非必要 |
 | 《外峰三道封橋牌有一道昨夜被翻回去了》 | `ootb-linked-tianyue-bridge-board-001` | 《北坡三張補簽頁有一張早了一刻》 | 後續／橋務交接與分流制度後果 | 非必要 |
 | 《南橋卸重棚少了一根記重木籤》 | `ootb-linked-tianyue-southbridge-load-tag-001` | 《外峰三道封橋牌有一道昨夜被翻回去了》 | 後續／南橋貨務與卸重交接後果 | 非必要 |
+| 《南橋雨後三條車道有一條先掛了放行牌》 | `ootb-linked-tianyue-southbridge-rainlane-001` | 《南橋卸重棚少了一根記重木籤》 | 後續／南橋貨流與雨後臨時車道交接後果 | 非必要 |
 
 ## 關連圖
 
@@ -29,6 +30,7 @@
         └─→ 北坡三張補簽頁有一張早了一刻
             └─→ 外峰三道封橋牌有一道昨夜被翻回去了
                 └─→ 南橋卸重棚少了一根記重木籤
+                    └─→ 南橋雨後三條車道有一條先掛了放行牌
 ```
 
 ## 共同背景基線
@@ -39,6 +41,7 @@
 - 《北坡三張補簽頁…》只承接夜間急行補簽與見證程序；其改頁、借號、藥貨與私鹽均為新事件。
 - 《外峰三道封橋牌…》只承接北坡補簽／見證制度留下的有效 state；其昨夜翻牌、護坡沖刷與本篇責任均為新事件，不回頭改判前作。
 - 《南橋卸重棚少了一根記重木籤》只承接前篇可保存的交接透明度、北坡重車封控與橋損 state；其失籤、位置牌誤掛、車具支點與責任均為新的南橋貨務事件，不把前篇任何翻牌人或橋損責任改判成本篇原因。
+- 《南橋雨後三條車道有一條先掛了放行牌》只承接南橋前篇可保存的木籤、交班、第三車處理與事故 state；其提前掛牌、第一車入道、排水堵塞與雨後土肩軟化均為新的候車坡事件，不回頭改判前作責任。
 - 關連樹節點的任務定位、建議等級、R、規模與難度不要求相同。
 
 ## Branch／state 路由
@@ -50,6 +53,8 @@
 - 《外峰三道封橋牌…》可建立 `outerpeak_bridge_board_handoff_clarified=true/false`（互斥，以最新合法 ending 為準）、`outerpeak_north_bridge_heavy_closed=true`、`outerpeak_north_bridge_damaged=true`；後兩者是否同時存在按實際 ending 與後續處置保存，不由目錄補造。
 - 《南橋卸重棚少了一根記重木籤》只直接讀取 `outerpeak_bridge_board_handoff_clarified`、`outerpeak_north_bridge_heavy_closed`、`outerpeak_north_bridge_damaged`：前者只改交班核對，後兩者只改南橋貨流壓力與山務對冒險試放的容忍度，不改本篇真相。
 - 《南橋卸重棚少了一根記重木籤》可建立 `southbridge_loadtags_restored=true`、`southbridge_third_cart_rebalanced=true/false`、`southbridge_handoff_traceable=true/false`、`southbridge_load_incident=true`；只有正文 ending 實際成立時寫入，目錄不補造。
+- 《南橋雨後三條車道有一條先掛了放行牌》只直接讀取 `southbridge_loadtags_restored`、`southbridge_handoff_traceable`、`southbridge_third_cart_rebalanced`、`southbridge_load_incident`；它們只改核對耗時、交班可信度與山務對分流／試放的接受度，不改本篇責任或雨後土肩真相。
+- 《南橋雨後三條車道有一條先掛了放行牌》可建立 `southbridge_rainlane_handoff_clarified=true/false`（互斥，以最新合法 ending 為準）、`southbridge_rainlane_drained=true/false`、`southbridge_rainlane_heavy_restricted=true`、`southbridge_rainlane_incident=true`；只有正文 ending 實際成立時寫入。
 - 《山務院…》支線與《外峰…》支線同屬一樹但不自動互斥；只有實際持久 state 衝突才限制先後。
 
 ## 主要 ending／state → 後續映射
@@ -59,7 +64,9 @@
 - 《外峰三道封橋牌…》`bridge-board-safe-handoff` 建立交接已釐清與北坡重車封控；`bridge-board-safe-only` 建立重車封控但交接未釐清；`bridge-board-heavy-incident` 保存實際橋損與已成立調查 state；`bridge-board-abandon` 只保存離場前實際成立內容。
 - 《外峰三道封橋牌…》任何 ending 或無紀錄都可進入《南橋卸重棚少了一根記重木籤》；只有實際存在的 `outerpeak_*` state 形成 overlay，前作不是必要前置。
 - 《南橋卸重棚少了一根記重木籤》的 `southbridge-loadtag-clear` 建立完整車次與交接 state；`southbridge-loadtag-safe-delay` 依實際處置保存第三車與交接狀態；`southbridge-loadtag-incident` 保存偏載事故及已成立交接；`southbridge-loadtag-abandon` 只保存離場前客觀成立內容。
+- 《南橋卸重棚少了一根記重木籤》任何 ending 或無紀錄都可進入《南橋雨後三條車道有一條先掛了放行牌》；只有實際存在的 `southbridge_*` state 形成 overlay，前作不是必要前置。
+- 《南橋雨後三條車道有一條先掛了放行牌》的 `southbridge-rainlane-clear` 建立交班釐清、排水處理與重車限制 state；`southbridge-rainlane-safe-only` 保存安全分流與未釐清交班；`southbridge-rainlane-incident` 保存雨後土肩事故與後續限制；`southbridge-rainlane-abandon` 只保存離場前客觀成立內容。
 - 一個 ending 開啟後續不表示其他同樹節點互斥。
 
 ## 維護
-新增節點時同步更新本檔；劇本檔維持原路徑，不以搬檔表示樹成員資格。若後作直接讀取《南橋卸重棚少了一根記重木籤》的車次、第三車或交接 state，應把該篇列為直接來源；若只共享天嶽外峰背景，不構成直接關連。
+新增節點時同步更新本檔；劇本檔維持原路徑，不以搬檔表示樹成員資格。若後作直接讀取《南橋雨後三條車道有一條先掛了放行牌》的交班、排水、重車限制或事故 state，應把該篇列為直接來源；若只共享天嶽外峰背景，不構成直接關連。
