@@ -2,7 +2,7 @@
 
 ## 劇本規格頭
 - `script_id`: `ootb-linked-tianyue-southbridge-nightfill-001`
-- 劇本版本：1.0.0
+- 劇本版本：1.1.0
 - 運行類別：一般任務
 - `replay_policy`: `once_per_character`
 - 連續性：`independent`
@@ -236,33 +236,33 @@ R=21、中型，正常完整結局以基礎總歷練約 12 為校準點；差異
 - 基礎歷練：行旅 5、計略 4、江湖 2（基礎總計 11）。
 - 物質結果：全隊 50 兩辛勞錢**實際取得**；共同權利、可分割，由玩家決定分配，未達共識則共同持有。證物與材料不轉為 PC 私產。
 - 俠名：若安全停工／分流由現場車隊可靠知道並歸因 PC，+0.1xE；否則 0.0xE。
-- 惡名：依上述「逼寫明知不實供詞且有可靠見證」條件 +0.2xE；否則 0.0xE。
-- 【天嶽派】：+0.1xE。
-- 【河洛道民間】：若貨車得到具體改道／等待安排而非無限封路，+0.1xE；否則 0.0xE。
+- 惡名：若 PC 在無換料證據時以傷害威脅逼普通書手／工役簽寫明知不實供詞，且有可靠見證，+0.2xE；否則 0.0xE。
+- 【天嶽派】：山務可由隔離標記、分料結果及安全復工紀錄可靠歸因 PC 阻止錯料入坡，+0.1xE。
+- 【河洛道民間】：若貨車得到具體改道／等待安排而非無限封路，且現場公告可可靠歸因 PC，+0.1xE；否則 0.0xE。
 - 持久 state：`southbridge_nightfill_materials_verified=true`、`southbridge_nightfill_badfill_removed=true`、`southbridge_nightfill_receipt_traceable=false`、`southbridge_nightfill_incident=false`。
 
 ### `ending_id: southbridge-nightfill-incident`｜表面夯實，幾日後又沉了
 - 角色卡顯示名稱：坡腳再度沉陷
 - 結算類型：失敗結局
-- 條件：PC 明知或已有足夠跡象顯示八號與七號不同，卻仍支持把八號混合料直接作坡腳排水回填，或永久毀去辨料來源後要求山務按未驗材料強行復工；數日後雨水與重車震動造成局部沉陷。
+- 條件：PC 明知或已有足夠跡象顯示八號與七號不同，卻仍支持把八號混合料直接作坡腳排水回填；或 PC 主動永久毀去辨料來源後，仍要求山務把未驗材料強行用於坡腳。數日後雨水與重車震動造成局部沉陷。
 - 角色參與條件：完整歷練只給實際參與辨料／復工決策並承擔事故後果的角色；只在事故後到場者按實際最多 4 點。
 - 基礎歷練：行旅 4、計略 3、江湖 2（基礎總計 9）。
 - 物質結果：0 兩；全額／部分辛勞錢均未達成支付條件，沒有應收未收款。PC 不取得材料或工具。
 - 俠名：0.0xE。
 - 惡名：若現場已有可理解的材料風險警告，PC 仍公開施壓要求強行填料，且事故後可由山務與車隊可靠歸因，+0.2xE；否則 0.0xE。
-- 【天嶽派】：若上述歸因成立，-0.2xE；若事故源於證據全毀、責任無法可靠歸因 PC，0.0xE。
+- 【天嶽派】：若上述公開施壓與事故能由山務紀錄可靠歸因 PC，-0.2xE；否則 0.0xE。
 - 【河洛道民間】：若事故堵住貨路且車隊能可靠知道 PC 曾支持強行復工，-0.2xE；否則 0.0xE。
-- 持久 state：按離場前實際寫 `southbridge_nightfill_materials_verified`；`southbridge_nightfill_badfill_removed=false`、`southbridge_nightfill_receipt_traceable` 依實際、`southbridge_nightfill_incident=true`。
+- 持久 state 變體 A（事故前已建立材料差異）：`southbridge_nightfill_materials_verified=true`、`southbridge_nightfill_badfill_removed=false`；若事故前已用至少兩項獨立來源建立第二車換料責任，`southbridge_nightfill_receipt_traceable=true`，否則 `false`；`southbridge_nightfill_incident=true`。
+- 持久 state 變體 B（PC 主動毀去最後可用辨料／收料來源後仍強行復工）：`southbridge_nightfill_materials_verified=false`、`southbridge_nightfill_badfill_removed=false`、`southbridge_nightfill_receipt_traceable=false`、`southbridge_nightfill_incident=true`。
 
 ### `ending_id: southbridge-nightfill-abandon`｜夜修簿留在原頁
 - 角色卡顯示名稱：離開南橋夜修
 - 結算類型：任務放棄
-- 條件：PC 在沒有完成安全分料／交接前明確離開，且不留下可由晨班直接執行的辨料結果或隔離措施。GM 須先告知山務會安全封坡半日而非冒險強填。
-- 角色參與條件：按實際經歷；未完成一個核心場景者基礎歷練 0，已完成部分查驗但主動離場者最多 4 點並只給實際 tag。
-- 基礎歷練：0–4，依已完成核心事件；不得超過實際經歷。
+- 條件：PC 在沒有完成安全分料／交接前明確離開，且不留下可由晨班直接執行的辨料結果或隔離措施。GM 須先告知山務會安全封坡半日而非冒險強填。本預寫放棄 ending 只適用於離場前沒有另行成立可可靠歸因的傷害／脅迫重大後果；若已有，依正式結算規則建立 `derived:` 結局保存該已成立結果。
+- 角色參與條件與基礎歷練：若未完成任何核心場景，基礎歷練 0；若只完成場景一的值房核對後離場，江湖 1、計略 1（總計 2）；若已實質完成場景二或場景三其中一項材料／來源查驗，但尚未形成安全分料即離場，行旅 2、計略 2（總計 4）。不得加入角色未實際經歷的 tag。
 - 物質結果：0 兩；無應收未收。借用工具原地交還。
-- 俠名、惡名、【天嶽派】、【河洛道民間】：均 0.0xE，除非離場前另有已公開且可靠歸因的傷害／脅迫行為；該類額外世界後果由既有規則處理，不把放棄本身當道德扣分。
-- 持久 state：只保存離場前客觀已成立的 `southbridge_nightfill_*`；不得因放棄自動寫成已驗或已移除。
+- 俠名：0.0xE；惡名：0.0xE；【天嶽派】：0.0xE；【河洛道民間】：0.0xE。
+- 持久 state：只保存離場前正文已實際成立的值；未建立材料差異則 `southbridge_nightfill_materials_verified=false`；未隔離八號料則 `southbridge_nightfill_badfill_removed=false`；未建立逐車收料責任則 `southbridge_nightfill_receipt_traceable=false`；離場時尚未發生沉陷則不寫 `southbridge_nightfill_incident=true`。
 
 ## 12. 偏離與韌性
 - PC 一開始就要求兩車全退：山務可安全接受，但若未辨料，會額外封坡半日；玩家仍可達安全但未釐清的收束，不會被迫冒險使用材料。
@@ -272,7 +272,7 @@ R=21、中型，正常完整結局以基礎總歷練約 12 為校準點；差異
 - `<NPC#3>` 拒絕合作：正式簿、臨時送料條、兩堆位置與夜班工役仍能建立未登簿／未標待驗。
 - `<NPC#4>` 離場：兩堆實物、已填第一層與木籮殘料仍在。
 - PC 使用高輕功繞到坡外或料堆背面：可縮短接近與取得視角，但不能以輕功直接把未知材料品質變成已知。
-- PC 想用武力逼車行認帳：沒有物證時，威脅不能創造真實供詞；有物證時可阻止離場，但官面／山務後續仍按已成立證據處理。
+- PC 想用武力逼車行認帳：沒有物證時，威脅不能創造真實供詞；有物證時可阻止離場，但山務後續仍按已成立證據處理。
 - PC 毀掉所有文書：材料品質仍可查，但責任鏈變弱；若再失去人證，只能走安全分料而非由 GM 補造換料證據。
 - PC 先讓可安全的七號料繼續施工：只要八號已隔離且第一層已核對，可合法分段復工；不要求先把所有責任人處置完。
 
