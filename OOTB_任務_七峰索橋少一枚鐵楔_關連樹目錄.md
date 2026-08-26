@@ -18,6 +18,7 @@
 | 《外峰三道封橋牌有一道昨夜被翻回去了》 | `ootb-linked-tianyue-bridge-board-001` | 《北坡三張補簽頁有一張早了一刻》 | 後續／橋務交接與分流制度後果 | 非必要 |
 | 《南橋卸重棚少了一根記重木籤》 | `ootb-linked-tianyue-southbridge-load-tag-001` | 《外峰三道封橋牌有一道昨夜被翻回去了》 | 後續／南橋貨務與卸重交接後果 | 非必要 |
 | 《南橋雨後三條車道有一條先掛了放行牌》 | `ootb-linked-tianyue-southbridge-rainlane-001` | 《南橋卸重棚少了一根記重木籤》 | 後續／南橋貨流與雨後臨時車道交接後果 | 非必要 |
+| 《南橋夜修坡腳多了兩車未登記碎石》 | `ootb-linked-tianyue-southbridge-nightfill-001` | 《南橋雨後三條車道有一條先掛了放行牌》 | 後續／南橋雨後坡腳修補與夜間收料交接後果 | 非必要 |
 
 ## 關連圖
 
@@ -31,6 +32,7 @@
             └─→ 外峰三道封橋牌有一道昨夜被翻回去了
                 └─→ 南橋卸重棚少了一根記重木籤
                     └─→ 南橋雨後三條車道有一條先掛了放行牌
+                        └─→ 南橋夜修坡腳多了兩車未登記碎石
 ```
 
 ## 共同背景基線
@@ -42,6 +44,7 @@
 - 《外峰三道封橋牌…》只承接北坡補簽／見證制度留下的有效 state；其昨夜翻牌、護坡沖刷與本篇責任均為新事件，不回頭改判前作。
 - 《南橋卸重棚少了一根記重木籤》只承接前篇可保存的交接透明度、北坡重車封控與橋損 state；其失籤、位置牌誤掛、車具支點與責任均為新的南橋貨務事件，不把前篇任何翻牌人或橋損責任改判成本篇原因。
 - 《南橋雨後三條車道有一條先掛了放行牌》只承接南橋前篇可保存的木籤、交班、第三車處理與事故 state；其提前掛牌、第一車入道、排水堵塞與雨後土肩軟化均為新的候車坡事件，不回頭改判前作責任。
+- 《南橋夜修坡腳多了兩車未登記碎石》只承接雨後前篇可保存的交班、排水、重車限制與事故 state；其臨時補料、未登簿、混合料替換與夜班收料責任均為新的坡腳修補事件，不回頭改判前作責任。
 - 關連樹節點的任務定位、建議等級、R、規模與難度不要求相同。
 
 ## Branch／state 路由
@@ -55,6 +58,8 @@
 - 《南橋卸重棚少了一根記重木籤》可建立 `southbridge_loadtags_restored=true`、`southbridge_third_cart_rebalanced=true/false`、`southbridge_handoff_traceable=true/false`、`southbridge_load_incident=true`；只有正文 ending 實際成立時寫入，目錄不補造。
 - 《南橋雨後三條車道有一條先掛了放行牌》只直接讀取 `southbridge_loadtags_restored`、`southbridge_handoff_traceable`、`southbridge_third_cart_rebalanced`、`southbridge_load_incident`；它們只改核對耗時、交班可信度與山務對分流／試放的接受度，不改本篇責任或雨後土肩真相。
 - 《南橋雨後三條車道有一條先掛了放行牌》可建立 `southbridge_rainlane_handoff_clarified=true/false`（互斥，以最新合法 ending 為準）、`southbridge_rainlane_drained=true/false`、`southbridge_rainlane_heavy_restricted=true`、`southbridge_rainlane_incident=true`；只有正文 ending 實際成立時寫入。
+- 《南橋夜修坡腳多了兩車未登記碎石》只直接讀取上述四項 `southbridge_rainlane_*` state；它們只改交班核對、排水施工條件、測試方法與山務／車隊態度，不改本篇兩車材料品質、換料責任或收料真相。
+- 《南橋夜修坡腳多了兩車未登記碎石》可建立 `southbridge_nightfill_materials_verified=true/false`、`southbridge_nightfill_badfill_removed=true/false`、`southbridge_nightfill_receipt_traceable=true/false`、`southbridge_nightfill_incident=true`；只有正文 ending 與實際世界結果成立時寫入，不由目錄補造。
 - 《山務院…》支線與《外峰…》支線同屬一樹但不自動互斥；只有實際持久 state 衝突才限制先後。
 
 ## 主要 ending／state → 後續映射
@@ -66,7 +71,9 @@
 - 《南橋卸重棚少了一根記重木籤》的 `southbridge-loadtag-clear` 建立完整車次與交接 state；`southbridge-loadtag-safe-delay` 依實際處置保存第三車與交接狀態；`southbridge-loadtag-incident` 保存偏載事故及已成立交接；`southbridge-loadtag-abandon` 只保存離場前客觀成立內容。
 - 《南橋卸重棚少了一根記重木籤》任何 ending 或無紀錄都可進入《南橋雨後三條車道有一條先掛了放行牌》；只有實際存在的 `southbridge_*` state 形成 overlay，前作不是必要前置。
 - 《南橋雨後三條車道有一條先掛了放行牌》的 `southbridge-rainlane-clear` 建立交班釐清、排水處理與重車限制 state；`southbridge-rainlane-safe-only` 保存安全分流與未釐清交班；`southbridge-rainlane-incident` 保存雨後土肩事故與後續限制；`southbridge-rainlane-abandon` 只保存離場前客觀成立內容。
+- 《南橋雨後三條車道有一條先掛了放行牌》任何 ending 或無紀錄都可進入《南橋夜修坡腳多了兩車未登記碎石》；只有實際存在的 `southbridge_rainlane_*` state 形成 overlay，前作不是必要前置。
+- 《南橋夜修坡腳多了兩車未登記碎石》的 `southbridge-nightfill-traceable` 建立材料已驗、壞料已移除與逐車收料可追溯；`southbridge-nightfill-safe-only` 保存安全分料但收料責任未完全接上；`southbridge-nightfill-incident` 保存坡腳沉陷及實際已成立查驗 state；`southbridge-nightfill-abandon` 只保存離場前客觀成立內容。
 - 一個 ending 開啟後續不表示其他同樹節點互斥。
 
 ## 維護
-新增節點時同步更新本檔；劇本檔維持原路徑，不以搬檔表示樹成員資格。若後作直接讀取《南橋雨後三條車道有一條先掛了放行牌》的交班、排水、重車限制或事故 state，應把該篇列為直接來源；若只共享天嶽外峰背景，不構成直接關連。
+新增節點時同步更新本檔；劇本檔維持原路徑，不建立同名資料夾、不搬檔。目錄只索引正文已成立的直接邊、state 與共同背景，不創造新的前置或正史。
