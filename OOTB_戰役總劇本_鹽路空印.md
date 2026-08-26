@@ -3,11 +3,11 @@
 ## 戰役規格
 - 戰役名：鹽路空印
 - `campaign_id`: `ootb_campaign_empty_salt_seals_20260825`
-- 總劇本版本：1.1.0
-- 戰役狀態：連載中
-- 已正式發布階段：無
-- 本輪完成草稿階段：第一至第三階段；第四階段待完成
-- 當前規劃：共4階段
+- 總劇本版本：1.2.0
+- 戰役狀態：已完結
+- 已正式發布階段：第一至第四階段
+- 已完成階段：第一至第四階段
+- 當前規劃：共4階段（全數完成）
 - 共同起點：隴東道赤關以西的官鹽轉運線
 - 主要地理：隴東道赤關、九折關及東關商路沿線普通井堡／轉運站
 - 建議角色等級走向：8–14級
@@ -85,7 +85,7 @@
 - `campaign_progress`: 已正式結算階段數／4。
 
 ## 階段接口
-### 第一階段｜《井堡多出一車已驗官鹽》｜本輪完成
+### 第一階段｜《井堡多出一車已驗官鹽》｜已完成
 - `script_id`: `ootb_campaign_empty_salt_seals_01_20260825`
 - 檔名：`OOTB_戰役任務_鹽路空印(01)_井堡多出一車已驗官鹽.md`
 - 為甚麼現在：井堡盤秤發現一車票號正確但重量、封條次序不合。
@@ -97,7 +97,7 @@
   - `empty_salt_01_deputy_only`：只把副監定成單一責任、腳行鏈永久失去且玩家正式結案 → 提早戰役結局，`campaign_status=partly_completed`；玩家可見收束「帳平了一頁，路仍照走」。
   - `empty_salt_01_abandoned`：放棄且無可靠交接 → `failed`。
 
-### 第二階段｜《兩本腳行簿只差一筆車腳》｜本輪完成
+### 第二階段｜《兩本腳行簿只差一筆車腳》｜已完成
 - `script_id`: `ootb_campaign_empty_salt_seals_02_20260825`
 - 解鎖：第一階段結算時 `empty_salt_01_chain` AND `seal_mismatch_proved=true`；`porter_status` 可為任何值，因名冊、債據與腳夫口供有替代接口。
 - 為甚麼現在：第一階段留下的車次矛盾使鹽商開始收債並催最後兩批。
@@ -108,7 +108,7 @@
   - `empty_salt_02_cut_porter`：只切斷腳行但上游身份／路線永久失去 → 提早收束 `partly_completed`；玩家可見「空車停了，買路的人沒有名字」。
   - `empty_salt_02_abandoned`：`failed`。
 
-### 第三階段｜《九折關前有人先買走空車》｜本輪完成
+### 第三階段｜《九折關前有人先買走空車》｜已完成
 - `script_id`: `ootb_campaign_empty_salt_seals_03_20260825`
 - 解鎖：第二階段結算時 `empty_salt_02_upstream` AND `ledger_chain_exposed=true`。`porter_cooperating`不是必要條件；債據、車號與買家付款痕跡可替代。
 - 為甚麼現在：鹽商察覺鏈條曝光，開始撤走空車、底冊與可辨認印樣。
@@ -119,9 +119,9 @@
   - `empty_salt_03_merchant_stopped_no_record`：攔下鹽商但兩類制度證據永久失去 → `destroyed/none`，提早收束 `partly_completed`；玩家可見「人留下了，印從帳上消失」。
   - `empty_salt_03_abandoned`：`destroyed/none`、`failed`。
 
-### 第四階段｜《赤關盤鹽日》｜已規劃、待完成
+### 第四階段｜《赤關盤鹽日》｜已完成
 - `script_id`: `ootb_campaign_empty_salt_seals_04_20260825`
-- 預定檔名：`OOTB_戰役任務_鹽路空印(04)_赤關盤鹽日.md`
+- 檔名：`OOTB_戰役任務_鹽路空印(04)_赤關盤鹽日.md`
 - 解鎖：第三階段結算時已凍結 `empty_salt_03_records_saved`，且此前完整路線同時保存 `seal_mismatch_proved=true` AND `ledger_chain_exposed=true` AND `warehouse_record_status` 為 `intact` 或 `partial` AND `warehouse_record_detail!=none`。下一篇開局只載入該次結算已裁定的第四階段解鎖，不重新計算。
 - 為甚麼現在：月末盤鹽將把所有未核差額正式寫入官面；各方只能在盤點封冊前決定供詞、證物與責任切分。
 - 玩家介入：前三階段的正式查驗與保全紀錄令PC成為能把不同來源證物對回同一批次的人；官面請其在封冊前提交可核驗的責任分層。
