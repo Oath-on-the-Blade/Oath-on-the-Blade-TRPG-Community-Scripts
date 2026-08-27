@@ -22,6 +22,7 @@
 | 《南橋夜修坡腳多了兩車未登記碎石》 | `ootb-linked-tianyue-southbridge-nightfill-001` | 《南橋雨後三條車道有一條先掛了放行牌》 | 後續／南橋雨後坡腳修補與夜間收料交接後果 | 非必要 |
 | 《南橋晨運一輛藥車在坡口歪了半尺》 | `ootb-linked-tianyue-southbridge-medicine-cart-001` | 《南橋夜修坡腳多了兩車未登記碎石》 | 後續／南橋復路後晨運安全與貨車裝載責任 | 非必要 |
 | 《南橋午前兩輛空車在回轉坪頂住了》 | `ootb-linked-tianyue-southbridge-turning-yard-001` | 《南橋晨運一輛藥車在坡口歪了半尺》 | 後續／南橋晨運後回轉秩序與車具安全責任 | 非必要 |
+| 《南橋車作棚三根換下車轅有一根沒有裂口》 | `ootb-linked-tianyue-southbridge-shaft-rack-001` | 《南橋午前兩輛空車在回轉坪頂住了》 | 後續／南橋車具查驗與維修記錄責任 | 非必要 |
 
 ## 關連圖
 
@@ -39,6 +40,7 @@
                         └─→ 南橋夜修坡腳多了兩車未登記碎石
                             └─→ 南橋晨運一輛藥車在坡口歪了半尺
                                 └─→ 南橋午前兩輛空車在回轉坪頂住了
+                                    └─→ 南橋車作棚三根換下車轅有一根沒有裂口
 ```
 
 ## 共同背景基線
@@ -54,6 +56,7 @@
 - 《南橋夜修坡腳多了兩車未登記碎石》只承接雨後前篇可保存的交班、排水、重車限制與事故 state；其臨時補料、未登簿、混合料替換與夜班收料責任均為新的坡腳修補事件，不回頭改判前作責任。
 - 《南橋晨運一輛藥車在坡口歪了半尺》只承接夜修前篇可保存的材料查驗、壞料移除、收料追溯與沉陷事故 state；其藥車偏載、固定不足、車夫處置與晨運責任均為新事件，不回頭改判前作。
 - 《南橋午前兩輛空車在回轉坪頂住了》只承接晨運前篇可保存的藥車／藥貨保全、事故因果查明與「前作結束時」清路 state；其車轅舊裂、第二車自行入坪、值事事後翻牌與回轉坪責任均為新事件。若前作結束時未清路，本篇只在山務後來恢復正常晨運後發生，不把舊 state 偷改成相反值。
+- 《南橋車作棚三根換下車轅有一根沒有裂口》只承接回轉坪前篇可保存的清障、因果查明、放行交接與裂轅事故 state；其第三根舊轅隱藏榫肩鬆損、車作總單簡寫、私人尾款與本篇人員均為新事件，不回頭改判前作責任。前作 `cleared=false` 只表示前作結束時狀態，本篇發生在山務後來恢復正常貨運後。
 - 關連樹節點的任務定位、建議等級、R、規模與難度不要求相同。
 
 ## Branch／state 路由
@@ -75,6 +78,8 @@
 - 《南橋晨運一輛藥車在坡口歪了半尺》可建立 `southbridge_medicine_cart_saved=true/false`、`southbridge_medicine_cart_cause_traced=true/false`、`southbridge_medicine_cart_road_cleared=true/false`；只有正文 ending 與實際世界結果成立時寫入。
 - 《南橋午前兩輛空車在回轉坪頂住了》只直接讀取上述三項 `southbridge_medicine_cart_*` state；它們只改安全協調、責任核對與前作歷史背景，不改本篇車轅舊裂、第二車入坪或事後翻牌真相。前作 `road_cleared=false` 是前作結束時狀態，不永久封死後續世界時間。
 - 《南橋午前兩輛空車在回轉坪頂住了》可建立 `southbridge_turning_yard_cleared=true/false`、`southbridge_turning_yard_cause_traced=true/false`、`southbridge_turning_yard_handoff_clarified=true/false`、`southbridge_turning_yard_incident=true/false`；只按正文 ending 與實際世界結果寫入，不由目錄補造。
+- 《南橋車作棚三根換下車轅有一根沒有裂口》只直接讀取上述四項 `southbridge_turning_yard_*` state；它們只改安全試驗場地、行政核對、記錄取得與山務對冒險重用舊轅的容忍度，不改本篇第三根車轅隱藏榫肩鬆損或總單簡寫真相。
+- 《南橋車作棚三根換下車轅有一根沒有裂口》可建立 `southbridge_shaft_hidden_defect_verified=true/false`、`southbridge_shaft_record_corrected=true/false`、`southbridge_shaft_reuse_blocked=true`、`southbridge_shaft_dispute_unresolved=true/false`；只按正文 ending 與實際世界結果寫入，不由目錄補造。
 - 《山務院…》支線與《外峰…》支線同屬一樹但不自動互斥；只有實際持久 state 衝突才限制先後。
 
 ## 主要 ending／state → 後續映射
@@ -94,6 +99,8 @@
 - 《南橋晨運一輛藥車在坡口歪了半尺》的 `southbridge-medicine-cart-01` 保存藥車／主要藥貨、完整事故因果與清路；`southbridge-medicine-cart-02` 保存安全清路但責任未完全釐清；`southbridge-medicine-cart-03` 保存翻車／封路與事故前已成立查驗；`southbridge-medicine-cart-04` 只保存離場前客觀成立內容。
 - 《南橋晨運一輛藥車在坡口歪了半尺》任何 ending 或無紀錄都可進入《南橋午前兩輛空車在回轉坪頂住了》；只有實際存在的 `southbridge_medicine_cart_*` state 形成 overlay，前作不是必要前置；若前作結束時 `road_cleared=false`，本篇開場時間固定在山務後續恢復正常晨運之後。
 - 《南橋午前兩輛空車在回轉坪頂住了》的 `southbridge-turning-yard-cleared-traced` 建立回轉坪已清、三層因果已查明、放行更正完成且無裂轅事故；`southbridge-turning-yard-cleared-unresolved` 保存安全清路但完整因果未全明，放行更正按實際成立；`southbridge-turning-yard-forced-closure` 保存本篇結束時未清路，並按實際保存因果／放行查明與是否發生裂轅事故；`southbridge-turning-yard-abandon` 只保存離場前客觀成立內容。
+- 《南橋午前兩輛空車在回轉坪頂住了》任何 ending 或無紀錄都可進入《南橋車作棚三根換下車轅有一根沒有裂口》；只有實際存在的 `southbridge_turning_yard_*` state 形成 overlay，前作不是必要前置；若前作結束時 `cleared=false`，本篇固定在山務後續恢復正常貨運後發生。
+- 《南橋車作棚三根換下車轅有一根沒有裂口》的 `southbridge-shaft-rack-safe-record` 建立隱藏缺陷已覆核、記錄已更正、舊轅禁止直接重用且公共爭議已釐清；`southbridge-shaft-rack-safe-unresolved` 保存安全封存但至少一項查驗／記錄仍未全明；`southbridge-shaft-rack-seized` 保存山務接管與本篇結束前已成立查驗；`southbridge-shaft-rack-abandon` 只保存離場前客觀成立內容。
 - 一個 ending 開啟後續不表示其他同樹節點互斥。
 
 ## 維護
