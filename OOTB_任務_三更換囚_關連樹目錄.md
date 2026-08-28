@@ -15,6 +15,7 @@
 | 《鎖雁關外四車贖糧只夠三家》 | `ootb-linked-four-carts-redemption-grain-001` | 《三更換囚》 | 後續／分支承接 | 非必要；可獨立運行 |
 | 《斷柳坡雪化後多了九只官糧袋》 | `ootb-linked-duanliu-nine-grain-sacks-001` | 《鎖雁關外四車贖糧只夠三家》 | 後續／貨物流向延伸 | 非必要；可獨立運行 |
 | 《鎖雁關北倉十二石封糧少了一張退封票》 | `ootb-linked-suobei-north-granary-unseal-slip-001` | 《斷柳坡雪化後多了九只官糧袋》 | 後續／保管鏈延伸 | 非必要；可獨立運行 |
+| 《鎖雁關南驗棚三甕留樣有一甕封泥沒壓繩結》 | `ootb-linked-suobei-south-inspection-three-sample-jars-001` | 《鎖雁關北倉十二石封糧少了一張退封票》 | 後續／複驗與留樣保管鏈延伸 | 非必要；可獨立運行 |
 
 ## 關連圖
 
@@ -24,6 +25,7 @@
 └─→ 鎖雁關外四車贖糧只夠三家
     └─→ 斷柳坡雪化後多了九只官糧袋
         └─→ 鎖雁關北倉十二石封糧少了一張退封票
+            └─→ 鎖雁關南驗棚三甕留樣有一甕封泥沒壓繩結
 ```
 
 ## 共同背景基線
@@ -32,6 +34,7 @@
 - 《三更換囚》建立的換囚／軍糧案件只以實際存檔中的公開結果、責任認知與持續 state 帶入後作。
 - 《鎖雁關外四車贖糧只夠三家》之後，合法發出的空官糧袋可以進入民間流轉；《斷柳坡…》的核心真相是有人利用舊包材洗白另一批貨，不是把前作補糧重新定義成失竊。
 - 《鎖雁關北倉十二石封糧少了一張退封票》只在前作存檔實際保存相應封存貨物時才把十二石糧承接成同批貨；其他 ending 或無前作紀錄使用自身獨立封存批次，不令前作出關／失落／私下放行的貨物重新生成。
+- 《鎖雁關南驗棚三甕留樣有一甕封泥沒壓繩結》只在北倉前案 state 實際支持同批貨進入後續複驗時承接批次 provenance；否則使用自身獨立留樣批次。本篇固定真相不因前作 ending 改寫。
 
 ## Branch／state 路由
 
@@ -39,6 +42,7 @@
 - 《鎖雁關外四車…》可讀取《三更換囚》不同 ending，改變四車來源與公開責任背景，但不要求前作 NPC 必定存活或在場。
 - 《斷柳坡…》可讀取 `four-carts-all-live`、`four-carts-law-first`、`four-carts-snowbound`、`four-carts-private-seizure` 等已保存結果；只帶入實際成立的發糧量、物權與公開責任。
 - 《鎖雁關北倉十二石封糧少了一張退封票》直接讀取《斷柳坡…》ending：`nine-sacks-source-proved`／`nine-sacks-cart-held-source-unclear` 可令本篇十二石承接為同批封存貨；`nine-sacks-wrong-arrests`、`nine-sacks-cart-gone`、`nine-sacks-paid-passage`、`nine-sacks-abandoned` 等不保證該批貨入北倉，故使用本篇獨立批次，只帶入實際公開紀錄、辦案履歷與名譽。
+- 《鎖雁關南驗棚三甕留樣有一甕封泥沒壓繩結》直接讀取《鎖雁關北倉十二石封糧少了一張退封票》的 state：`north-granary-chain-cleared` 可在存檔另有批次依法進入後續複驗時承接同批 provenance；`north-granary-held-unclear` 可承接為待複驗批次但不得反推前案責任；`north-granary-clerk-blamed`、`north-granary-private-settlement-secret`、`north-granary-private-settlement-exposed`、`north-granary-records-lost`、`north-granary-abandoned` 預設使用本篇獨立批次，只按各自公開程度改變態度／背景。秘密私了不得因後作存在而自動揭露。
 - 同一來源 ending 若同時令多個後續成立，不因此自動互斥；後續能否先後遊玩只由實際 state 衝突決定。
 
 ## 本篇新增 state
@@ -51,7 +55,15 @@
 - `north-granary-private-settlement-secret`／`north-granary-private-settlement-exposed`：兩者互斥，分別表示私人放行未被共同消息網可靠歸因／已可靠公開歸因。
 - `north-granary-abandoned`：本篇被明確放棄。
 
-目前上述 state **不對應任何尚未交付的具名後續**；只保留給本樹未來任務作可驗證來源。目錄不得因此暗示已有新劇本或自動關閉其他無互斥條件的節點。
+《鎖雁關南驗棚三甕留樣有一甕封泥沒壓繩結》依實際 ending 保存：
+- `south-inspection-samples-cleared`：真留樣已保全，程序疏失與實際調換已能分辨。
+- `south-inspection-held-unclear`：車／甕已保全，但責任鏈仍待續查。
+- `south-inspection-kudian-blamed`：夜值庫工被錯扣責；不得升格成全樹共同正史。
+- `south-inspection-records-lost`：關鍵證物未能形成可交接鏈；若角色主動毀證且可確認，另存 `south-inspection-records-destroyed-by-pc=true`。
+- `south-inspection-private-settlement-secret`／`south-inspection-private-settlement-exposed`：兩者互斥，表示本篇私人放行未被／已被共同消息網可靠歸因。
+- `south-inspection-abandoned`：本篇被明確放棄。
+
+目前 `south-inspection-*` state **不對應任何尚未交付的具名後續**；只保留給本樹未來任務作可驗證來源。目錄不得因此暗示已有新劇本或自動關閉其他無互斥條件的節點。
 
 ## 維護
 
