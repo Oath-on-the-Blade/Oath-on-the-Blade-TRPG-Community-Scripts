@@ -16,6 +16,7 @@
 | 《斷柳坡雪化後多了九只官糧袋》 | `ootb-linked-duanliu-nine-grain-sacks-001` | 《鎖雁關外四車贖糧只夠三家》 | 後續／貨物流向延伸 | 非必要；可獨立運行 |
 | 《鎖雁關北倉十二石封糧少了一張退封票》 | `ootb-linked-suobei-north-granary-unseal-slip-001` | 《斷柳坡雪化後多了九只官糧袋》 | 後續／保管鏈延伸 | 非必要；可獨立運行 |
 | 《鎖雁關南驗棚三甕留樣有一甕封泥沒壓繩結》 | `ootb-linked-suobei-south-inspection-three-sample-jars-001` | 《鎖雁關北倉十二石封糧少了一張退封票》 | 後續／複驗與留樣保管鏈延伸 | 非必要；可獨立運行 |
+| 《鎖雁關東交割棚四車糧袋只有一車沒沾秤盤灰》 | `ootb-linked-suobei-east-transfer-four-carts-scale-dust-001` | 《鎖雁關南驗棚三甕留樣有一甕封泥沒壓繩結》 | 後續／複驗後交割與放行鏈延伸 | 非必要；可獨立運行 |
 
 ## 關連圖
 
@@ -26,6 +27,7 @@
     └─→ 斷柳坡雪化後多了九只官糧袋
         └─→ 鎖雁關北倉十二石封糧少了一張退封票
             └─→ 鎖雁關南驗棚三甕留樣有一甕封泥沒壓繩結
+                └─→ 鎖雁關東交割棚四車糧袋只有一車沒沾秤盤灰
 ```
 
 ## 共同背景基線
@@ -35,6 +37,7 @@
 - 《鎖雁關外四車贖糧只夠三家》之後，合法發出的空官糧袋可以進入民間流轉；《斷柳坡…》的核心真相是有人利用舊包材洗白另一批貨，不是把前作補糧重新定義成失竊。
 - 《鎖雁關北倉十二石封糧少了一張退封票》只在前作存檔實際保存相應封存貨物時才把十二石糧承接成同批貨；其他 ending 或無前作紀錄使用自身獨立封存批次，不令前作出關／失落／私下放行的貨物重新生成。
 - 《鎖雁關南驗棚三甕留樣有一甕封泥沒壓繩結》只在北倉前案 state 實際支持同批貨進入後續複驗時承接批次 provenance；否則使用自身獨立留樣批次。本篇固定真相不因前作 ending 改寫。
+- 《鎖雁關東交割棚四車糧袋只有一車沒沾秤盤灰》只在南驗棚存檔同時保存 `south-inspection-samples-cleared=true` 與該批貨依法完成複驗、進入後續交割的批次 receipt／provenance 時，才把四車視為同批後續交割；否則使用本篇獨立四車。無論入口如何，本篇固定真相均不因前作 ending 改寫。
 
 ## Branch／state 路由
 
@@ -43,6 +46,7 @@
 - 《斷柳坡…》可讀取 `four-carts-all-live`、`four-carts-law-first`、`four-carts-snowbound`、`four-carts-private-seizure` 等已保存結果；只帶入實際成立的發糧量、物權與公開責任。
 - 《鎖雁關北倉十二石封糧少了一張退封票》直接讀取《斷柳坡…》ending：`nine-sacks-source-proved`／`nine-sacks-cart-held-source-unclear` 可令本篇十二石承接為同批封存貨；`nine-sacks-wrong-arrests`、`nine-sacks-cart-gone`、`nine-sacks-paid-passage`、`nine-sacks-abandoned` 等不保證該批貨入北倉，故使用本篇獨立批次，只帶入實際公開紀錄、辦案履歷與名譽。
 - 《鎖雁關南驗棚三甕留樣有一甕封泥沒壓繩結》直接讀取《鎖雁關北倉十二石封糧少了一張退封票》的 state：`north-granary-chain-cleared` 可在存檔另有批次依法進入後續複驗時承接同批 provenance；`north-granary-held-unclear` 可承接為待複驗批次但不得反推前案責任；`north-granary-clerk-blamed`、`north-granary-private-settlement-secret`、`north-granary-private-settlement-exposed`、`north-granary-records-lost`、`north-granary-abandoned` 預設使用本篇獨立批次，只按各自公開程度改變態度／背景。秘密私了不得因後作存在而自動揭露。
+- 《鎖雁關東交割棚四車糧袋只有一車沒沾秤盤灰》直接讀取《鎖雁關南驗棚三甕留樣有一甕封泥沒壓繩結》的 state：`south-inspection-samples-cleared` 只有在另有同批貨已依法進入交割的 receipt／provenance 時承接同批；`south-inspection-held-unclear`、`south-inspection-records-lost`、`south-inspection-abandoned` 預設使用獨立批次並只改程序態度／成本；`south-inspection-kudian-blamed` 只在公開可知時影響普通庫工對承認程序失誤的戒心；`south-inspection-private-settlement-secret` 保持秘密，`south-inspection-private-settlement-exposed` 只按已公開紀錄與正式名譽影響初始態度。本篇真相不由前作 state 改寫。
 - 同一來源 ending 若同時令多個後續成立，不因此自動互斥；後續能否先後遊玩只由實際 state 衝突決定。
 
 ## 本篇新增 state
@@ -63,7 +67,14 @@
 - `south-inspection-private-settlement-secret`／`south-inspection-private-settlement-exposed`：兩者互斥，表示本篇私人放行未被／已被共同消息網可靠歸因。
 - `south-inspection-abandoned`：本篇被明確放棄。
 
-目前 `south-inspection-*` state **不對應任何尚未交付的具名後續**；只保留給本樹未來任務作可驗證來源。目錄不得因此暗示已有新劇本或自動關閉其他無互斥條件的節點。
+《鎖雁關東交割棚四車糧袋只有一車沒沾秤盤灰》依實際 ending 保存：
+- `east-transfer-chain-cleared`：丁車合法側秤、乙車秤後減載及三袋去向已形成可交接證據鏈。
+- `east-transfer-grain-held-unclear`：三袋／相關車輛已保全，但程序或責任仍有一部分待查。
+- `east-transfer-wrong-cart-blamed`：丁車合法側秤被錯判為主要舞弊來源；不得升格成全樹共同正史。
+- `east-transfer-records-lost`：本篇責任來源不足；若角色主動毀證且可確認，另保存 `east-transfer-records-destroyed-by-pc=true`。
+- `east-transfer-abandoned`：本篇被明確放棄。
+
+目前 `east-transfer-*` state **不對應任何尚未交付的具名後續**；只保留給本樹未來任務作可驗證來源。目錄不得因此暗示已有新劇本或自動關閉其他無互斥條件的節點。
 
 ## 維護
 
