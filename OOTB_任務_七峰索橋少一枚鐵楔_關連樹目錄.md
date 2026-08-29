@@ -24,6 +24,7 @@
 | 《南橋午前兩輛空車在回轉坪頂住了》 | `ootb-linked-tianyue-southbridge-turning-yard-001` | 《南橋晨運一輛藥車在坡口歪了半尺》 | 後續／南橋晨運後回轉秩序與車具安全責任 | 非必要 |
 | 《南橋車作棚三根換下車轅有一根沒有裂口》 | `ootb-linked-tianyue-southbridge-shaft-rack-001` | 《南橋午前兩輛空車在回轉坪頂住了》 | 後續／南橋車具查驗與維修記錄責任 | 非必要 |
 | 《南橋試車坡四道輪痕有一道逆著上坡》 | `ootb-linked-tianyue-southbridge-reverse-track-001` | 《南橋車作棚三根換下車轅有一根沒有裂口》 | 後續／南橋試車程序、坡道安全與記錄責任 | 非必要 |
+| 《南橋坡下回收坪三枚止輪楔有一枚插反了》 | `ootb-linked-tianyue-southbridge-recovery-chock-001` | 《南橋試車坡四道輪痕有一道逆著上坡》 | 後續／南橋回收坪止輪程序、車位交接與現場記錄責任 | 非必要 |
 
 ## 關連圖
 
@@ -43,6 +44,7 @@
                                 └─→ 南橋午前兩輛空車在回轉坪頂住了
                                     └─→ 南橋車作棚三根換下車轅有一根沒有裂口
                                         └─→ 南橋試車坡四道輪痕有一道逆著上坡
+                                            └─→ 南橋坡下回收坪三枚止輪楔有一枚插反了
 ```
 
 ## 共同背景基線
@@ -60,6 +62,7 @@
 - 《南橋午前兩輛空車在回轉坪頂住了》只承接晨運前篇可保存的藥車／藥貨保全、事故因果查明與「前作結束時」清路 state；其車轅舊裂、第二車自行入坪、值事事後翻牌與回轉坪責任均為新事件。若前作結束時未清路，本篇只在山務後來恢復正常晨運後發生，不把舊 state 偷改成相反值。
 - 《南橋車作棚三根換下車轅有一根沒有裂口》只承接回轉坪前篇可保存的清障、因果查明、放行交接與裂轅事故 state；其第三根舊轅隱藏榫肩鬆損、車作總單簡寫、私人尾款與本篇人員均為新事件，不回頭改判前作責任。前作 `cleared=false` 只表示前作結束時狀態，本篇發生在山務後來恢復正常貨運後。
 - 《南橋試車坡四道輪痕有一道逆著上坡》只承接車轅前篇可保存的隱藏缺陷覆核、記錄補正、舊轅封存與爭議狀態；其受控牽回、煞木間隙、雨後鬆石、試車簿簡寫與本篇人員均為新事件，不回頭改判前作車轅或私人價款責任。
+- 《南橋坡下回收坪三枚止輪楔有一枚插反了》只承接試車坡前篇可保存的輪痕原因、坡面修復、記錄補正與前作結束時封坡 state；其合格楔被誤拿、舊楔錯置、反向插楔、翻牌與解索覆核均為新的回收坪事件，不回頭改判前作牽回、煞木或鬆石責任。若前作 `southbridge_test_slope_closed=true`，本篇只在山務後續完成必要整修並恢復正常試放後發生。
 - 關連樹節點的任務定位、建議等級、R、規模與難度不要求相同。
 
 ## Branch／state 路由
@@ -85,6 +88,8 @@
 - 《南橋車作棚三根換下車轅有一根沒有裂口》可建立 `southbridge_shaft_hidden_defect_verified=true/false`、`southbridge_shaft_record_corrected=true/false`、`southbridge_shaft_reuse_blocked=true`、`southbridge_shaft_dispute_unresolved=true/false`；只按正文 ending 與實際世界結果寫入，不由目錄補造。
 - 《南橋試車坡四道輪痕有一道逆著上坡》只直接讀取上述四項 `southbridge_shaft_*` state；它們只改封線、簿冊取得、前作舊轅可用性與人物合作態度，不改本篇受控牽回、煞木間隙、雨後鬆石或簡寫真相。
 - 《南橋試車坡四道輪痕有一道逆著上坡》可建立 `southbridge_reverse_track_explained=true/false`、`southbridge_test_slope_repaired=true/false`、`southbridge_test_record_corrected=true/false`、`southbridge_test_slope_closed=true/false`；只按正文 ending 與實際世界結果寫入，不由目錄補造。
+- 《南橋坡下回收坪三枚止輪楔有一枚插反了》只直接讀取上述四項 `southbridge_*` 前作 state：它們只改封線態度、坡面可用背景、文書核對耗時與開場世界時點，不改本篇換楔、反向插楔、翻牌或覆核不足真相。
+- 《南橋坡下回收坪三枚止輪楔有一枚插反了》可建立 `southbridge_recovery_chock_swap_traced=true/false`、`southbridge_recovery_handoff_clarified=true/false`、`southbridge_recovery_bay_repaired=true/false`、`southbridge_recovery_bay_closed=true/false`；只按正文 ending 與實際世界結果寫入，不由目錄補造。
 - 《山務院…》支線與《外峰…》支線同屬一樹但不自動互斥；只有實際持久 state 衝突才限制先後。
 
 ## 主要 ending／state → 後續映射
@@ -108,6 +113,8 @@
 - 《南橋車作棚三根換下車轅有一根沒有裂口》的 `southbridge-shaft-rack-safe-record` 建立隱藏缺陷已覆核、記錄已更正、舊轅禁止直接重用且公共爭議已釐清；`southbridge-shaft-rack-safe-unresolved` 保存安全封存但至少一項查驗／記錄仍未全明；`southbridge-shaft-rack-seized` 保存山務接管與本篇結束前已成立查驗；`southbridge-shaft-rack-abandon` 只保存離場前客觀成立內容。
 - 《南橋車作棚三根換下車轅有一根沒有裂口》任何 ending 或無紀錄都可進入《南橋試車坡四道輪痕有一道逆著上坡》；只有實際存在的 `southbridge_shaft_*` state 形成 overlay，前作不是必要前置；`southbridge_shaft_reuse_blocked=true` 時本篇使用另一輛合格空車，不重生前作舊轅。
 - 《南橋試車坡四道輪痕有一道逆著上坡》的 `southbridge-reverse-track-cleared` 建立輪痕原因已說明、坡面／煞木已修、記錄已補正且試車坡重開；`southbridge-reverse-track-safe-delay` 保存安全封坡並按實際保存已成立查驗；`southbridge-reverse-track-seized` 保存山務接管與本篇結束前已成立結果；`southbridge-reverse-track-abandon` 只保存離場前客觀成立內容。
+- 《南橋試車坡四道輪痕有一道逆著上坡》任何 ending 或無紀錄都可進入《南橋坡下回收坪三枚止輪楔有一枚插反了》；只有實際存在的四項 `southbridge_*` state 形成 overlay，前作不是必要前置；若前作結束時 `southbridge_test_slope_closed=true`，本篇固定在山務後續完成整修並恢復正常試放後發生。
+- 《南橋坡下回收坪三枚止輪楔有一枚插反了》的 `southbridge-recovery-chock-cleared` 建立換楔鏈與交接鏈已釐清、第三車位已修復且重開；`southbridge-recovery-chock-safe-delay` 保存安全封位並按實際保存已成立查驗；`southbridge-recovery-chock-seized` 保存山務接管與本篇結束前已成立結果；`southbridge-recovery-chock-abandon` 只保存離場前客觀成立內容。
 - 一個 ending 開啟後續不表示其他同樹節點互斥。
 
 ## 維護
