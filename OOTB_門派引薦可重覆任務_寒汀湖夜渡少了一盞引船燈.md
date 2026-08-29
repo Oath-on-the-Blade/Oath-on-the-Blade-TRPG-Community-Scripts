@@ -4,7 +4,7 @@
 - 劇本名稱：寒汀湖夜渡少了一盞引船燈
 - `script_id`：`ootb-intro-repeat-shuanghua-lamp-001`
 - 劇本版本：2.0.2
-- 任務類別：入門引薦委託（非門派專用任務）
+- 任務類別：門派引薦可重覆任務（非門派專用任務）
 - 運行類別：可重覆任務
 - `replay_policy`：`repeatable`
 - 連續性：`independent`
