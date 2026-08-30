@@ -2,7 +2,7 @@
 
 ## 戰役規格頭
 - `campaign_id`: `ootb-campaign-reverse-tide-three-seals-001`
-- 總劇本版本：1.2.0
+- 總劇本版本：1.2.1
 - 戰役狀態：已完結。
 - 戰役共同起點：河洛道白沙河中游的白堤、南埠、回水倉與舊分洪閘一帶。
 - 主要地理範圍：同一河運小區域；各階段各自提供可直接運行的行程與整備資料。
@@ -12,7 +12,7 @@
   - 第 2 階段 `ootb-campaign-reverse-tide-three-seals-02`／`OOTB_戰役任務_逆潮三印(02)_南埠轉運單每張都多兩個針孔.md`
   - 第 3 階段 `ootb-campaign-reverse-tide-three-seals-03`／`OOTB_戰役任務_逆潮三印(03)_回水倉三張提貨票跳過同一號.md`
   - 第 4 階段 `ootb-campaign-reverse-tide-three-seals-04`／`OOTB_戰役任務_逆潮三印(04)_舊分洪閘兩把鑰匙只磨亮一把.md`
-- 本版完整內容先保存於 `campaign_in_progress`；合併 default 後，上述四階段即成為 repository 正式發布版本。若閱讀的是尚未合併的 branch，這句只描述發布時序，不改變內容完成狀態。
+- 上述四階段已正式合併 default，均為 repository 正式發布版本。
 - repository 總劇本只保存作者權威真相、actor、NPC registry、state 與承接規則；單桌實際姓名、傷亡、物件去向與已宣告承接結果由 `campaign_save` 保存，不回寫本檔。
 
 ## 1. 跨篇核心答案
