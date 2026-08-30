@@ -26,6 +26,7 @@
 | 《南橋試車坡四道輪痕有一道逆著上坡》 | `ootb-linked-tianyue-southbridge-reverse-track-001` | 《南橋車作棚三根換下車轅有一根沒有裂口》 | 後續／南橋試車程序、坡道安全與記錄責任 | 非必要 |
 | 《南橋坡下回收坪三枚止輪楔有一枚插反了》 | `ootb-linked-tianyue-southbridge-recovery-chock-001` | 《南橋試車坡四道輪痕有一道逆著上坡》 | 後續／南橋回收坪止輪程序、車位交接與現場記錄責任 | 非必要 |
 | 《南橋回收坪兩塊車位牌疊在同一格》 | `ootb-linked-tianyue-southbridge-bay-tag-001` | 《南橋坡下回收坪三枚止輪楔有一枚插反了》 | 後續／回收坪車位標示、交接與放車程序後果 | 非必要 |
+| 《南橋回收坪四根牽索有一根繫在舊環上》 | `ootb-linked-tianyue-southbridge-old-ring-001` | 《南橋回收坪兩塊車位牌疊在同一格》 | 後續／回收坪牽索固定點、退役器材與交接程序後果 | 非必要 |
 
 ## 關連圖
 
@@ -47,6 +48,7 @@
                                         └─→ 南橋試車坡四道輪痕有一道逆著上坡
                                             └─→ 南橋坡下回收坪三枚止輪楔有一枚插反了
                                                 └─→ 南橋回收坪兩塊車位牌疊在同一格
+                                                    └─→ 南橋回收坪四根牽索有一根繫在舊環上
 ```
 
 ## 共同背景基線
@@ -66,6 +68,7 @@
 - 《南橋試車坡四道輪痕有一道逆著上坡》只承接車轅缺陷覆核、記錄補正、舊轅封存與爭議 state；受控牽回、煞木間隙、雨後鬆石與試車簿簡寫為新事件。
 - 《南橋坡下回收坪三枚止輪楔有一枚插反了》只承接輪痕原因、坡面修復、記錄補正與前作結束時封坡 state；換楔、舊楔錯置、反向插楔、翻牌與解索覆核為新事件；若前作封坡，本篇在後續修復重開後發生。
 - 《南橋回收坪兩塊車位牌疊在同一格》只承接回收坪前篇的換楔查明、交接釐清、車位修復與前作結束時封位 state；其受潮晾牌、代掛、兩牌同翻、遠距催放與半解索均為新事件；若前作 `southbridge_recovery_bay_closed=true`，本篇在山務後續修復重開後發生。
+- 《南橋回收坪四根牽索有一根繫在舊環上》只承接前篇疊牌查明、交接釐清、車位重開與事故 state；退役舊環、未拆除、木箱占位、夜班臨時改掛與「四」字簡寫均為新事件；若前作 `southbridge_bay_tag_bays_reopened=false`，本篇在山務完成修復並恢復第三車位日常使用後發生。
 - 關連樹節點的任務定位、建議等級、R、規模與難度不要求相同。
 
 ## Branch／state 路由
@@ -83,6 +86,7 @@
 - 《南橋試車坡四道輪痕有一道逆著上坡》只讀 `southbridge_shaft_*`，並可建立 `southbridge_reverse_track_explained`、`southbridge_test_slope_repaired`、`southbridge_test_record_corrected`、`southbridge_test_slope_closed`。
 - 《南橋坡下回收坪三枚止輪楔有一枚插反了》只讀上述四項試車坡 state，並可建立 `southbridge_recovery_chock_swap_traced`、`southbridge_recovery_handoff_clarified`、`southbridge_recovery_bay_repaired`、`southbridge_recovery_bay_closed`。
 - 《南橋回收坪兩塊車位牌疊在同一格》只讀上述四項 `southbridge_recovery_*` state；它們只改現場保存態度、交接核對耗時與開場世界時點，不改本篇代掛、同翻、催放或半解索真相。可建立 `southbridge_bay_tag_stack_traced`、`southbridge_bay_tag_handoff_clarified`、`southbridge_bay_tag_bays_reopened`、`southbridge_bay_tag_incident`；只按正文 ending 與實際客觀結果寫入。
+- 《南橋回收坪四根牽索有一根繫在舊環上》只讀上述四項 `southbridge_bay_tag_*` state；它們只改現場保存態度、交接核對耗時與開場世界時點，不改本篇舊環退役、木箱占位、臨時改掛或簡寫誤讀真相。可建立 `southbridge_old_ring_retirement_traced`、`southbridge_old_ring_handoff_clarified`、`southbridge_old_ring_bay_reopened`、`southbridge_old_ring_incident`；只按正文 ending 與實際客觀結果寫入。
 - 《山務院…》支線與《外峰…》支線同屬一樹但不自動互斥；只有實際持久 state 衝突才限制先後。
 
 ## 主要 ending／state → 後續映射
@@ -99,7 +103,8 @@
 - 《南橋車作棚三根換下車轅有一根沒有裂口》各 ending 保存隱藏缺陷覆核、記錄更正、舊轅禁用、爭議或離場前內容；任何 ending 或無紀錄都可進《南橋試車坡四道輪痕有一道逆著上坡》。
 - 《南橋試車坡四道輪痕有一道逆著上坡》各 ending 保存輪痕原因、坡面修復、記錄補正、封坡或接管；任何 ending 或無紀錄都可進《南橋坡下回收坪三枚止輪楔有一枚插反了》，前作封坡只延後到修復重開後。
 - 《南橋坡下回收坪三枚止輪楔有一枚插反了》的 `southbridge-recovery-chock-cleared` 建立換楔鏈與交接鏈已釐清、第三車位已修復且重開；`southbridge-recovery-chock-safe-delay` 保存安全封位並按實際保存已成立查驗；`southbridge-recovery-chock-seized` 保存山務接管與本篇結束前已成立結果；`southbridge-recovery-chock-abandon` 只保存離場前客觀成立內容。任何 ending 或無紀錄都可進《南橋回收坪兩塊車位牌疊在同一格》；只有實際存在的 `southbridge_recovery_*` state 形成 overlay，前作不是必要前置，封位 state 只延後到後續修復重開後。
-- 《南橋回收坪兩塊車位牌疊在同一格》的 `southbridge-bay-tag-cleared` 建立疊牌鏈、交接鏈已釐清且兩車位重開；`southbridge-bay-tag-safe-delay` 保存安全封位並按實際保存已成立查驗；`southbridge-bay-tag-seized` 保存山務接管、是否發生側移險情與接管前已成立內容；`southbridge-bay-tag-abandon` 只保存離場前客觀成立內容。
+- 《南橋回收坪兩塊車位牌疊在同一格》的 `southbridge-bay-tag-cleared` 建立疊牌鏈、交接鏈已釐清且兩車位重開；`southbridge-bay-tag-safe-delay` 保存安全封位並按實際保存已成立查驗；`southbridge-bay-tag-seized` 保存山務接管、是否發生側移險情與接管前已成立內容；`southbridge-bay-tag-abandon` 只保存離場前客觀成立內容。任何 ending 或無紀錄都可進《南橋回收坪四根牽索有一根繫在舊環上》；只有實際存在的 `southbridge_bay_tag_*` state 形成 overlay，前作不是必要前置，封位 state 只延後到後續修復重開後。
+- 《南橋回收坪四根牽索有一根繫在舊環上》的 `southbridge-old-ring-cleared` 建立退役鏈、交接鏈已釐清且第三車位重開；`southbridge-old-ring-safe-delay` 保存安全封位並按實際保存已成立查驗；`southbridge-old-ring-seized` 保存山務接管、是否發生側移／傷人險情與接管前已成立內容；`southbridge-old-ring-abandon` 只保存離場前客觀成立內容。
 - 一個 ending 開啟後續不表示其他同樹節點互斥。
 
 ## 維護
