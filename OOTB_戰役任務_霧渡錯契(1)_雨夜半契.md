@@ -2,7 +2,7 @@
 
 ## 劇本規格
 - `script_id`: `ootb_campaign_mist_ferry_01_half_contract_20260831`
-- 劇本版本：1.0.3
+- 劇本版本：1.0.4
 - 戰役：`ootb_campaign_mist_ferry_false_contract_20260831`《霧渡錯契》；階段 1/4
 - 任務類別：一般任務；運行類別：一次性；`replay_policy: once_per_character`；連續性：`continuous`
 - 冒險分類：一般冒險；類型：渡口爭議／契據調查／限時止亂
@@ -111,7 +111,7 @@
 ### `E1_CHAIN_FOUND`｜角色卡顯示：半契有源
 - `ending_id`: `E1_CHAIN_FOUND`；角色卡顯示名稱：半契有源；結算類型：完成結局；可承接第2階段。
 - 條件：至少保全一半契；確認假契性質；並取得腳夫、樣紙或牙行收據鏈至少一項可追來源。
-- state：`half_contract_secured=one_half/both_halves`；`scribe_exposed=true`；`campaign_status=active`；`campaign_progress=1/4`。
+- state：`half_contract_secured=one_half/both_halves`；`scribe_exposed=true`；`scribe_status`依本篇實際狀態寫入 `free/cooperative/detained/fled/dead_or_unavailable`；`broker_status`依實際狀態寫入 `active/cooperative/detained/fled/unavailable`；`boatfolk_trust=high`；`campaign_status=active`；`campaign_progress=1/4`。
 - 基礎歷練：計略3、江湖1；基礎總歷練4。
 - 角色參與：完整4點需角色實際參與至少一項契據／來源核心調查，並參與渡口終局或來源鏈正式收束。若中途加入、離開、分隊或替補，只按實際參與推導：僅參與契據／來源調查者取得計略2；僅參與渡口止亂／終局者取得江湖1＋計略1；同時參與兩類者取得完整計略3＋江湖1。之後才作角色等級折算與個人加成。
 - 物質：老船戶群已支付整隊12兩共同委託金，`shared_asset_id=E1_CHAIN_FOUND_PAY`，可分割，由玩家決定分配；未達共識則維持共同持有。半契為共同戰役證物，由老船戶封存，PC僅具共同查核權、無私人所有權；借物歸還。
@@ -120,7 +120,7 @@
 ### `E1_ORDER_ONLY`｜角色卡顯示：渡口暫靜
 - `ending_id`: `E1_ORDER_ONLY`；角色卡顯示名稱：渡口暫靜；結算類型：部分完成結局；提早戰役結局。
 - 條件：避免大規模械鬥並恢復渡運，但兩半契全失且沒有可追源接口。
-- state：`half_contract_secured=none`；`scribe_exposed=false`；`campaign_status=partly_completed`；`campaign_progress=1/4`。
+- state：`half_contract_secured=none`；`scribe_exposed=false`；`scribe_status`與`broker_status`按本篇已實際成立狀態保存，未曾接觸或改變時分別採`free`與`active`；`boatfolk_trust=neutral`；`campaign_status=partly_completed`；`campaign_progress=1/4`。
 - 玩家可見收束：今夜的爭執散去，船重新離岸；幾日後又有人拿出相似舊契，但PC手上已沒有能追回來源的那條線。
 - 基礎歷練：江湖2、計略1；基礎總歷練3。
 - 角色參與：完整3點需實際參與至少一項爭議查核／調停，並參與止亂終局。中途加入／離開／替補若只參與前段查核取得計略1；只參與終局止亂取得江湖2；兩類皆參與取得完整江湖2＋計略1。之後才作角色等級折算與個人加成。
@@ -130,10 +130,10 @@
 ### `E1_ABANDON`｜角色卡顯示：雨裡散席
 - `ending_id`: `E1_ABANDON`；角色卡顯示名稱：雨裡散席；結算類型：放棄結局；提早戰役結局。
 - 條件：PC明確退出核心事件，或子時前拒絕再處理且沒有止亂安排。
-- state：`campaign_status=failed`；`campaign_progress=1/4`。
+- state：`scribe_status`與`broker_status`按本篇已實際成立狀態保存，未曾接觸或改變時分別採`free`與`active`；`boatfolk_trust=low`；`campaign_status=failed`；`campaign_progress=1/4`。
 - 基礎歷練：若角色本人已實際參與並完成可靠半契比對，取得計略1；否則0。中途加入、離開、分隊或替補一律按該角色實際完成的比對行動判定，不共享他人tag；之後才作角色等級折算與個人加成。
 - 物質：未取得委託酬勞；借物須歸還，遺失按世界內實價處理；沒有共同可分配新資產。
 - 社會名譽：俠名`0.0x E`；惡名`0.0x E`；無相對名譽變化。
 
 ## 下一階段承接
-只有`E1_CHAIN_FOUND`可承接《舊庫無名印》。GM在本篇正式結算時一次判定並寫入`campaign_save`；之後只載入已宣告結果，不追溯重算。
+只有`E1_CHAIN_FOUND`可承接《舊庫無名印》。GM在本篇正式結算時一次判定並寫入`campaign_save`；同時保存`scribe_status`、`broker_status`、`boatfolk_trust`與實際證物狀態；之後只載入已宣告結果，不追溯重算。
