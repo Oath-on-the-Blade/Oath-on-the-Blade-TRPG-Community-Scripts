@@ -29,6 +29,7 @@
 | 《南橋回收坪四根牽索有一根繫在舊環上》 | `ootb-linked-tianyue-southbridge-old-ring-001` | 《南橋回收坪兩塊車位牌疊在同一格》 | 後續／回收坪牽索固定點、退役器材與交接程序後果 | 非必要 |
 | 《南橋拆環棚三枚退役鐵環只掛了兩張去向牌》 | `ootb-linked-tianyue-southbridge-retired-rings-001` | 《南橋回收坪四根牽索有一根繫在舊環上》 | 後續／退役鐵件去向、樣件保留與拆環棚交接程序後果 | 非必要 |
 | 《南橋鐵作覆驗臺三張斷口拓紙有一張壓在廢料簿下》 | `ootb-linked-tianyue-southbridge-fracture-rubbing-001` | 《南橋拆環棚三枚退役鐵環只掛了兩張去向牌》 | 後續／鐵作覆驗、斷口比對與樣件交接程序後果 | 非必要 |
+| 《南橋封件櫃四張覆驗牌有一張掛在空格》 | `ootb-linked-tianyue-southbridge-seal-tag-001` | 《南橋鐵作覆驗臺三張斷口拓紙有一張壓在廢料簿下》 | 後續／覆驗封件、掛牌與交接程序後果 | 非必要 |
 
 ## 關連圖
 
@@ -53,6 +54,7 @@
                                                     └─→ 南橋回收坪四根牽索有一根繫在舊環上
                                                         └─→ 南橋拆環棚三枚退役鐵環只掛了兩張去向牌
                                                             └─→ 南橋鐵作覆驗臺三張斷口拓紙有一張壓在廢料簿下
+                                                                └─→ 南橋封件櫃四張覆驗牌有一張掛在空格
 ```
 
 ## 共同背景基線
@@ -72,9 +74,10 @@
 - 《南橋試車坡四道輪痕有一道逆著上坡》只承接車轅缺陷覆核、記錄補正、舊轅封存與爭議 state；受控牽回、煞木間隙、雨後鬆石與試車簿簡寫為新事件。
 - 《南橋坡下回收坪三枚止輪楔有一枚插反了》只承接輪痕原因、坡面修復、記錄補正與前作結束時封坡 state；換楔、舊楔錯置、反向插楔、翻牌與解索覆核為新事件；若前作封坡，本篇在後續修復重開後發生。
 - 《南橋回收坪兩塊車位牌疊在同一格》只承接回收坪前篇的換楔查明、交接釐清、車位修復與前作結束時封位 state；其受潮晾牌、代掛、兩牌同翻、遠距催放與半解索均為新事件；若前作 `southbridge_recovery_bay_closed=true`，本篇在山務後續修復重開後發生。
-- 《南橋回收坪四根牽索有一根繫在舊環上》只承接前篇疊牌查明、交接釐清、車位重開與事故 state；退役舊環、未拆除、木箱占位、夜班臨時改掛與「四」字簡寫均為新事件；若前作 `southbridge_bay_tag_bays_reopened=false`，本篇在山務完成修復並恢復第三車位日常使用後發生。
+- 《南橋回收坪四根牽索有一根繫在舊環上》只承接前篇疊牌查明、交接釐清、第三車位重開與事故 state；退役舊環、未拆除、木箱占位、夜班臨時改掛與「四」字簡寫均為新事件；若前作 `southbridge_bay_tag_bays_reopened=false`，本篇在山務完成修復並恢復第三車位日常使用後發生。
 - 《南橋拆環棚三枚退役鐵環只掛了兩張去向牌》只承接前篇退役鏈、交接釐清、第三車位重開與事故 state；另外兩枚退役鐵環、樣件覆驗、雨後晾牌、秤臺移件與按堆計數均為新事件；若前作 `southbridge_old_ring_bay_reopened=false`，本篇在山務完成修復、恢復第三車位並拆下舊環後發生。
 - 《南橋鐵作覆驗臺三張斷口拓紙有一張壓在廢料簿下》只承接前篇樣件識別、交接釐清、樣件保留與事故 state；三張拓紙、兩枚參照件、穿堂風、壓紙與錯誤比對均為新事件；若前作 `southbridge_retired_rings_sample_retained=false`，本篇在山務追回或重新取得可覆驗樣件後發生。
+- 《南橋封件櫃四張覆驗牌有一張掛在空格》只承接前篇拓紙／參照對應、交接釐清、樣件封存與事故 state；四張覆驗牌、屋漏移件、錯掛與今晨領件均為新事件；若前作 `southbridge_fracture_rubbing_sample_quarantined=false`，本篇在山務完成後續複核並重新建立可處理封件後發生。
 - 關連樹節點的任務定位、建議等級、R、規模與難度不要求相同。
 
 ## Branch／state 路由
@@ -95,6 +98,7 @@
 - 《南橋回收坪四根牽索有一根繫在舊環上》只讀上述四項 `southbridge_bay_tag_*` state；它們只改現場保存態度、交接核對耗時與開場世界時點，不改本篇舊環退役、木箱占位、臨時改掛或簡寫誤讀真相。可建立 `southbridge_old_ring_retirement_traced`、`southbridge_old_ring_handoff_clarified`、`southbridge_old_ring_bay_reopened`、`southbridge_old_ring_incident`；只按正文 ending 與實際客觀結果寫入。
 - 《南橋拆環棚三枚退役鐵環只掛了兩張去向牌》只讀上述四項 `southbridge_old_ring_*` state；它們只改拆除記錄完整度、晾牌核對耗時、器材領班可用性與山務扣車態度，不改本篇樣件覆驗、雨後取牌、秤臺移件或按堆計數真相。可建立 `southbridge_retired_rings_sample_identified`、`southbridge_retired_rings_handoff_clarified`、`southbridge_retired_rings_sample_retained`、`southbridge_retired_rings_incident`；只按正文 ending 與實際客觀結果寫入。
 - 《南橋鐵作覆驗臺三張斷口拓紙有一張壓在廢料簿下》只讀上述四項 `southbridge_retired_rings_*` state；它們只改送件來源可追溯性、記錄工合作、樣件是否可直接重拓與封件態度，不改本篇三張拓紙、參照件、壓紙或錯誤比對真相。可建立 `southbridge_fracture_rubbing_reference_matched`、`southbridge_fracture_rubbing_handoff_clarified`、`southbridge_fracture_rubbing_sample_quarantined`、`southbridge_fracture_rubbing_incident`；只按正文 ending 與實際客觀結果寫入。
+- 《南橋封件櫃四張覆驗牌有一張掛在空格》只讀上述四項 `southbridge_fracture_rubbing_*` state；它們只改逐件核對意願、記錄工合作、封件鏈完整度與封櫃態度，不改本篇屋漏移件、錯掛或領件真相。可建立 `southbridge_seal_tag_mapping_restored`、`southbridge_seal_tag_handoff_clarified`、`southbridge_seal_tag_c_tracked`、`southbridge_seal_tag_incident`；只按正文 ending 與實際客觀結果寫入。
 - 《山務院…》支線與《外峰…》支線同屬一樹但不自動互斥；只有實際持久 state 衝突才限制先後。
 
 ## 主要 ending／state → 後續映射
@@ -114,7 +118,8 @@
 - 《南橋回收坪兩塊車位牌疊在同一格》的 `southbridge-bay-tag-cleared` 建立疊牌鏈、交接鏈已釐清且兩車位重開；`southbridge-bay-tag-safe-delay` 保存安全封位並按實際保存已成立查驗；`southbridge-bay-tag-seized` 保存山務接管、是否發生側移險情與接管前已成立內容；`southbridge-bay-tag-abandon` 只保存離場前客觀成立內容。任何 ending 或無紀錄都可進《南橋回收坪四根牽索有一根繫在舊環上》；只有實際存在的 `southbridge_bay_tag_*` state 形成 overlay，前作不是必要前置，封位 state 只延後到後續修復重開後。
 - 《南橋回收坪四根牽索有一根繫在舊環上》的 `southbridge-old-ring-cleared` 建立退役鏈、交接鏈已釐清且第三車位重開；`southbridge-old-ring-safe-delay` 保存安全封位並按實際保存已成立查驗；`southbridge-old-ring-seized` 保存山務接管、是否發生側移／傷人險情與接管前已成立內容；`southbridge-old-ring-abandon` 只保存離場前客觀成立內容。任何 ending 或無紀錄都可進《南橋拆環棚三枚退役鐵環只掛了兩張去向牌》；只有實際存在的 `southbridge_old_ring_*` state 形成 overlay，前作不是必要前置，`bay_reopened=false` 只延後到後續修復、重開與拆環後。
 - 《南橋拆環棚三枚退役鐵環只掛了兩張去向牌》的 `southbridge-retired-rings-cleared` 建立樣件識別、交接鏈已釐清、樣件保留且無事故；`southbridge-retired-rings-safe-hold` 保存安全暫扣並按實際保存已成立查驗；`southbridge-retired-rings-seized` 保存山務接管、樣件是否仍保留與是否發生擦撞／污染／傷人；`southbridge-retired-rings-abandon` 只保存離場前客觀成立內容。任何 ending 或無紀錄都可進《南橋鐵作覆驗臺三張斷口拓紙有一張壓在廢料簿下》；只有實際存在的 `southbridge_retired_rings_*` state 形成 overlay，前作不是必要前置，`sample_retained=false` 只延後到追回或重新取得可覆驗樣件後。
-- 《南橋鐵作覆驗臺三張斷口拓紙有一張壓在廢料簿下》的 `southbridge-fracture-rubbing-cleared` 建立拓紙／參照對應、交接釐清、樣件封存且無事故；`southbridge-fracture-rubbing-safe-hold` 保存安全暫緩並按實際保存已成立查驗；`southbridge-fracture-rubbing-seized` 保存山務接管、樣件是否仍封存與是否發生毀證／傷人／污染；`southbridge-fracture-rubbing-abandon` 只保存離場前客觀成立內容。
+- 《南橋鐵作覆驗臺三張斷口拓紙有一張壓在廢料簿下》的 `southbridge-fracture-rubbing-cleared` 建立拓紙／參照對應、交接釐清、樣件封存且無事故；`southbridge-fracture-rubbing-safe-hold` 保存安全暫緩並按實際保存已成立查驗；`southbridge-fracture-rubbing-seized` 保存山務接管、樣件是否仍封存與是否發生毀證／傷人／污染；`southbridge-fracture-rubbing-abandon` 只保存離場前客觀成立內容。任何 ending 或無紀錄都可進《南橋封件櫃四張覆驗牌有一張掛在空格》；只有實際存在的 `southbridge_fracture_rubbing_*` state 形成 overlay，前作不是必要前置，`sample_quarantined=false` 只延後到山務完成後續複核並重新建立可處理封件後。
+- 《南橋封件櫃四張覆驗牌有一張掛在空格》的 `southbridge-seal-tag-cleared` 建立牌—封件對應、交接釐清、C持續追蹤且無事故；`southbridge-seal-tag-safe-hold` 保存安全封櫃並按實際保存已成立查驗；`southbridge-seal-tag-seized` 保存山務接管與事故前已成立內容；`southbridge-seal-tag-abandon` 只保存離場前客觀成立內容。
 - 一個 ending 開啟後續不表示其他同樹節點互斥。
 
 ## 維護
