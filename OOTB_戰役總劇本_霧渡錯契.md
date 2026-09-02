@@ -2,7 +2,7 @@
 
 ## 戰役規格
 - `campaign_id`: `ootb_campaign_mist_ferry_false_contract_20260831`
-- 總劇本版本：1.2.1
+- 總劇本版本：1.2.2
 - 戰役狀態：已完結
 - 已正式發布的階段劇本：
   1. `ootb_campaign_mist_ferry_01_half_contract_20260831`｜`OOTB_戰役任務_霧渡錯契(1)_雨夜半契.md`
@@ -154,7 +154,7 @@
 - 與跨篇真相接觸：末篇直接處理核心因果的最後兩節——「利用爭議暫收」與「代理提前承接」，不再留下新的自動續篇接口。
 - 可改變 state：最終 `campaign_status`、`campaign_progress=4/4`、`clerk_intent_proven`的最終官面採認結果、各NPC實際狀態及收件簿／內簿／代理供述的保存狀態。
 - `E4_ACCOUNTABLE`｜角色卡「渡權歸明」：責任鏈達標且代理提前承接被阻止；`completed (4/4)`；**末篇正式完成**。
-- `E4_PARTIAL`｜角色卡「渡口先穩」：保住渡運但責任鏈不足，或責任成立而程序未能當日完全恢復；`partly_completed (4/4)`；**末篇部分完成收束**，玩家可見渡運恢復／將恢復，但部分官面責任只留下正式疑點。
+- `E4_PARTIAL`｜角色卡「渡口先穩」：保住渡運但利用意圖責任鏈不足，或利用意圖責任鏈成立但程序未能當日恢復渡運；`partly_completed (4/4)`；**末篇部分完成收束**。前者保留正式疑點，後者保留已成立責任但承受三渡暫停至翌日的程序代價。
 - `E4_FORCE_BREAK`｜角色卡「公議散場」：暴力使公開程序與合法收束失敗；`failed (4/4)`；**末篇失敗收束**。
 - `E4_ABANDON`｜角色卡「未赴公議」：放棄；`failed (4/4)`；**末篇放棄收束**。
 - 末篇所有 ending 均直接收束，不再解鎖下一階段。
@@ -173,7 +173,7 @@
 - 第2 `E2_SOURCE_PROVEN` → 第3；其餘 `E2_LEAK_ONLY/E2_ABANDON` 立即按 `partly_completed/failed (2/4)` 收束。
 - 第3 `E3_INTENT_LINK` → 第4；其餘 `E3_BROKER_ONLY/E3_ABANDON` 立即按 `partly_completed/failed (3/4)` 收束。
 - 第4 `E4_ACCOUNTABLE`：跨篇責任、程序與渡運形成完整收束，`completed (4/4)`。
-- 第4 `E4_PARTIAL`：主要生活秩序有完成感，但官面意圖或程序結果只部分成立，`partly_completed (4/4)`。
+- 第4 `E4_PARTIAL`：利用意圖責任或渡運程序其中一邊只完成到部分狀態；已成立的責任不得因渡運未恢復而洗掉，未成立的責任亦不得因渡運恢復而視為已證明；`partly_completed (4/4)`。
 - 第4 `E4_FORCE_BREAK/E4_ABANDON`：`failed (4/4)`。
 - 所有承接資格均在前一篇正式結算時一次裁定並寫入 `campaign_save`；後篇開局只載入已宣告結果，不重新計算。
 - 每一桌的最終 NPC、證物、物品、官簿、謝儀與名譽結果以該篇正式結算寫入 `campaign_save`；總綱不追寫單桌結果。
