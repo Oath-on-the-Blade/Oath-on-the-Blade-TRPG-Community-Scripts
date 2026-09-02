@@ -2,10 +2,13 @@
 
 ## 戰役規格
 - `campaign_id`: `ootb_campaign_mist_ferry_false_contract_20260831`
-- 總劇本版本：1.0.0
+- 總劇本版本：1.0.1
 - 戰役狀態：連載中
-- 已正式發布的階段劇本：無（本輪將建立第1–3階段）
-- 當前規劃階段：共4階段；第4階段尚未撰寫
+- 已正式發布的階段劇本：
+  1. `ootb_campaign_mist_ferry_01_half_contract_20260831`｜`OOTB_戰役任務_霧渡錯契(1)_雨夜半契.md`
+  2. `ootb_campaign_mist_ferry_02_archive_seal_20260831`｜`OOTB_戰役任務_霧渡錯契(2)_舊庫無名印.md`
+  3. `ootb_campaign_mist_ferry_03_empty_boats_20260831`｜`OOTB_戰役任務_霧渡錯契(3)_兩艘空船.md`
+- 當前規劃中的下一階段：第4階段《重分渡權》（尚未撰寫）。
 - 共同起點：劍南道一處普通河谷渡鎮與上下游村落；不建立固定世界地標。
 - 預期等級走向：3–5級；R4；每篇3–5 PC；小型至中型。
 - repository 總劇本與單桌 `campaign_save` 分離；玩家實際姓名、死亡、失蹤、物品毀損、已宣告承接結果由 GM 結算保存，不寫回本總劇本。
@@ -60,11 +63,11 @@
 - 反應：若爭議惡化會停止夜渡；若玩家能拿出可核對的契據鏈，願意作證並維持臨時渡運。
 
 ## 戰役級 NPC registry
-1. `<NPC#1@戰役:霧渡錯契: 姓?-名?>`：退役書手；`actor_scribe`；首次規劃登場第1階段。
-2. `<NPC#2@戰役:霧渡錯契: 姓?-名?>`：河運牙人；`actor_broker`；首次規劃登場第1階段。
-3. `<NPC#3@戰役:霧渡錯契: 姓?-名?>`：地方胥吏；`actor_clerk`；首次規劃登場第2階段。
-4. `<NPC#4@戰役:霧渡錯契: 姓?-名?>`：老船戶代表；無獨立 actor_key，屬 `actor_boatfolk` 的具體跨篇人物；首次規劃登場第1階段。
-5. `<NPC#5@戰役:霧渡錯契: 姓?-名?>`：舊庫看守；首次規劃登場第2階段；功能為提供保管流程與接觸紀錄，不預設涉案。
+1. `<NPC#1@戰役:霧渡錯契: 姓?-名?>`：退役書手；`actor_scribe`；首次規劃／正式登場第1階段；`script_id=ootb_campaign_mist_ferry_01_half_contract_20260831`。
+2. `<NPC#2@戰役:霧渡錯契: 姓?-名?>`：河運牙人；`actor_broker`；首次規劃／正式登場第1階段；`script_id=ootb_campaign_mist_ferry_01_half_contract_20260831`。
+3. `<NPC#3@戰役:霧渡錯契: 姓?-名?>`：地方胥吏；`actor_clerk`；首次規劃／正式登場第2階段；`script_id=ootb_campaign_mist_ferry_02_archive_seal_20260831`。
+4. `<NPC#4@戰役:霧渡錯契: 姓?-名?>`：老船戶代表；無獨立 actor_key，屬 `actor_boatfolk` 的具體跨篇人物；首次規劃／正式登場第1階段；`script_id=ootb_campaign_mist_ferry_01_half_contract_20260831`。
+5. `<NPC#5@戰役:霧渡錯契: 姓?-名?>`：舊庫看守；首次規劃／正式登場第2階段；`script_id=ootb_campaign_mist_ferry_02_archive_seal_20260831`；功能為提供保管流程與接觸紀錄，不預設涉案。
 
 ## Campaign state
 - `half_contract_secured`: `none / one_half / both_halves`
@@ -81,7 +84,11 @@
 
 ## 階段接口
 
-### 第1階段《雨夜半契》｜狀態：本輪撰寫
+### 第1階段《雨夜半契》｜狀態：已發布
+- `script_id`: `ootb_campaign_mist_ferry_01_half_contract_20260831`
+- 正式檔名：`OOTB_戰役任務_霧渡錯契(1)_雨夜半契.md`
+- 輸入 state：第一階段，無前篇 state。
+- 直接使用戰役 NPC：NPC#1、#2、#4。
 - 為何現在發生：一份假契在爭執中被撕成兩半，真假爭議首次公開。
 - 玩家介入理由：老船戶代表請PC在天亮前避免雙方械鬥並查明半契來源。
 - 局部目標：保住人證與半契、確認契據不是單純「一真一假」的表面爭執、找到書手線索。
@@ -92,8 +99,11 @@
   - `E1_ORDER_ONLY`：止住衝突但證物全失、無書手線索；提早戰役結局，`campaign_status=partly_completed`，`campaign_progress=1/4`；玩家可見收束「渡口暫靜」：眼前械鬥平息、渡運恢復，但幾日後更多舊契出現，PC沒有足以合法追查的來源接口。
   - `E1_ABANDON`：放棄；提早結局，`campaign_status=failed`。
 
-### 第2階段《舊庫無名印》｜狀態：本輪撰寫
+### 第2階段《舊庫無名印》｜狀態：已發布
+- `script_id`: `ootb_campaign_mist_ferry_02_archive_seal_20260831`
+- 正式檔名：`OOTB_戰役任務_霧渡錯契(2)_舊庫無名印.md`
 - 解鎖條件：第1階段 `E1_CHAIN_FOUND` AND `scribe_exposed=true`；來源僅第1階段。
+- 直接使用戰役 NPC：NPC#3、#4、#5；NPC#1可由 state 決定是否出現。
 - 為何現在發生：PC追到書手紙料／印樣來源，舊庫保管流程出現缺口。
 - 玩家介入理由：已有前篇證據鏈，且書手或其物證能指向舊庫規格。
 - 局部目標：核對舊印樣接觸鏈、保全舊庫、分辨制度疏漏與故意外流。
@@ -104,8 +114,11 @@
   - `E2_LEAK_ONLY`：只證明舊庫有漏洞、無法把來源指向胥吏；提早 `partly_completed (2/4)`；玩家可見收束「封庫止漏」：舊庫被封、眼前偽造渠道被切斷，但誰在利用漏洞仍無可追接口。
   - `E2_ABANDON`：放棄；`failed`。
 
-### 第3階段《兩艘空船》｜狀態：本輪撰寫
+### 第3階段《兩艘空船》｜狀態：已發布
+- `script_id`: `ootb_campaign_mist_ferry_03_empty_boats_20260831`
+- 正式檔名：`OOTB_戰役任務_霧渡錯契(3)_兩艘空船.md`
 - 解鎖條件：第1階段 `scribe_exposed=true` AND 第2階段 `seal_source_known=true`；若書手已不可用，必須有保存的樣紙或紙料來源；AND/OR：`scribe_status=cooperative OR half_contract_secured!=none OR 第2階段已取得印樣比對記錄`。
+- 直接使用戰役 NPC：NPC#2、#4；NPC#1/#3依 state 與玩家行動可能被引用或對質。
 - 為何現在發生：牙人得知舊庫被查，開始回收未使用假契，兩艘租船被清空準備轉移契紙。
 - 玩家介入理由：前兩篇已建立假契與印樣鏈，船戶願提供租船去向。
 - 局部目標：保全未用契紙與牙人交易記錄、阻止證據被分散、確認牙人是否知道官面利益。
