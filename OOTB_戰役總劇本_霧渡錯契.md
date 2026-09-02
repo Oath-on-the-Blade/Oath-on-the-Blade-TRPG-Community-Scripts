@@ -2,7 +2,7 @@
 
 ## 戰役規格
 - `campaign_id`: `ootb_campaign_mist_ferry_false_contract_20260831`
-- 總劇本版本：1.2.0
+- 總劇本版本：1.2.1
 - 戰役狀態：已完結
 - 已正式發布的階段劇本：
   1. `ootb_campaign_mist_ferry_01_half_contract_20260831`｜`OOTB_戰役任務_霧渡錯契(1)_雨夜半契.md`
@@ -10,7 +10,7 @@
   3. `ootb_campaign_mist_ferry_03_empty_boats_20260831`｜`OOTB_戰役任務_霧渡錯契(3)_兩艘空船.md`
   4. `ootb_campaign_mist_ferry_04_ferry_rights_20260902`｜`OOTB_戰役任務_霧渡錯契(4)_重分渡權.md`
 - 當前規劃中的下一階段：無；戰役於第4階段正式收束。
-- 共同起點：劍南道一處普通河谷渡鎮與上下游村落；不建立固定世界地標。
+- 共同起點：巴蜀道一處普通河谷渡鎮與上下游村落；不建立固定世界地標。
 - 預期等級走向：3–5級；R4；每篇3–5 PC；小型至中型。
 - 共用世界基準：Handbook 世界知識庫之時代／地理基準；本戰役渡鎮、人物與渡權均為局部劇本事實。
 - repository 總劇本與單桌 `campaign_save` 分離；實際姓名、死亡、失蹤、物品毀損及已宣告承接結果只由 GM 存檔保存。
