@@ -2,7 +2,7 @@
 
 ## 戰役規格
 - `campaign_id`: `ootb_campaign_mist_ferry_false_contract_20260831`
-- 總劇本版本：1.1.0
+- 總劇本版本：1.2.0
 - 戰役狀態：已完結
 - 已正式發布的階段劇本：
   1. `ootb_campaign_mist_ferry_01_half_contract_20260831`｜`OOTB_戰役任務_霧渡錯契(1)_雨夜半契.md`
@@ -57,21 +57,26 @@
 ### `actor_clerk`｜地方胥吏
 - 戰役 NPC：`<NPC#3@戰役:霧渡錯契: 姓?-名?>`
 - 知道：印樣外流、牙人用假契、家族舊份額、代理安排。
+- 不知道：玩家會保全哪一組物證與見證。
 - 利益：令現有渡權顯得混亂，促成暫收與重分，同時維持表面清白。
+- 當前計畫：在契據爭議擴大時先推動封存／暫收，再令遠房姻親代理參與重分。
 - 資源／限制：舊庫接觸權、初驗程序、人情；不能公開改寫已登記日期，直接提供印樣若被證明風險極高。
 - 反應：`seal_source_known=true` 時先封庫；第3階段意圖鏈逼近時提前推動暫收；代理提前投件曝光後轉為程序拖延。
 
 ### `actor_boatfolk`｜受影響船戶群體
 - 抽象 actor，無 NPC key。
+- 知道：近期舊契壓價、渡運收入與船戶間實際輪值。
+- 不知道：開局時不知道仿契來源與胥吏家族安排。
 - 利益：保住合法渡運收入與通行秩序。
+- 資源／限制：船隻、輪值表、地方見證；內部意見不一，無權自行改官簿。
 - 反應：爭議惡化時停夜渡；證據鏈清楚時願作證並維持臨時輪渡。
 
 ## 戰役級 NPC registry
-1. `<NPC#1@戰役:霧渡錯契: 姓?-名?>`：退役書手；`actor_scribe`；首次正式登場第1階段。
-2. `<NPC#2@戰役:霧渡錯契: 姓?-名?>`：河運牙人；`actor_broker`；首次正式登場第1階段。
-3. `<NPC#3@戰役:霧渡錯契: 姓?-名?>`：地方胥吏；`actor_clerk`；首次正式登場第2階段。
-4. `<NPC#4@戰役:霧渡錯契: 姓?-名?>`：老船戶代表；屬 `actor_boatfolk` 的具體跨篇人物；首次正式登場第1階段。
-5. `<NPC#5@戰役:霧渡錯契: 姓?-名?>`：舊庫看守；首次正式登場第2階段；提供保管流程與接觸紀錄，不預設涉案。
+1. `<NPC#1@戰役:霧渡錯契: 姓?-名?>`：退役書手；`actor_scribe`；首次規劃／正式登場第1階段；`script_id=ootb_campaign_mist_ferry_01_half_contract_20260831`。
+2. `<NPC#2@戰役:霧渡錯契: 姓?-名?>`：河運牙人；`actor_broker`；首次規劃／正式登場第1階段；`script_id=ootb_campaign_mist_ferry_01_half_contract_20260831`。
+3. `<NPC#3@戰役:霧渡錯契: 姓?-名?>`：地方胥吏；`actor_clerk`；首次規劃／正式登場第2階段；`script_id=ootb_campaign_mist_ferry_02_archive_seal_20260831`。
+4. `<NPC#4@戰役:霧渡錯契: 姓?-名?>`：老船戶代表；屬 `actor_boatfolk` 的具體跨篇人物；首次規劃／正式登場第1階段；`script_id=ootb_campaign_mist_ferry_01_half_contract_20260831`。
+5. `<NPC#5@戰役:霧渡錯契: 姓?-名?>`：舊庫看守；首次規劃／正式登場第2階段；`script_id=ootb_campaign_mist_ferry_02_archive_seal_20260831`；提供保管流程與接觸紀錄，不預設涉案。
 - 上述編號永久保留；任何桌次實際姓名與例外狀態由 `campaign_save` 保存。
 
 ## Campaign state
@@ -86,49 +91,72 @@
 - `boatfolk_trust`: `low / neutral / high`
 - `campaign_status`: `active / partly_completed / failed / completed`
 - `campaign_progress`: 已正式結算階段數/4。
+- 具體證物（半契、樣紙／合法覆紙、薄冊、初驗副記或等價雙來源、收件簿／內簿抄錄）的存在、毀損、封存與保管者均由每篇結算寫入 `campaign_save`；證物狀態不是以缺省值自動恢復。
 
 ## 階段接口
 ### 第1階段《雨夜半契》｜已發布
 - `script_id`: `ootb_campaign_mist_ferry_01_half_contract_20260831`
-- 輸入：第一階段，無前篇 state。
-- NPC：#1、#2、#4。
-- 局部真相：兩半來自同一份假契；持契雙方均非偽造者。
-- 輸出：`half_contract_secured`、`scribe_exposed`、`boatfolk_trust`。
-- `E1_CHAIN_FOUND`：至少一半契＋書手線索 → 可承接第2階段，`active`。
-- `E1_ORDER_ONLY`：止衝突但證物與書手線索全失 → 提早 `partly_completed (1/4)`。
-- `E1_ABANDON`：放棄 → `failed`。
+- 正式檔名：`OOTB_戰役任務_霧渡錯契(1)_雨夜半契.md`
+- 輸入 state：第一階段，無前篇 state。
+- 直接使用戰役 NPC：#1、#2、#4。
+- 為何現在發生：一份已在渡價爭議中使用的仿舊契於雨夜對質時被撕成兩半，兩方約定子時再聚；若不處理，停渡與械鬥會在當夜發生。
+- 玩家介入理由：#4老船戶代表需要不屬爭議兩方的外來俠客在子時前保住秩序與證物，並以12兩／9兩分級委託金正式請PC介入。
+- 本篇獨立目標：確認半契真假與持契雙方責任、避免公開衝突、在可能時建立可追來源。
+- 局部真相：兩半來自同一份假契；持契貨主與年輕船戶都不是偽造者；書手為錢仿契，牙人是買家。
+- 與跨篇真相接觸：首次建立書手—牙人供應接口；本篇不揭露胥吏印樣外流與家族目的。
+- 可改變 state：`half_contract_secured`、`scribe_exposed`、`scribe_status`、`broker_status`、`boatfolk_trust`、`campaign_status`、`campaign_progress`及半契／樣紙／收據等實際證物狀態。
+- `E1_CHAIN_FOUND`｜角色卡「半契有源」：保住至少一半契、確認假契並取得可追來源；`active (1/4)`；**可承接 → 第2階段**。第1階段結算時一次保存實際 `scribe_status/broker_status/boatfolk_trust` 與證物；第2階段不重算。
+- `E1_ORDER_ONLY`｜角色卡「渡口暫靜」：止住衝突但證物與追源接口全失；`partly_completed (1/4)`；**提早戰役結局**。玩家可見收束：今夜渡運恢復，幾日後仍有相似舊契出現，但PC已沒有合法追源接口；第2–4階段不再自動發生於本桌戰役。
+- `E1_ABANDON`｜角色卡「雨裡散席」：放棄；`failed (1/4)`；**提早戰役結局**。玩家可見收束：PC退出後爭議按當夜世界狀態自行發展，已查得內容仍成立，但戰役不再自動續開。
 
 ### 第2階段《舊庫無名印》｜已發布
 - `script_id`: `ootb_campaign_mist_ferry_02_archive_seal_20260831`
-- 解鎖：第1 `E1_CHAIN_FOUND` AND `scribe_exposed=true`。
-- NPC：#3、#4、#5；#1依 state。
-- 局部真相：看守失職但非主謀；胥吏曾抄存印樣。
-- 輸出：`seal_source_known`、`old_archive_status`、`clerk_intent_proven` 初步狀態。
-- `E2_SOURCE_PROVEN`：印樣接觸鏈指向胥吏 → 可承接第3階段，`active`。
-- `E2_LEAK_ONLY`：只證明制度漏洞 → 提早 `partly_completed (2/4)`。
-- `E2_ABANDON`：放棄 → `failed`。
+- 正式檔名：`OOTB_戰役任務_霧渡錯契(2)_舊庫無名印.md`
+- 階段解鎖：第1階段正式 ending=`E1_CHAIN_FOUND` **AND** `scribe_exposed=true`；來源全部來自第1階段正式結算與已宣告承接。
+- 輸入 state／證物：`half_contract_secured`、`scribe_exposed=true`、`scribe_status`、`boatfolk_trust`，以及第1階段保存的半契／樣紙／牙行收據鏈／腳夫口信等至少一項可用來源證據。
+- 直接使用戰役 NPC：#3、#4、#5；#1依 `scribe_status` 可出現或以證物代替。
+- 為何現在發生：第1階段的可追來源指出仿契版式可與舊庫廢止印樣核對，而舊庫申末即封；胥吏在得知有人查契後會收緊閱卷。
+- 玩家介入理由：PC已掌握上一階段正式證據鏈且由#4取得合法查核窗口，是能把假契版式與舊庫接觸記錄接起來的一方。
+- 本篇獨立目標：在封庫前確認假契版式來源、區分看守失職與故意外流責任並保存合法比對資料。
+- 局部真相：#5看守失職但不是主謀；#3胥吏曾利用疏漏抄存印樣規格並外流。
+- 與跨篇真相接觸：把假契供應鏈第一次連到官面印樣接觸，但本篇尚不證明胥吏利用混亂重分渡權的完整目的。
+- 可改變 state：`seal_source_known`、`old_archive_status`、`clerk_intent_proven`初步值、`campaign_status`、`campaign_progress`及合法覆紙／值簿紀錄等證物狀態。
+- `E2_SOURCE_PROVEN`｜角色卡「印從庫出」：印樣接觸與外流合理指向胥吏個人；`active (2/4)`；**可承接 → 第3階段**。第2階段結算時保存 `seal_source_known=true`、實際 `old_archive_status` 與合法比對件。
+- `E2_LEAK_ONLY`｜角色卡「封庫止漏」：只證明制度漏洞並封止，無法合理指向個人；`partly_completed (2/4)`；**提早戰役結局**。玩家可見收束：舊庫重新封好，假契來源被截斷一部分，但個人外流責任沒有足夠接口再追；第3–4階段不再自動發生。
+- `E2_ABANDON`｜角色卡「庫門先閉」：放棄；`failed (2/4)`；**提早戰役結局**。玩家可見收束：庫門按程序關閉，已成立的查核仍保留，但本桌不再宣告下一階段。
 
 ### 第3階段《兩艘空船》｜已發布
 - `script_id`: `ootb_campaign_mist_ferry_03_empty_boats_20260831`
-- 解鎖：第1 `scribe_exposed=true` AND 第2 `seal_source_known=true` AND (`scribe_status=cooperative` OR `half_contract_secured!=none` OR 第2階段已有印樣比對記錄)。
-- NPC：#2、#4；#1/#3依 state。
-- 局部真相：牙人牟利成立但不知完整家族目的；初驗副記或等價來源能把故意放行接到官面意圖。
-- 輸出：`broker_network_exposed`、`broker_status`、`clerk_intent_proven`。
-- `E3_INTENT_LINK`：副記或等價雙來源建立意圖鏈 → 可承接第4階段，`active`。
-- `E3_BROKER_ONLY`：只坐實牙人牟利 → 提早 `partly_completed (3/4)`。
-- `E3_ABANDON`：放棄 → `failed`。
+- 正式檔名：`OOTB_戰役任務_霧渡錯契(3)_兩艘空船.md`
+- 階段解鎖：第1 `scribe_exposed=true` **AND** 第2正式 ending=`E2_SOURCE_PROVEN` **AND** `seal_source_known=true` **AND** (`scribe_status=cooperative` **OR** `half_contract_secured!=none` **OR** 第2階段已保存可辨識假契規格的合法印樣比對記錄)。每個因子均來自第1–2階段正式結算；第2階段結算時一次裁定完整路線。
+- 輸入 state／證物：`half_contract_secured`、`scribe_status`、`broker_status`、`seal_source_known=true`、`old_archive_status`與前篇保存的合法比對件／樣紙。
+- 直接使用戰役 NPC：#2、#4；#1/#3按 state／既有證據可被引用，不要求本人在場。
+- 為何現在發生：第2階段外流來源被追到後，牙人察覺風險並在一夜間清空兩艘租船，開始回收／毀棄剩餘假契與交易紀錄。
+- 玩家介入理由：PC是已掌握前兩篇比對基準、又由船戶告知空船異狀的一方，只有他們能在日落前把回收行為與既有外流鏈交叉。
+- 本篇獨立目標：追查兩艘空船搬運物、保全牙人交易證據，判斷牙人責任並確認官面故意放行是否有雙來源支持。
+- 局部真相：牙人確實利用假契牟利並回收證物，但不知道胥吏完整家族目的；初驗副記或等價來源能證明胥吏曾故意放過明顯異常契。
+- 與跨篇真相接觸：首次建立「外流印樣＋故意放行」的官面意圖鏈，足以令胥吏提前推動末篇暫收／重分計畫。
+- 可改變 state：`broker_network_exposed`、`broker_status`、`clerk_intent_proven`、`campaign_status`、`campaign_progress`及薄冊／假契殘件／初驗副記或等價雙來源的證物狀態。
+- `E3_INTENT_LINK`｜角色卡「過驗有痕」：坐實牙人牟利，並以至少兩個獨立來源證明胥吏故意放行異常契；`active (3/4)`；**可承接 → 第4階段**。結算時一次保存 `clerk_intent_proven=true` 與實際等價證據鏈。
+- `E3_BROKER_ONLY`｜角色卡「假契止於河面」：只坐實牙人網路，官面意圖鏈不足；`partly_completed (3/4)`；**提早戰役結局**。玩家可見收束：假契買賣鏈被拆開、正常渡價逐步恢復，但官面那道放行手續只留下無法追進下一場重查的空白；第4階段不再自動發生。
+- `E3_ABANDON`｜角色卡「空船順流」：放棄；`failed (3/4)`；**提早戰役結局**。玩家可見收束：已保全證物仍成立，但關鍵紙證按實際狀態離開／毀損，戰役不再自動進末篇。
 
 ### 第4階段《重分渡權》｜已發布，末篇
 - `script_id`: `ootb_campaign_mist_ferry_04_ferry_rights_20260902`
-- 解鎖：第1 `scribe_exposed=true` AND 第2 `seal_source_known=true` AND 第3 `E3_INTENT_LINK`；由第3階段結算一次裁定並保存。
-- NPC：#3、#4；#1/#2/#5按存檔可被引用，不要求存活或在場。
-- 為何現在發生：意圖鏈逼近後，胥吏提前推動暫收渡權；代理申請在公開公告前送入。
-- 局部目標：維持渡運、核對提前申請與內簿、完成責任與程序收束。
+- 正式檔名：`OOTB_戰役任務_霧渡錯契(4)_重分渡權.md`
+- 階段解鎖：第1 `scribe_exposed=true` **AND** 第2 `seal_source_known=true` **AND** 第3正式 ending=`E3_INTENT_LINK`／`clerk_intent_proven=true`；這些條件回看前三階段全部必要來源，由第3階段結算一次裁定並保存。
+- 輸入 state／證物：`half_contract_secured`、`scribe_status`、`broker_status`、`seal_source_known=true`、`clerk_intent_proven=true`、`old_archive_status`、`boatfolk_trust`與第3階段正式保存的初驗副記或等價意圖鏈。
+- 直接使用戰役 NPC：#3、#4；#1/#2/#5按存檔可被引用，不要求存活、自由、在職或在場。
+- 為何現在發生：意圖鏈逼近後，胥吏提前推動暫收渡權；其遠房姻親代理申請在公開公告前送入。
+- 玩家介入理由：PC持有前三篇正式累積的合法證據鏈，船戶又面臨當日停渡與重分，因此有直接資格在公議前提出異議、核對收件與內簿。
+- 本篇獨立目標：維持可行渡運、核對提前申請與內簿、完成胥吏利用爭議的責任與程序收束。
 - 局部真相：胥吏利用自己促成的契據混亂推動家族利益，但書手、牙人仍各自承擔既有責任。
-- `E4_ACCOUNTABLE`：責任鏈達標且代理提前承接被阻止 → `completed (4/4)`。
-- `E4_PARTIAL`：保住渡運但責任鏈不足，或責任成立但程序未能當日完全恢復 → `partly_completed (4/4)`。
-- `E4_FORCE_BREAK`：暴力使公開程序與合法收束失敗 → `failed (4/4)`。
-- `E4_ABANDON`：放棄 → `failed (4/4)`。
+- 與跨篇真相接觸：末篇直接處理核心因果的最後兩節——「利用爭議暫收」與「代理提前承接」，不再留下新的自動續篇接口。
+- 可改變 state：最終 `campaign_status`、`campaign_progress=4/4`、`clerk_intent_proven`的最終官面採認結果、各NPC實際狀態及收件簿／內簿／代理供述的保存狀態。
+- `E4_ACCOUNTABLE`｜角色卡「渡權歸明」：責任鏈達標且代理提前承接被阻止；`completed (4/4)`；**末篇正式完成**。
+- `E4_PARTIAL`｜角色卡「渡口先穩」：保住渡運但責任鏈不足，或責任成立而程序未能當日完全恢復；`partly_completed (4/4)`；**末篇部分完成收束**，玩家可見渡運恢復／將恢復，但部分官面責任只留下正式疑點。
+- `E4_FORCE_BREAK`｜角色卡「公議散場」：暴力使公開程序與合法收束失敗；`failed (4/4)`；**末篇失敗收束**。
+- `E4_ABANDON`｜角色卡「未赴公議」：放棄；`failed (4/4)`；**末篇放棄收束**。
 - 末篇所有 ending 均直接收束，不再解鎖下一階段。
 
 ## 跨篇證物與代用品
@@ -137,17 +165,22 @@
 - 初驗副記：若毀損，第3階段可由同日初驗流水號、見證人、胥吏手記三者中至少兩項建立等價意圖鏈；第4階段只讀取第3階段已正式確認的等價鏈。
 - 老船戶代表：若不可用，由普通船戶群體提供輪值與帳目，不繼承其個人記憶。
 - 胥吏：若第4階段前已被拘留／不可用，其先前暫收提案、代理申請、內簿與收件簿繼續承載程序因果；不復活人物。
+- 牙人：若提前被拘／失聯，第3階段的腳夫、薄冊、副記與船夫仍按已成立時間線運作；其本人供述不是最佳 ending 的唯一來源。
+- 官簿／證物所有權：原始官簿留制度持有人；PC可依法取得的覆紙／抄錄按各篇結算保存，不因跨篇承接自動變成私人戰利品或自動恢復被毀原件。
 
 ## 戰役收束矩陣
-- 第1–3階段任一提早 ending：依各篇正式 ending 保存 `partly_completed/failed` 與當時 `campaign_progress`，不再自動續開。
+- 第1 `E1_CHAIN_FOUND` → 第2；其餘 `E1_ORDER_ONLY/E1_ABANDON` 立即按 `partly_completed/failed (1/4)` 收束。
+- 第2 `E2_SOURCE_PROVEN` → 第3；其餘 `E2_LEAK_ONLY/E2_ABANDON` 立即按 `partly_completed/failed (2/4)` 收束。
+- 第3 `E3_INTENT_LINK` → 第4；其餘 `E3_BROKER_ONLY/E3_ABANDON` 立即按 `partly_completed/failed (3/4)` 收束。
 - 第4 `E4_ACCOUNTABLE`：跨篇責任、程序與渡運形成完整收束，`completed (4/4)`。
 - 第4 `E4_PARTIAL`：主要生活秩序有完成感，但官面意圖或程序結果只部分成立，`partly_completed (4/4)`。
 - 第4 `E4_FORCE_BREAK/E4_ABANDON`：`failed (4/4)`。
+- 所有承接資格均在前一篇正式結算時一次裁定並寫入 `campaign_save`；後篇開局只載入已宣告結果，不重新計算。
 - 每一桌的最終 NPC、證物、物品、官簿、謝儀與名譽結果以該篇正式結算寫入 `campaign_save`；總綱不追寫單桌結果。
 
 ## 戰役設計邊界
 - 各階段不得把後篇真相倒灌成前篇自動資訊。
 - 胥吏責任限於印樣外流、故意放行與利用爭議推動重分；不得改寫成全知主謀。
 - 書手與牙人的既有責任後篇不得洗白。
-- 玩家在任一非末篇真正切斷後續接口時，按該 ending 提早收束。
+- 玩家在任一非末篇真正切斷後續接口時，按該 ending 提早收束，而不是讓世界之後仍會有事件等同於玩家自動續篇。
 - 各階段的 DC、場景、整備、歷練、名譽、物質與結算均由各自 `.md` 完整提供；總綱不代檢單篇。
