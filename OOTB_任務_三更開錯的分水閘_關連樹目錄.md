@@ -31,7 +31,7 @@
 ## branch-specific state
 根任務只有在實際存檔存在時才讀取下列 ending：
 - `sluice_stable_truth`：後作辰初查簿准入節省10分鐘。
-- `sluice_stable_unclear`：後作首次封存程序不受庫吏拖延。
+- `sluice_stable_unclear`：後作第一次完成第三批封存交接時，預填清單省去10分鐘填表時間。
 - `sluice_breach_evacuated`：後作可有河村代表協助維持安裝坑秩序，前提是PC公開展示可驗證批次判據。
 - `sluice_bought_off`：單靠此 ending 不代表官府／民間已可靠知道PC行為；後作不自動改名譽或准入。
 - `sluice_abandoned`：單靠此 ending 不代表所有人知道離場責任；後作不自動改名譽或准入。
@@ -56,7 +56,7 @@
 |---|---|---|
 | 根任務 | 無存檔 | 使用後作無前作紀錄基線 |
 | 根任務 | `sluice_stable_truth` | 查簿准入節省10分鐘 |
-| 根任務 | `sluice_stable_unclear` | 首次封存程序不受庫吏拖延 |
+| 根任務 | `sluice_stable_unclear` | 第一次第三批封存交接省去10分鐘填表時間 |
 | 根任務 | `sluice_breach_evacuated` | 符合公開驗料條件時可取得村民秩序協助 |
 | 根任務 | `sluice_bought_off` / `sluice_abandoned` | 不因 ending_id 自動產生官面／民間態度；只讀另有明示且可歸因的既有持久 state |
 | 後作 | 任一主要 ending | 保存後作正文列出的對應材料／責任／工程 state |
