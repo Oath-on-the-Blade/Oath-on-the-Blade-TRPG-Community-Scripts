@@ -33,6 +33,7 @@
 | 《南橋領件桌三張回條有一張先蓋了收訖》 | `ootb-linked-tianyue-southbridge-receipt-stamp-001` | 《南橋封件櫃四張覆驗牌有一張掛在空格》 | 後續／領件回條、實物交付與收訖程序 | 非必要 |
 | 《南橋交件門三塊出門牌有一塊還掛在架上》 | `ootb-linked-tianyue-southbridge-exit-tag-001` | 《南橋領件桌三張回條有一張先蓋了收訖》 | 後續／交件門放行標示與實物離場程序後果 | 非必要 |
 | 《南橋補運棚四張車次牌有一張壓在舊班牌下》 | `ootb-linked-tianyue-southbridge-relay-tag-001` | 《南橋交件門三塊出門牌有一塊還掛在架上》 | 後續／補運車次標示、候運實物與交班程序後果 | 非必要 |
+| 《南橋收車棚三塊回庫牌有一塊掛在借車鉤上》 | `ootb-linked-tianyue-southbridge-return-tag-001` | 《南橋補運棚四張車次牌有一張壓在舊班牌下》 | 後續／補運收車、借車鉤與回庫責任後果 | 非必要 |
 
 ## 關連圖
 ```text
@@ -59,16 +60,18 @@
             → 南橋領件桌三張回條有一張先蓋了收訖
             → 南橋交件門三塊出門牌有一塊還掛在架上
             → 南橋補運棚四張車次牌有一張壓在舊班牌下
+            → 南橋收車棚三塊回庫牌有一塊掛在借車鉤上
 ```
 
 ## 共同背景基線
 - 天嶽七峰外圍以山路、橋索、貨務、車具、鐵作、封件與交接責任形成連續的地方運作背景；不得因此新增世界知識庫未定義的常設高層機構。
 - 每篇後作只承接直接來源已保存的制度／物權／事故 state；新事件的具體責任、人物、物件與失誤均以本篇正文為準，不把前作責任者或物件無聲改判成後作同一來源。
-- 前作 ending 或 state 若令道路、車位、樣件、封件暫時不可用，後作固定在山務完成合理修復、追回、複核或重開後發生；這只推進世界時間，不抹除前作結果。
+- 前作 ending 或 state 若令道路、車位、樣件、封件或車務暫時不可用，後作固定在山務完成合理修復、追回、複核或重開後發生；這只推進世界時間，不抹除前作結果。
 - 《南橋封件櫃…》只承接前篇拓紙／參照對應、交接釐清、樣件封存與事故 state；四張覆驗牌、屋漏移件、錯掛與領件為新事件。
 - 《南橋領件桌三張回條…》只承接《南橋封件櫃…》的牌—件對應、交接釐清、C追蹤與事故 state；三張回條、先蓋收訖、乙車移位、借索與補簽意圖均為新事件。
 - 《南橋交件門三塊出門牌…》只承接前篇交付鏈制度後果；三車、三牌、輪銷鬆動與補運安排均為新事件。
 - 《南橋補運棚四張車次牌…》只承接《南橋交件門…》的補運制度與 `southbridge_exit_tag_*` overlay；四張車次牌、午後換車、裂轅與重號預留欄均為新事件。
+- 《南橋收車棚三塊回庫牌…》只承接《南橋補運棚…》的收班制度與 `southbridge_relay_tag_*` overlay；三塊回庫牌、借車鉤漏移、乙車輪轂待修與夜班錯配均為新事件。
 - 關連樹節點的任務定位、建議等級、R、規模與難度不要求相同；一個 ending 開啟後續不表示其他同樹節點互斥。
 
 ## Branch／state 路由
@@ -92,13 +95,15 @@
 - 《南橋領件桌三張回條…》只讀上述四項 `southbridge_seal_tag_*`；它們只改逐件核對意願、記錄工合作、封件鍵核對耗時與開場世界時點，不改本篇先蓋章、乙車移位或補簽真相。可建立 `southbridge_receipt_stamp_delivery_verified`、`southbridge_receipt_stamp_handoff_clarified`、`southbridge_receipt_stamp_receipts_corrected`、`southbridge_receipt_stamp_incident`；只按正文 ending 與實際客觀結果寫入。
 - 《南橋交件門三塊出門牌…》只讀上述 `southbridge_receipt_stamp_*`；它們只改逐件核對意願、合作程度與開場時點，不改本篇丙件暫卸、空車越門與錯登真相。可建立 `southbridge_exit_tag_chain_restored`、`southbridge_exit_tag_item_secured`、`southbridge_exit_tag_incident`、`southbridge_exit_tag_unresolved`、`southbridge_exit_tag_seized`；只按正文 ending 與實際客觀結果寫入。
 - 《南橋補運棚四張車次牌…》只讀 `southbridge_exit_tag_*`；它們只改調閱合作、候運保全與開場時點，不改本篇舊丁二已訖、午後換車與重號真相。可建立 `southbridge_relay_tag_chain_restored`、`southbridge_relay_tag_safe_hold`、`southbridge_relay_tag_incident`、`southbridge_relay_tag_unresolved`、`southbridge_relay_tag_seized`；只按正文 ending 與實際客觀結果寫入。
+- 《南橋收車棚三塊回庫牌…》只讀 `southbridge_relay_tag_*`；它們只改調閱合作、領車開場時點與值班防禦程度，不改本篇甲牌漏移、乙車待修與夜班錯配真相。可建立 `southbridge_return_tag_chain_restored`、`southbridge_return_tag_safe_hold`、`southbridge_return_tag_incident`、`southbridge_return_tag_unresolved`、`southbridge_return_tag_seized`；只按正文 ending 與實際客觀結果寫入。
 
 ## 主要 ending／state → 後續映射
 - 既有節點原有後續可達性維持：凡正文及本索引已標示「任何 ending 或無紀錄可進後作」者仍成立；只有實際存在的 state 形成 overlay，暫時封路／封位／缺樣件等 state 只延後到合理修復後。
 - 《南橋封件櫃四張覆驗牌有一張掛在空格》的 `southbridge-seal-tag-cleared` 建立牌—封件對應、交接釐清、C持續追蹤且無事故；`southbridge-seal-tag-safe-hold` 保存安全封櫃及實際查驗；`southbridge-seal-tag-seized` 保存山務接管與事故前內容；`southbridge-seal-tag-abandon` 只保存離場前客觀內容。四種 ending 或無紀錄都可進《南橋領件桌三張回條有一張先蓋了收訖》；只有實際 `southbridge_seal_tag_*` state 形成 overlay，前作不是必要前置。
 - 《南橋領件桌三張回條有一張先蓋了收訖》的 `southbridge-receipt-stamp-cleared` 建立實物交付已核實、交接鏈釐清、回條更正且無事故；`southbridge-receipt-stamp-safe-hold` 保存安全停銷號及實際查驗；`southbridge-receipt-stamp-seized` 保存山務接管與事故前內容；`southbridge-receipt-stamp-abandon` 只保存離場前客觀內容。
 - 《南橋交件門三塊出門牌有一塊還掛在架上》的 `southbridge_exit_tag_chain_restored=true` 表示交件門實物—車—牌—簿鏈已恢復；`southbridge_exit_tag_item_secured=true` 表示丙件安全保全但責任鏈未完整；`southbridge_exit_tag_incident=true`、`southbridge_exit_tag_unresolved=true`、`southbridge_exit_tag_seized=true` 依正文保存事故／未決／接管。任何 ending 或無紀錄都可進《南橋補運棚四張車次牌有一張壓在舊班牌下》；只有實際 state 形成 overlay，前作不是必要前置。
-- 《南橋補運棚四張車次牌有一張壓在舊班牌下》的 `southbridge_relay_tag_chain_restored=true` 表示車號、車次實例、實物鍵與時點鏈已恢復；`southbridge_relay_tag_safe_hold=true` 表示重號已封住但完整責任鏈未結；`southbridge_relay_tag_incident=true`、`southbridge_relay_tag_unresolved=true`、`southbridge_relay_tag_seized=true` 依正文保存事故／未決／接管。
+- 《南橋補運棚四張車次牌有一張壓在舊班牌下》的 `southbridge_relay_tag_chain_restored=true` 表示車號、車次實例、實物鍵與時點鏈已恢復；`southbridge_relay_tag_safe_hold=true` 表示重號已封住但完整責任鏈未結；`southbridge_relay_tag_incident=true`、`southbridge_relay_tag_unresolved=true`、`southbridge_relay_tag_seized=true` 依正文保存事故／未決／接管。任何 ending 或無紀錄都可進《南橋收車棚三塊回庫牌有一塊掛在借車鉤上》；只有實際 state 形成 overlay，前作不是必要前置。
+- 《南橋收車棚三塊回庫牌有一塊掛在借車鉤上》的 `southbridge_return_tag_chain_restored=true` 表示車—牌—鉤—回庫時點鏈已恢復；`southbridge_return_tag_safe_hold=true` 表示待修車與錯牌已安全封住但完整責任鏈未結；`southbridge_return_tag_incident=true`、`southbridge_return_tag_unresolved=true`、`southbridge_return_tag_seized=true` 依正文保存事故／未決／接管。
 - 一個 ending 開啟後續不表示其他同樹節點互斥；目前沒有新增互斥 state。
 
 ## 維護
