@@ -12,6 +12,7 @@
 | 《三份鹽引只認兩枚官印》 | `ootb-salt-permits-two-seals` | — | 根任務 | 無 |
 | 《退倉單上第三船的領訖時辰早了一刻》 | `ootb-linked-salt-return-receipt-001` | 《三份鹽引只認兩枚官印》 | 後續／退倉交接與領訖責任 | 非必要 |
 | 《瀝水棚兩包鹽的封記比退倉簿多了一筆》 | `ootb-linked-salt-drainage-seal-001` | 《退倉單上第三船的領訖時辰早了一刻》 | 後續／封記補錄與破袋鹽責任 | 非必要 |
+| 《封記桌四枚新木印有一枚先沾了鹽霜》 | `ootb-linked-salt-seal-block-frost-001` | 《瀝水棚兩包鹽的封記比退倉簿多了一筆》 | 後續／封記工具交接與舊鹽霜來源覆核 | 非必要 |
 
 ## 關連圖
 
@@ -19,6 +20,7 @@
 三份鹽引只認兩枚官印
 └─→ 退倉單上第三船的領訖時辰早了一刻
     └─→ 瀝水棚兩包鹽的封記比退倉簿多了一筆
+        └─→ 封記桌四枚新木印有一枚先沾了鹽霜
 ```
 
 ## 共同背景基線
@@ -26,6 +28,7 @@
 - 根任務已確立的三份鹽引均為真、舊簿重抄錯頁及地方官署程序責任不得被後作改寫成偽引或私鹽真案。
 - 《退倉單》確立的退倉單預填、換鎖延誤、兩包破袋鹽與搬移責任均為新事件，不把根任務 NPC 或錯頁行為強行認定為同一責任來源。
 - 《瀝水棚》確立的夜間合法換袋、臨時籤回收及正式封號漏補亦是後續獨立程序疏漏；不得倒推成前兩篇存在偷鹽或私拆。
+- 《封記桌》確立的新木印鹽霜源於驗收試壓時舊封殘片鹽分轉移；不得倒推成新木印曾私下重封鹽包，也不得藉此推翻《瀝水棚》已成立的合法換袋／補封真相。
 - 任一前作若未在角色紀錄中發生，後作使用自己的無前作基線，仍可完整獨立運行。
 
 ## branch-specific state
@@ -44,15 +47,22 @@
 - `salt_reseal_record_corrected=true/false`：正式補封號是否完成附簿更正。
 - `salt_reseal_liability=warehouse_clerical/unresolved/unresolved_or_misattributed`：補封責任是否確定為官倉文書遺漏、未決或仍有錯誤歸責。
 
+### 《封記桌四枚新木印有一枚先沾了鹽霜》
+- `salt_seal_block_trace=verified/partial/broken_or_unresolved/abandoned`：木印鹽霜來源追溯程度。
+- `salt_seal_block_misuse=false/unproven/unresolved`：是否已排除新木印被私用的疑責。
+- `salt_seal_block_record=corrected/pending/sealed`：逐枚驗收／交庫記錄的最終狀態。
+
 ## 可累積 state
-- 根任務的公開程序錯誤、退倉更正與補封更正可以同時成立；三者是不同程序節點，不互相覆寫。
-- 前作45兩應收債權、《退倉單》35／20兩酬勞與《瀝水棚》30／15兩酬勞分開結算，不得重複計算。
+- 根任務的公開程序錯誤、退倉更正、補封更正與木印驗收更正可以同時成立；四者是不同程序節點，不互相覆寫。
+- 前作45兩應收債權、《退倉單》35／20兩酬勞、《瀝水棚》30／15兩酬勞與《封記桌》30／20兩酬勞分開結算，不得重複計算。
+- `salt_reseal_record_corrected=true` 與 `salt_seal_block_trace=verified` 可同時成立：前者是鹽包補封附簿更正，後者是後來木印驗收污染來源追溯。
 
 ## 互斥 state
 - 同一次根任務紀錄只能有一個主要 `ending_id`。
 - 同一次《退倉單》紀錄中，`salt_return_boatman_liability=false`、`unresolved`、`true` 互斥。
 - `salt_return_receipt_corrected=true` 與同一次事件的 `salt_return_boatman_liability=true` 不可同時成立。
 - 同一次《瀝水棚》紀錄中 `salt_reseal_liability` 只能取一個值；`salt_reseal_record_corrected=true` 只與 `warehouse_clerical` 相容。
+- 同一次《封記桌》紀錄中 `salt_seal_block_trace`、`salt_seal_block_misuse`、`salt_seal_block_record` 各自只能取一個值；`trace=verified` 只與 `misuse=false`、`record=corrected` 相容。
 
 ## ending/state → 後續映射
 - `seals-restored` → 《退倉單》可運行，但固定為三日後另一批同船號的補退貨程序；不得聲稱根任務第三船已入倉。
@@ -62,6 +72,9 @@
 - 《退倉單》任何主要結果或無前作紀錄 → 《瀝水棚》均可獨立運行；只讀取已成立的兩包位置與船戶責任作 overlay，不把任何結果設成必要前置。
 - `salt_return_two_bags_recovered=false` → 《瀝水棚》固定為三日後官倉自行清點找到兩包後開始；不追溯改判前作。
 - `salt_return_boatman_liability=false` → 《瀝水棚》不得重新把「短少」責任歸給船戶；只查補封。
+- 《瀝水棚》任何主要結果或無前作紀錄 → 《封記桌》均可獨立運行；只讀取補封更正與責任狀態作 overlay，核心鹽霜來源固定為驗收試壓污染。
+- `salt_reseal_record_corrected=true` → 《封記桌》直接保留前作合法補封更正，不得用 M-24 鹽霜倒推翻案。
+- `salt_reseal_liability=unresolved` 或 `unresolved_or_misattributed` → 《封記桌》只提高開場疑責與旁聽壓力；本篇自身證據仍獨立裁定木印來源。
 
 ## 多來源條件
 目前沒有多來源節點；每個後作都只有一個直接來源。
@@ -69,5 +82,6 @@
 ## 維護註記
 - 新後作若讀取退倉單更正、兩包鹽去向或船戶短少責任，必須把《退倉單上第三船的領訖時辰早了一刻》列為直接來源。
 - 新後作若讀取正式補封號是否更正或補封責任，必須把《瀝水棚兩包鹽的封記比退倉簿多了一筆》列為直接來源。
-- 不得把普通船戶、腳夫、官倉、簿房或封記桌自行建立成相對名譽對象；社會名譽仍只使用 Handbook 正式對象。
+- 新後作若讀取 M-24 木印是否排除私用、逐枚驗收更正或 `salt_seal_block_*` state，必須把《封記桌四枚新木印有一枚先沾了鹽霜》列為直接來源。
+- 不得把普通船戶、腳夫、官倉、簿房、封記桌或木印工匠自行建立成相對名譽對象；社會名譽仍只使用 Handbook 正式對象。
 - 目錄只記錄正文已存在的 ending/state；不得用目錄創造新的前置、物權或正史。
