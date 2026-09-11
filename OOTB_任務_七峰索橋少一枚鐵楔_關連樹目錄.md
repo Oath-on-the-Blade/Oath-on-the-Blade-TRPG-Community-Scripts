@@ -38,6 +38,7 @@
 | 《南橋試坡棚四張載重籤有一張先寫了通過》 | `ootb-linked-tianyue-southbridge-load-slip-001` | 《南橋車作門兩支新輪銷有一支先刻了驗訖線》 | 後續／試坡載重、載重籤與放車簿責任後果 | 非必要 |
 | 《南橋放車門三塊驗載牌有一塊掛在空鉤上》 | `ootb-linked-tianyue-southbridge-release-tag-001` | 《南橋試坡棚四張載重籤有一張先寫了通過》 | 後續／驗載牌、放車鉤與出門交接責任後果 | 非必要 |
 | 《南橋放車門兩本出門簿有一本少了半頁》 | `ootb-linked-tianyue-southbridge-gate-ledger-001` | 《南橋放車門三塊驗載牌有一塊掛在空鉤上》 | 後續／出門簿換冊、撕角留樣與班次交接後果 | 非必要 |
+| 《南橋放車門四枚封冊簽有一枚穿在舊繩上》 | `ootb-linked-tianyue-southbridge-seal-cord-001` | 《南橋放車門兩本出門簿有一本少了半頁》 | 後續／封冊簽、封繩批次與換班交接後果 | 非必要 |
 
 ## 關連圖
 ```text
@@ -69,6 +70,7 @@
             → 南橋試坡棚四張載重籤有一張先寫了通過
             → 南橋放車門三塊驗載牌有一塊掛在空鉤上
             → 南橋放車門兩本出門簿有一本少了半頁
+            → 南橋放車門四枚封冊簽有一枚穿在舊繩上
 ```
 
 ## 共同背景基線
@@ -77,6 +79,7 @@
 - 前作 state 若令道路、車位、樣件、封件或車務暫時不可用，後作固定在山務完成合理修復、追回、複核或重開後發生；只推進世界時間，不抹除前作結果。
 - 《南橋放車門三塊驗載牌…》只承接 `southbridge_load_slip_*` overlay；其車、牌、空鉤與預填簿為新事件。
 - 《南橋放車門兩本出門簿…》只承接 `southbridge_release_tag_*` overlay；舊新兩冊、三車轉抄、撕角留樣、黏頁與缺頁為新事件。
+- 《南橋放車門四枚封冊簽…》只承接 `southbridge_gate_ledger_*` overlay；四冊、四枚封冊簽、新舊封繩、工作盤與留樣匣為新事件。
 - 各節點的任務定位、建議等級、R、規模與難度可各自設計；同源後續不自動互斥。
 
 ## Branch／state 路由
@@ -90,12 +93,14 @@
 - 《南橋試坡棚四張載重籤…》只讀 `southbridge_repair_pin_*`；可建立 `southbridge_load_slip_chain_restored`、`southbridge_load_slip_retest_completed`、`southbridge_load_slip_safe_hold`、`southbridge_load_slip_incident`、`southbridge_load_slip_unresolved`、`southbridge_load_slip_seized`。
 - 《南橋放車門三塊驗載牌…》只讀 `southbridge_load_slip_*`；可建立 `southbridge_release_tag_chain_restored`、`southbridge_release_tag_rehandoff_completed`、`southbridge_release_tag_safe_hold`、`southbridge_release_tag_incident`、`southbridge_release_tag_unresolved`、`southbridge_release_tag_seized`。
 - 《南橋放車門兩本出門簿…》只讀 `southbridge_release_tag_*`；它們只改調閱合作、先封後查意願、正式取樣見證與催放時點，不改整頁轉抄、撕角留樣、黏頁與空白襯紙真相。可建立 `southbridge_gate_ledger_chain_restored`、`southbridge_gate_ledger_dual_procedure_retired`、`southbridge_gate_ledger_safe_hold`、`southbridge_gate_ledger_incident`、`southbridge_gate_ledger_unresolved`、`southbridge_gate_ledger_seized`。
+- 《南橋放車門四枚封冊簽…》只讀 `southbridge_gate_ledger_*`；它們只改核對合作、先封後查意願、正式封存物見證與催促時點，不改新繩短缺、丁簽暫穿、騰盤與舊繩留樣真相。可建立 `southbridge_seal_cord_chain_restored`、`southbridge_seal_cord_waiting_tag_board`、`southbridge_seal_cord_safe_hold`、`southbridge_seal_cord_incident`、`southbridge_seal_cord_unresolved`、`southbridge_seal_cord_seized`。
 
 ## 主要 ending／state → 後續映射
 - 既有節點原有可達性維持；凡正文已標示任何 ending 或無紀錄可進後作者仍成立，只有實際 state 形成 overlay。
 - 《南橋試坡棚四張載重籤…》任何 ending 或無紀錄都可進《南橋放車門三塊驗載牌有一塊掛在空鉤上》。
 - 《南橋放車門三塊驗載牌有一塊掛在空鉤上》的 `southbridge_release_tag_chain_restored=true` 表示車—牌—鉤—出門簿鏈已恢復；`southbridge_release_tag_safe_hold=true` 表示己車已安全暫封但完整責任鏈未結；`southbridge_release_tag_incident=true`、`southbridge_release_tag_unresolved=true`、`southbridge_release_tag_seized=true` 依正文保存相應狀態。任何 ending 或無紀錄都可進《南橋放車門兩本出門簿有一本少了半頁》；前作不是必要前置。
-- 《南橋放車門兩本出門簿有一本少了半頁》的 `southbridge_gate_ledger_chain_restored=true` 表示舊簿—新簿—留樣—當班車次換冊鏈已復核；`southbridge_gate_ledger_dual_procedure_retired=true` 表示同頁重複採用兩套換冊做法的程序已停用；`southbridge_gate_ledger_safe_hold=true` 表示兩冊與留樣已安全封存而缺頁責任仍可續查；`southbridge_gate_ledger_incident`、`southbridge_gate_ledger_unresolved`、`southbridge_gate_ledger_seized` 依正文保存相應狀態。
+- 《南橋放車門兩本出門簿有一本少了半頁》的 `southbridge_gate_ledger_chain_restored=true` 表示舊簿—新簿—留樣—當班車次換冊鏈已復核；`southbridge_gate_ledger_dual_procedure_retired=true` 表示同頁重複採用兩套換冊做法的程序已停用；`southbridge_gate_ledger_safe_hold=true` 表示兩冊與留樣已安全封存而缺頁責任仍可續查；`southbridge_gate_ledger_incident=true`、`southbridge_gate_ledger_unresolved=true`、`southbridge_gate_ledger_seized=true` 依正文保存相應狀態。任何 ending 或無紀錄都可進《南橋放車門四枚封冊簽有一枚穿在舊繩上》；前作不是必要前置。
+- 《南橋放車門四枚封冊簽有一枚穿在舊繩上》的 `southbridge_seal_cord_chain_restored=true` 表示簿—簽—繩—見證鏈已復核；`southbridge_seal_cord_waiting_tag_board=true` 表示待換封冊簽已改用獨立工作盤；`southbridge_seal_cord_safe_hold=true` 表示四冊與材料已安全封存而暫穿責任仍可續查；`southbridge_seal_cord_incident=true`、`southbridge_seal_cord_unresolved=true`、`southbridge_seal_cord_seized=true` 依正文保存相應狀態。
 - 本次沒有新增互斥 state。
 
 ## 維護
