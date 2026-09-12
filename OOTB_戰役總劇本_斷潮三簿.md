@@ -3,7 +3,7 @@
 ## 規格頭
 - 戰役名：斷潮三簿
 - `campaign_id`：`ootb_campaign_broken_tide_three_ledgers_v1`
-- 總劇本版本：1.2.0
+- 總劇本版本：1.2.1
 - 戰役狀態：已完結
 - 原定階段：4／4；本版本無規劃中的第5階段。
 - 戰役共同起點：西海道海陵及蒼龍灣沿岸；末篇延伸至定潮島外主航道。
@@ -139,8 +139,8 @@
 - 本篇完成後：任何 ending 都完成眼前臨簿／缺貨事件；只有仍保留正式查驗接口的兩個 ending 可在本篇結算時解鎖第2篇。
 
 Ending 映射：
-- `bt1_documented`：`ledger_chain=partial`，其餘按正文；**可承接 → 第2篇路線 S2-A**；`campaign_status=active`、`campaign_progress=1/4`。
-- `bt1_clerk_only`：`clerk_status=detained`、`ledger_chain=none`、`broker_alert=high`；海關複核自然產生新量水矛盾；**可承接 → 第2篇路線 S2-B**；`campaign_status=active`、`campaign_progress=1/4`。
+- `bt1_documented`：`ledger_chain=partial`；`clerk_status` 按當場處置為 `cooperating / detained / free`；秘密交證且未驚動貨棧時 `broker_alert=low`，否則 `high`；`deputy_sting` 保持實值（通常 `active`）；**可承接 → 第2篇路線 S2-A**；`campaign_status=active`、`campaign_progress=1/4`。
+- `bt1_clerk_only`：`clerk_status=detained`、`ledger_chain=none`、`broker_alert=high`、`deputy_sting` 保持實值；海關複核自然產生新量水矛盾；**可承接 → 第2篇路線 S2-B**；`campaign_status=active`、`campaign_progress=1/4`。
 - `bt1_false_clean`：**提早戰役結局／部分完成**；`campaign_status=partly_completed`、`campaign_progress=1/4`。已回答：本次缺貨與行政責任；未回答：重複船號、上游貨棧與後續三簿鏈。關鍵 NPC／證物按本篇實際保存，沒有可追的正式接口；原定第2篇不再由本案啟動。玩家可見收束沿階段正文《一頁歸檔》，宣讀後宣告「戰役部分完成（1/4）」；最後的重複貨號傳聞只作不劇透謎面尾巴，不是新委託。
 - `bt1_abandon`：**提早戰役結局／失敗**；`campaign_status=failed`、`campaign_progress=1/4`。保存角色退出、證物與 NPC 當時狀態；原定第2篇不得自動承接。
 
@@ -163,8 +163,8 @@ Ending 映射：
 - 其他第1篇 ending 均沒有合法路線；第2篇保持鎖定。
 
 Ending 映射：
-- `bt2_chain`：`ledger_chain=strong`；**可承接 → 第3篇路線 S3-A**；`campaign_status=active`、`campaign_progress=2/4`。
-- `bt2_stop_cargo`：`ledger_chain=partial`、`broker_alert=high`、`final_ship=rerouted`；**可承接 → 第3篇路線 S3-B**；`campaign_status=active`、`campaign_progress=2/4`。
+- `bt2_chain`：`ledger_chain=strong`；`final_ship=scheduled`；`clerk_status`、`broker_alert`、`deputy_sting` 保留進篇實值（後續只按正式反應規則變動）；**可承接 → 第3篇路線 S3-A**；`campaign_status=active`、`campaign_progress=2/4`。
+- `bt2_stop_cargo`：`ledger_chain=partial`、`broker_alert=high`、`final_ship=rerouted`；`clerk_status/deputy_sting` 保留實值；**可承接 → 第3篇路線 S3-B**；`campaign_status=active`、`campaign_progress=2/4`。
 - `bt2_wrong_ship`：**提早戰役結局／部分完成**；`campaign_status=partly_completed`、`campaign_progress=2/4`。已回答：眼前錯船與扣船爭議；未回答：真貨去向、舊印與燈役。真正貨與帳證已轉移且沒有留下可追舊印／貨棧接口，因此第3篇不再由本案啟動。人物、船貨、證物按實際保存。玩家可見收束沿《空艙有主》，宣讀後宣告「戰役部分完成（2/4）」；夜潮後的無主貨消息只作謎面尾巴。
 - `bt2_abandon`：**提早戰役結局／失敗**；`campaign_status=failed`、`campaign_progress=2/4`；保存當時船貨／人物／證物狀態，第3篇不得自動承接。
 
@@ -188,8 +188,8 @@ Ending 映射：
 - 其他第2篇 ending 均沒有合法路線；第3篇保持鎖定。
 
 Ending 映射：
-- `bt3_sting_stopped`：`deputy_sting=stopped`、`old_seal_secured` 按實物、`lamp_link/pilot_trust` 按證據；**可承接 → 第4篇路線 S4-A**；`campaign_status=active`、`campaign_progress=3/4`。
-- `bt3_sting_exposed`：`deputy_sting=exposed`、`broker_alert=high`、`final_ship=rerouted`、其他 state 按正文；**可承接 → 第4篇路線 S4-B**；`campaign_status=active`、`campaign_progress=3/4`。
+- `bt3_sting_stopped`：`deputy_sting=stopped`；舊印實物依法封存則 `old_seal_secured=true`，實物失去則 `false`；付款＋輪值兩類互證則 `lamp_link=identified`，只有一類則 `suspected`，皆無則 `unknown`；`pilot_trust` 按本篇實際互動為 `cooperative / neutral`（若無證泛化歸責致接口失去，改走 `bt3_blame_pilots`）；`broker_alert/final_ship` 保留進篇實值；**可承接 → 第4篇路線 S4-A**；`campaign_status=active`、`campaign_progress=3/4`。
+- `bt3_sting_exposed`：`deputy_sting=exposed`、`broker_alert=high`、`final_ship=rerouted`；`old_seal_secured` 依實物是否依法封存；`lamp_link` 仍依付款／輪值證據為 `unknown / suspected / identified`；未泛化指控時 `pilot_trust=cooperative`，若接口被泛化歸責破壞則不得用本 ending 承接而改走 `bt3_blame_pilots`；**可承接 → 第4篇路線 S4-B**；`campaign_status=active`、`campaign_progress=3/4`。
 - `bt3_blame_pilots`：**提早戰役結局／部分完成**；`pilot_trust=hostile`、`lamp_link=unknown`、`campaign_status=partly_completed`、`campaign_progress=3/4`。已回答：舊印來源與越權責任；未回答：單一燈役及最後船完整責任鏈。因泛化歸責令引航端接口失去，原定第4篇不再由本案啟動。玩家可見收束沿《舊印入匣》，宣讀後宣告「戰役部分完成（3/4）」；「一班燈役被撤但外人不知原因」作最後謎面尾巴，不是新委託。
 - `bt3_abandon`：**提早戰役結局／失敗**；`campaign_status=failed`、`campaign_progress=3/4`；保存舊印、輪值、人物當時狀態，第4篇不得自動承接。
 
@@ -208,7 +208,7 @@ Ending 映射：
 
 完整解鎖路線：
 - **S4-A**：`bt3_sting_stopped AND campaign_status=active`。來源：第3篇；並帶入此前全部仍有效 `ledger_chain/clerk_status/broker_alert/final_ship/old_seal_secured/lamp_link/pilot_trust`。
-- **S4-B**：`bt3_sting_exposed AND campaign_status=active`。來源：第3篇；同樣帶入更早全部仍有效 state，尤其 `broker_alert=high`、通常 `final_ship=rerouted`。
+- **S4-B**：`bt3_sting_exposed AND campaign_status=active`。來源：第3篇；同樣帶入更早全部仍有效 state，尤其 `broker_alert=high`、`final_ship=rerouted`。
 - 早期 state 不再作額外「有／無」門檻，但必須實際改變末篇船、證據、人物與合作路線；不得洗平成單一標準開場。
 - 其他第3篇 ending 均沒有合法路線；末篇保持鎖定。
 
