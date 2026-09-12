@@ -148,6 +148,7 @@ Ending 映射：
 - 狀態：正式完成。
 - `script_id`：`ootb_campaign_broken_tide_s2_false_draft_v1`
 - 正式檔名：`OOTB_戰役任務_斷潮三簿(2)_兩艘空船都報了滿艙吃水.md`
+- 帶入 state：第1篇已結算的 `ledger_chain`、`clerk_status`、`broker_alert`、`deputy_sting`、`campaign_status`、`campaign_progress`，以及三名戰役 NPC 與玩家／官署持有證物的實際狀態；`final_ship` 尚未被前篇改寫時按初始 `scheduled`。
 - 直接使用戰役 NPC：`NPC#2`、`NPC#3`；`NPC#1` 狀態只從 `campaign_save` 讀取，非必要出場。
 - 為甚麼現在：第1篇結算後海關複核量水紙，發現兩艘近期「滿艙」船的吃水互相矛盾；夜潮四小時後會讓其中一艘離泊。
 - 為甚麼玩家：玩家已是第1篇正式外查人，且本次矛盾正由其已結算案卷／複核產生，海關直接續委託。
@@ -171,6 +172,7 @@ Ending 映射：
 - 狀態：正式完成。
 - `script_id`：`ootb_campaign_broken_tide_s3_old_seal_v1`
 - 正式檔名：`OOTB_戰役任務_斷潮三簿(3)_海陵三道驗牒有一道只認舊印.md`
+- 帶入 state：此前所有仍有效的 `ledger_chain`、`clerk_status`、`broker_alert`、`deputy_sting`、`final_ship`、`campaign_status`、`campaign_progress`，以及戰役 NPC、船貨、載貨副頁與其他已保存證物狀態。
 - 直接使用戰役 NPC：`NPC#2`、`NPC#3`、`NPC#4`；`NPC#1` 只依前史狀態提供本人或替代物證。
 - 為甚麼現在：第2篇扣貨／船貨記錄中出現半年前已停用的真舊驗印，而下一夜班三小時後接手；`<NPC#3>` 的越權放線正要失控。
 - 為甚麼玩家：第2篇正式扣驗案卷直接把舊印矛盾交給同一外查隊，且玩家已掌握可核查的船貨前史。
@@ -195,6 +197,7 @@ Ending 映射：
 - 狀態：正式完成；末篇。
 - `script_id`：`ootb_campaign_broken_tide_s4_false_lamp_v1`
 - 正式檔名：`OOTB_戰役任務_斷潮三簿(4)_定潮島外五盞引航燈有一盞不照船.md`
+- 帶入 state：此前全部仍有效的 `ledger_chain`、`clerk_status`、`broker_alert`、`deputy_sting`、`old_seal_secured`、`lamp_link`、`final_ship`、`pilot_trust`、`campaign_status`、`campaign_progress`，以及四名戰役 NPC、舊印、輪值／付款證據、最後船與玩家持有物的實際狀態。
 - 直接使用戰役 NPC：`NPC#2`、`NPC#3`、`NPC#4`；`NPC#1` 僅按前史狀態提供本人或替代物證。
 - 為甚麼現在：`<NPC#2>` 在第3篇前已支付錯燈訂金；指定夜潮三小時內到來，第三燈的錯號安排與最後船／岸上副頁即將同時生效。
 - 為甚麼玩家：第3篇正式結算已把單一燈役／輪值接口交給同一查驗隊，並在該次結算宣告末篇解鎖；玩家不是靠新委託重新進場。
@@ -257,7 +260,7 @@ Ending 映射：
   以上值一經前篇結算不得重置。
 
 ## 九、提早戰役結局保存要求
-所有非末篇不可承接 ending 都在相應階段當場形成正式戰役結局，不把「後篇開不了」留給下一次開局處理。
+所有非末篇不可承接 ending 都在相應階段當場形成正式戰役結局，不把「後篇開不了」留給下一次開局處理。除下列 ending 明列覆寫的 `campaign_status/campaign_progress` 與其他 state 外，其餘 campaign state、戰役 NPC、關鍵物品／證物、持有人、公開程度與世界條件一律凍結為該篇正式結算時的實值並寫入 `campaign_save`；戰役收束後不再由未發生的後篇改動。
 
 - `bt1_false_clean`：`partly_completed`、1/4；保存三名已登場戰役 NPC、臨簿／草頁／貨物當時狀態及沒有正式可追接口的事實；宣告「戰役部分完成（1/4）」。
 - `bt2_wrong_ship`：`partly_completed`、2/4；保存船貨、`ledger_chain`、人物與已失去的舊印／貨棧接口；宣告「戰役部分完成（2/4）」。
