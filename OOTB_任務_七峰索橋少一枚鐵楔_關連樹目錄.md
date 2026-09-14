@@ -41,6 +41,7 @@
 | 《南橋放車門四枚封冊簽有一枚穿在舊繩上》 | `ootb-linked-tianyue-southbridge-seal-cord-001` | 《南橋放車門兩本出門簿有一本少了半頁》 | 後續／封冊簽、封繩批次與換班交接後果 | 非必要 |
 | 《南橋封冊架三枚交班木楔有一枚刻了兩道線》 | `ootb-linked-tianyue-southbridge-shelf-wedge-001` | 《南橋放車門四枚封冊簽有一枚穿在舊繩上》 | 後續／封冊架定位木楔、換架記號與交班程序後果 | 非必要 |
 | 《南橋入庫門四枚架號牌有一枚翻了面》 | `ootb-linked-tianyue-southbridge-rack-tag-001` | 《南橋封冊架三枚交班木楔有一枚刻了兩道線》 | 後續／入庫架號、待核標示與交班程序後果 | 非必要 |
+| 《南橋庫內四格待核架有一格掛了兩張紙》 | `ootb-linked-tianyue-southbridge-hold-slip-001` | 《南橋入庫門四枚架號牌有一枚翻了面》 | 後續／待核紙、架位改派與封庫覆核程序後果 | 非必要 |
 
 ## 關連圖
 ```text
@@ -75,30 +76,33 @@
             → 南橋放車門四枚封冊簽有一枚穿在舊繩上
             → 南橋封冊架三枚交班木楔有一枚刻了兩道線
             → 南橋入庫門四枚架號牌有一枚翻了面
+            → 南橋庫內四格待核架有一格掛了兩張紙
 ```
 
 ## 共同背景基線
 - 天嶽七峰外圍以山路、橋索、貨務、車具、鐵作、封件與交接責任形成連續地方運作背景；不得因此新增世界知識庫未定義的常設高層機構。
 - 每篇後作只承接直接來源已保存的制度／物權／事故 state；新事件的具體責任、人物、物件與失誤均以本篇正文為準。
 - 前作 state 若令道路、車位、樣件、封件或車務暫時不可用，後作固定在山務完成合理修復、追回、複核或重開後發生；只推進世界時間，不抹除前作結果。
-- 《南橋放車門三塊驗載牌…》的車、牌、空鉤與預填簿為新事件；《南橋放車門兩本出門簿…》的舊新兩冊、三車轉抄、撕角留樣、黏頁與缺頁為新事件；《南橋放車門四枚封冊簽…》的四冊、四簽、新舊封繩、工作盤與留樣匣為新事件；《南橋封冊架三枚交班木楔…》的換架、三枚定位木楔、雙刻線、新側板木毛與簿位異常為新事件；《南橋入庫門四枚架號牌…》的四冊、四枚架號牌、乙七格屋漏封閉、翻牌與漏寫交班為新事件。
+- 《南橋放車門三塊驗載牌…》的車、牌、空鉤與預填簿為新事件；《南橋放車門兩本出門簿…》的舊新兩冊、三車轉抄、撕角留樣、黏頁與缺頁為新事件；《南橋放車門四枚封冊簽…》的四冊、四簽、新舊封繩、工作盤與留樣匣為新事件；《南橋封冊架三枚交班木楔…》的換架、三枚定位木楔、雙刻線、新側板木毛與簿位異常為新事件；《南橋入庫門四枚架號牌…》的四冊、四枚架號牌、乙七格屋漏封閉、翻牌與漏寫交班為新事件；《南橋庫內四格待核架…》的乙冊、乙七／乙九兩張待核紙、唯一改派與舊紙未撤為新事件。
 - 各節點的任務定位、建議等級、R、規模與難度可各自設計；同源後續不自動互斥。
 
 ## Branch／state 路由
 - 上游節點既有 `night-ledger-*`、`bridge_*`、`backdated-*`、`outerpeak_*` 與早期 `southbridge_*` state 依各自正文保存；本索引不改寫其語義。
-- 《南橋封件櫃四張覆驗牌…》→《南橋領件桌三張回條…》→《南橋交件門三塊出門牌…》→《南橋補運棚四張車次牌…》→《南橋收車棚三塊回庫牌…》→《南橋車作門兩支新輪銷…》→《南橋試坡棚四張載重籤…》→《南橋放車門三塊驗載牌…》→《南橋放車門兩本出門簿…》→《南橋放車門四枚封冊簽…》→《南橋封冊架三枚交班木楔…》→《南橋入庫門四枚架號牌…》各自只讀其直接前作相應 `southbridge_*` state；無前作紀錄均可完整運行。
+- 《南橋封件櫃四張覆驗牌…》→《南橋領件桌三張回條…》→《南橋交件門三塊出門牌…》→《南橋補運棚四張車次牌…》→《南橋收車棚三塊回庫牌…》→《南橋車作門兩支新輪銷…》→《南橋試坡棚四張載重籤…》→《南橋放車門三塊驗載牌…》→《南橋放車門兩本出門簿…》→《南橋放車門四枚封冊簽…》→《南橋封冊架三枚交班木楔…》→《南橋入庫門四枚架號牌…》→《南橋庫內四格待核架…》各自只讀其直接前作相應 `southbridge_*` state；無前作紀錄均可完整運行。
 - 《南橋放車門三塊驗載牌…》可建立 `southbridge_release_tag_chain_restored`、`southbridge_release_tag_rehandoff_completed`、`southbridge_release_tag_safe_hold`、`southbridge_release_tag_incident`、`southbridge_release_tag_unresolved`、`southbridge_release_tag_seized`。
 - 《南橋放車門兩本出門簿…》只讀 `southbridge_release_tag_*`；可建立 `southbridge_gate_ledger_chain_restored`、`southbridge_gate_ledger_dual_procedure_retired`、`southbridge_gate_ledger_safe_hold`、`southbridge_gate_ledger_incident`、`southbridge_gate_ledger_unresolved`、`southbridge_gate_ledger_seized`。
 - 《南橋放車門四枚封冊簽…》只讀 `southbridge_gate_ledger_*`；可建立 `southbridge_seal_cord_chain_restored`、`southbridge_seal_cord_waiting_tag_board`、`southbridge_seal_cord_safe_hold`、`southbridge_seal_cord_incident`、`southbridge_seal_cord_unresolved`、`southbridge_seal_cord_seized`。
 - 《南橋封冊架三枚交班木楔…》只讀 `southbridge_seal_cord_*`；它們只改核查合作、正式物件見證與入庫催促時點，不改換架、雙刻線與新側板木毛真相。可建立 `southbridge_shelf_wedge_chain_restored`、`southbridge_shelf_wedge_marking_rule`、`southbridge_shelf_wedge_safe_hold`、`southbridge_shelf_wedge_incident`、`southbridge_shelf_wedge_unresolved`、`southbridge_shelf_wedge_seized`。
 - 《南橋入庫門四枚架號牌…》只讀 `southbridge_shelf_wedge_*`；它們只改核查合作、原狀拓記、先封後查與正式物件見證，不改四冊未拆換、乙七格封閉、翻牌及漏寫交班的本篇真相。可建立 `southbridge_rack_tag_chain_restored`、`southbridge_rack_tag_safe_hold`、`southbridge_rack_tag_incident`、`southbridge_rack_tag_abandoned`。
+- 《南橋庫內四格待核架…》只讀 `southbridge_rack_tag_*`；它們只改第一次冊—紙—架核對、先封後查、正式物件見證與合作程度，不改乙冊未移、唯一改派乙七→乙九及舊紙未撤後被翻回的本篇真相。可建立 `southbridge_hold_slip_chain_restored`、`southbridge_hold_slip_safe_hold`、`southbridge_hold_slip_incident`、`southbridge_hold_slip_abandoned`。
 
 ## 主要 ending／state → 後續映射
 - 既有節點原有可達性維持；凡正文已標示任何 ending 或無紀錄可進後作者仍成立，只有實際 state 形成 overlay。
 - 《南橋放車門兩本出門簿有一本少了半頁》任何 ending 或無紀錄都可進《南橋放車門四枚封冊簽有一枚穿在舊繩上》；前作不是必要前置。
 - 《南橋放車門四枚封冊簽有一枚穿在舊繩上》任何 ending 或無紀錄都可進《南橋封冊架三枚交班木楔有一枚刻了兩道線》；`southbridge_seal_cord_chain_restored=true` 只增加合作與延後一次催促，`safe_hold` 只增加先封後查意願，`incident/seized` 只增加正式物件見證，`unresolved` 不改本篇真相。
 - 《南橋封冊架三枚交班木楔有一枚刻了兩道線》任何 ending 或無紀錄都可進《南橋入庫門四枚架號牌有一枚翻了面》；`southbridge_shelf_wedge_chain_restored=true` 令第一次冊身核對直接成立，`marking_rule=true` 增加保留原狀拓記合作，`safe_hold=true` 增加先封後查意願，`incident/seized=true` 增加正式物件見證，`unresolved=true` 只令前作責任另案續查。
-- 《南橋入庫門四枚架號牌有一枚翻了面》的 `southbridge_rack_tag_chain_restored=true` 表示冊—牌—架—交班鏈已恢復；`southbridge_rack_tag_safe_hold=true` 表示四冊已安全封存而責任續查；`southbridge_rack_tag_incident=true` 表示山務因破壞或失據接管；`southbridge_rack_tag_abandoned=true` 表示未完成安全交接便離場。
+- 《南橋入庫門四枚架號牌有一枚翻了面》任何 ending 或無紀錄都可進《南橋庫內四格待核架有一格掛了兩張紙》；`southbridge_rack_tag_chain_restored=true` 令第一次冊—紙—架核對直接成立，`safe_hold=true` 增加先封後查意願，`incident=true` 增加正式物件見證，`abandoned=true` 只降低初始合作，不改本篇真相。
+- 《南橋庫內四格待核架有一格掛了兩張紙》的 `southbridge_hold_slip_chain_restored=true` 表示唯一改派與撤舊紙見證鏈已恢復；`southbridge_hold_slip_safe_hold=true` 表示乙冊與兩紙已安全封存待續查；`southbridge_hold_slip_incident=true` 表示山務因破壞或失據接管；`southbridge_hold_slip_abandoned=true` 表示未完成安全交接便離場。
 - 本次沒有新增互斥 state。
 
 ## 維護
