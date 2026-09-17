@@ -43,6 +43,7 @@
 | 《南橋入庫門四枚架號牌有一枚翻了面》 | `ootb-linked-tianyue-southbridge-rack-tag-001` | 《南橋封冊架三枚交班木楔有一枚刻了兩道線》 | 後續／入庫架號、待核標示與交班程序後果 | 非必要 |
 | 《南橋庫內四格待核架有一格掛了兩張紙》 | `ootb-linked-tianyue-southbridge-hold-slip-001` | 《南橋入庫門四枚架號牌有一枚翻了面》 | 後續／待核紙、架位改派與封庫覆核程序後果 | 非必要 |
 | 《南橋封庫桌三枚封存籤有一枚少了見證押》 | `ootb-linked-tianyue-southbridge-witness-tag-001` | 《南橋庫內四格待核架有一格掛了兩張紙》 | 後續／封存籤、見證押與封庫交接程序後果 | 非必要 |
+| 《南橋封庫櫃三把鑰匙有一把留在鎖孔》 | `ootb-linked-tianyue-southbridge-lock-key-001` | 《南橋封庫桌三枚封存籤有一枚少了見證押》 | 後續／封庫鑰匙、交班簽領與鎖櫃責任 | 非必要 |
 
 ## 關連圖
 ```text
@@ -79,13 +80,14 @@
             → 南橋入庫門四枚架號牌有一枚翻了面
             → 南橋庫內四格待核架有一格掛了兩張紙
             → 南橋封庫桌三枚封存籤有一枚少了見證押
+            → 南橋封庫櫃三把鑰匙有一把留在鎖孔
 ```
 
 ## 共同背景基線
 - 天嶽七峰外圍以山路、橋索、貨務、車具、鐵作、封件與交接責任形成連續地方運作背景；不得因此新增世界知識庫未定義的常設高層機構。
 - 每篇後作只承接直接來源已保存的制度／物權／事故 state；新事件的具體責任、人物、物件與失誤均以本篇正文為準。
 - 前作 state 若令道路、車位、樣件、封件或車務暫時不可用，後作固定在山務完成合理修復、追回、複核或重開後發生；只推進世界時間，不抹除前作結果。
-- 《南橋放車門三塊驗載牌…》的車、牌、空鉤與預填簿為新事件；《南橋放車門兩本出門簿…》的舊新兩冊、三車轉抄、撕角留樣、黏頁與缺頁為新事件；《南橋放車門四枚封冊簽…》的四冊、四簽、新舊封繩、工作盤與留樣匣為新事件；《南橋封冊架三枚交班木楔…》的換架、三枚定位木楔、雙刻線、新側板木毛與簿位異常為新事件；《南橋入庫門四枚架號牌…》的四冊、四枚架號牌、乙七格屋漏封閉、翻牌與漏寫交班為新事件；《南橋庫內四格待核架…》的乙冊、乙七／乙九兩張待核紙、唯一改派與舊紙未撤為新事件；《南橋封庫桌三枚封存籤…》的乙冊封存匣、三枚封存籤、見證簿、工作盤與籤面漏補見證押為新事件。
+- 《南橋放車門三塊驗載牌…》的車、牌、空鉤與預填簿為新事件；《南橋放車門兩本出門簿…》的舊新兩冊、三車轉抄、撕角留樣、黏頁與缺頁為新事件；《南橋放車門四枚封冊簽…》的四冊、四簽、新舊封繩、工作盤與留樣匣為新事件；《南橋封冊架三枚交班木楔…》的換架、三枚定位木楔、雙刻線、新側板木毛與簿位異常為新事件；《南橋入庫門四枚架號牌…》的四冊、四枚架號牌、乙七格屋漏封閉、翻牌與漏寫交班為新事件；《南橋庫內四格待核架…》的乙冊、乙七／乙九兩張待核紙、唯一改派與舊紙未撤為新事件；《南橋封庫桌三枚封存籤…》的乙冊封存匣、三枚封存籤、見證簿、工作盤與籤面漏補見證押為新事件；《南橋封庫櫃三把鑰匙…》的乙櫃、甲乙丙三匙、鑰匙板、簽領簿、倒箱中斷與甲匙留孔為新事件。
 - 各節點的任務定位、建議等級、R、規模與難度可各自設計；同源後續不自動互斥。
 
 ## Branch／state 路由
@@ -98,6 +100,7 @@
 - 《南橋入庫門四枚架號牌…》只讀 `southbridge_shelf_wedge_*`；可建立 `southbridge_rack_tag_chain_restored`、`southbridge_rack_tag_safe_hold`、`southbridge_rack_tag_incident`、`southbridge_rack_tag_abandoned`。
 - 《南橋庫內四格待核架…》只讀 `southbridge_rack_tag_*`；可建立 `southbridge_hold_slip_chain_restored`、`southbridge_hold_slip_safe_hold`、`southbridge_hold_slip_incident`、`southbridge_hold_slip_abandoned`。
 - 《南橋封庫桌三枚封存籤…》只讀 `southbridge_hold_slip_*`；它們只改乙冊來源核對、先封後查、正式物件見證與合作程度，不改乙冊未拆、昨夜確有雙人見證及籤面漏補第二押的本篇真相。可建立 `southbridge_witness_tag_chain_restored`、`southbridge_witness_tag_safe_hold`、`southbridge_witness_tag_incident`、`southbridge_witness_tag_abandoned`。
+- 《南橋封庫櫃三把鑰匙…》只讀 `southbridge_witness_tag_*`；它們只改封存交班記錄的可信起點、正式鑰匙見證與合作程度，不改乙櫃未被私開、甲匙留孔及錯誤補寫歸還的本篇真相。可建立 `southbridge_lock_key_chain_restored`、`southbridge_lock_key_safe_hold`、`southbridge_lock_key_incident`、`southbridge_lock_key_abandoned`。
 
 ## 主要 ending／state → 後續映射
 - 既有節點原有可達性維持；凡正文已標示任何 ending 或無紀錄可進後作者仍成立，只有實際 state 形成 overlay。
@@ -106,7 +109,8 @@
 - 《南橋封冊架三枚交班木楔有一枚刻了兩道線》任何 ending 或無紀錄都可進《南橋入庫門四枚架號牌有一枚翻了面》；前作 state 只依後作正文形成 overlay。
 - 《南橋入庫門四枚架號牌有一枚翻了面》任何 ending 或無紀錄都可進《南橋庫內四格待核架有一格掛了兩張紙》；前作 state 只依後作正文形成 overlay。
 - 《南橋庫內四格待核架有一格掛了兩張紙》任何 ending 或無紀錄都可進《南橋封庫桌三枚封存籤有一枚少了見證押》；`southbridge_hold_slip_chain_restored=true` 令第一次乙冊來源核對直接成立，`safe_hold=true` 令乙冊可由前次安全封存轉入本次續封，`incident=true` 增加正式物件見證，`abandoned=true` 只降低初始合作。
-- 《南橋封庫桌三枚封存籤有一枚少了見證押》的 `southbridge_witness_tag_chain_restored=true` 表示封存—見證—籤面鏈已恢復；`southbridge_witness_tag_safe_hold=true` 表示乙匣已整體安全續封；`southbridge_witness_tag_incident=true` 表示山務因破壞或失據接管；`southbridge_witness_tag_abandoned=true` 表示未完成安全交接便離場。
+- 《南橋封庫桌三枚封存籤有一枚少了見證押》任何 ending 或無紀錄都可進《南橋封庫櫃三把鑰匙有一把留在鎖孔》；`southbridge_witness_tag_chain_restored=true` 令第一次封存交班記錄核對直接成立，`safe_hold=true` 令櫃內物件由安全續封轉入本次保管，`incident=true` 增加正式鑰匙見證，`abandoned=true` 只降低初始合作。
+- 《南橋封庫櫃三把鑰匙有一把留在鎖孔》的 `southbridge_lock_key_chain_restored=true` 表示鑰匙—簽領—封櫃鏈已恢復；`southbridge_lock_key_safe_hold=true` 表示甲匙與乙櫃已一起安全外封；`southbridge_lock_key_incident=true` 表示山務因破壞或失據接管；`southbridge_lock_key_abandoned=true` 表示未完成安全交接便離場。
 - 本次沒有新增互斥 state。
 
 ## 維護
