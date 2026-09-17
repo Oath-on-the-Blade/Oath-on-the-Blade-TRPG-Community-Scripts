@@ -1,7 +1,8 @@
 # 廢峰石壁五道拳痕只剩四道
 
 - `script_id`: `ootb-martial-abandoned-peak-five-fist-marks`
-- 劇本版本：1.0.0
+- 劇本版本：1.0.1
+- 建議人數：2–4名角色
 - 建議角色等級：1–5級
 - 歷練基準等級 R：5
 - 劇本規模：小型
