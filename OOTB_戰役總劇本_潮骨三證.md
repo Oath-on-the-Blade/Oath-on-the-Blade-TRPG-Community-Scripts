@@ -3,7 +3,7 @@
 ## 規格頭
 - 戰役名：潮骨三證
 - `campaign_id`：`ootb_campaign_tidebone_three_proofs`
-- 總劇本版本：1.0.2
+- 總劇本版本：1.0.3
 - 戰役狀態：連載中
 - 已正式發布的階段劇本：無
 - 當前規劃階段：四階段；第一至第三階段在 `campaign_in_progress` 撰寫／修訂中，第四階段規劃中
@@ -105,9 +105,15 @@
 - `campaign_progress=0/4`
 - `state_final_cargo` 尚未建立；只在第二階段正式結算時首次寫入 `scheduled/moved_early`，不得提前用預設值覆蓋實際時間線。
 
+## 承接裁決共通規則
+- 每個非末篇可承接 ending 只在該篇正式結算時，依本總綱、current `campaign_save` 與本篇凍結結果判定一次完整解鎖路線。
+- 成立時保存 `continuation_status=open`、目標 `next_stage` 與實際匹配的完整路線；下一篇開局只載入這個 `continuation_handoff`，不得重新計算前篇能否承接。
+- 不可承接／放棄時保存 `continuation_status=closed`、`next_stage=none`，並依下列提早戰役結局寫入 `partly_completed` 或 `failed`。
+- repository 之後改版不得追溯改判已由某桌正式宣告並保存的承接結果。
+
 ## 四階段接口
 ### 第一階段《鹽袋上的第二道水線》
-- 狀態：撰寫中；branch 內已完成 1.0.2 修訂，未正式發布。
+- 狀態：撰寫中；branch 內已完成 1.0.3 修訂，未正式發布。
 - 輸入：戰役共同起點；無前篇要求。
 - 使用 NPC：#1、#2、#3。
 - 為何現在發生：鹽貨出現不合正常堆放位置的第二道海水線，承包人要求以「倉漏」結案。
@@ -126,7 +132,7 @@
   - A OR B 即可；`state_clerk_status`、`state_foreman_status`、`state_side_channel` 只改開場差異，不是額外解鎖門檻。若兩個 ending 均不成立，第二階段保持鎖定。
 
 ### 第二階段《三枚不同鍛痕的船釘》
-- 狀態：撰寫中；branch 內已完成 1.0.2 修訂，未正式發布。
+- 狀態：撰寫中；branch 內已完成 1.0.3 修訂，未正式發布。
 - 輸入：第一階段可承接 ending；帶入書吏與領工狀態。
 - 使用 NPC：#1、#2、#3。
 - 為何現在發生：第一階段留下的潮時／實物矛盾指向舊船塢；領工開始擔心自己被滅證。
@@ -145,7 +151,7 @@
   - A OR B；兩條路線都必須帶入第二階段已結算的 `state_final_cargo` 及全部仍有效早期 state。若兩個 ending 均不成立，第三階段保持鎖定。
 
 ### 第三階段《退潮前移動的最後一批貨》
-- 狀態：撰寫中；branch 內已完成 1.0.2 修訂，未正式發布。
+- 狀態：撰寫中；branch 內已完成 1.0.3 修訂，未正式發布。
 - 輸入：第二階段可承接 ending；同時讀取第一階段 `state_ledger_exposed`、`state_clerk_status`。
 - 使用 NPC：#1、#2、#3。
 - 為何現在發生：承包人按暴露程度選擇原定交貨或提前轉移最後一批貨。
