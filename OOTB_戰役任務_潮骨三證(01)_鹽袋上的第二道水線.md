@@ -3,8 +3,8 @@
 ## 劇本規格
 - 劇本名稱：《鹽袋上的第二道水線》
 - `script_id`：`ootb_campaign_tidebone_01_second_waterline`
-- 版本：1.0.2
-- `replay_policy`：`once_per_campaign`
+- 版本：1.0.3
+- `replay_policy`：`once_per_character`
 - 連續性：`independent`（《潮骨三證》戰役入口；無前篇 `campaign_save` 要求）
 - 所屬戰役：`ootb_campaign_tidebone_three_proofs`《潮骨三證》
 - 階段：01／04
@@ -172,7 +172,7 @@
 - 物質結果：30兩整隊實際取得並共同持有（`shared_asset_id: E1_CHAIN_PAY`；可分割；玩家共同決定分配）；若玩家已在行動前被告知並仍造成可歸責的貨物損壞，按委託約定扣10兩，實得20兩。
 - 社會名譽：公開且可靠歸因時，俠名 `+0.2×E`、惡名 `0.0×E`、【西海道民間】`+0.4×E`；由三家鹽商、腳夫與港民傳開。若只私下交付證據，俠名 `0.0×E`、惡名 `0.0×E`、【西海道民間】`+0.2×E`，只由委託鹽商圈內傳播。
 - state：`state_ledger_exposed=true`；書吏依實際處置寫入 `state_clerk_status`，領工若已被提前接觸則同步其 `state_foreman_status`；`campaign_status=active`、`campaign_progress=1/4`。
-- 承接：解鎖第二階段。
+- 承接：結算時依總綱確認第二階段路線A完整成立後，保存 `next_stage=ootb_campaign_tidebone_02_three_spikes` 與實際匹配路線；下篇開局不重算。
 
 ### `E1_physical_only`《貨證留下，帳頁沒能說話》
 - 結局 ID：`E1_physical_only`
@@ -184,7 +184,7 @@
 - 物質結果：25兩整隊實際取得並共同持有（`shared_asset_id: E1_PHYSICAL_PAY`；可分割；玩家共同決定分配）；若上述貨損扣款已成立，實得15兩。
 - 社會名譽：可靠公開時，俠名 `+0.1×E`、惡名 `0.0×E`、【西海道民間】`+0.2×E`；若只私下交付，三者均為 `0.0×E`。
 - state：`state_ledger_exposed=false`；書吏與領工依實際處置寫入各自 status；`campaign_status=active`、`campaign_progress=1/4`。
-- 承接：解鎖第二階段，以實物／船塢路線開場。
+- 承接：結算時依總綱確認第二階段路線B完整成立後，保存 `next_stage=ootb_campaign_tidebone_02_three_spikes` 與實際匹配路線；下篇開局不重算。
 
 ### `E1_false_closure`《潮痕止於倉門》
 - 結局 ID：`E1_false_closure`
