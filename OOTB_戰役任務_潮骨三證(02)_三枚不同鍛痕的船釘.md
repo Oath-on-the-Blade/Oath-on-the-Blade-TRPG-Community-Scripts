@@ -3,8 +3,8 @@
 ## 劇本規格
 - 劇本名稱：《三枚不同鍛痕的船釘》
 - `script_id`：`ootb_campaign_tidebone_02_three_spikes`
-- 版本：1.0.2
-- `replay_policy`：`once_per_campaign`
+- 版本：1.0.3
+- `replay_policy`：`once_per_character`
 - 連續性：`continuous`（只接受第一階段 `E1_chain_intact` 或 `E1_physical_only` 已正式結算且已保存承接裁決的 `campaign_save`）
 - 所屬戰役：`ootb_campaign_tidebone_three_proofs`《潮骨三證》
 - 階段：02／04
@@ -34,7 +34,7 @@
 - 需要引用的內容庫條目：`內容庫/拿手.md`：說服、威嚇、格物推理、感應、體能；`內容庫/相對名譽對象.md`：【西海道民間】
 
 ## 承接載入
-開局只讀已結算的第一階段 state，不重新計算前篇條件。必讀：`state_ledger_exposed`、`state_clerk_status`、`state_foreman_status`、`state_side_channel`（若玩家前篇提前發現）。
+開局先讀上一階段結算保存的 `continuation_handoff`；只有 `next_stage=ootb_campaign_tidebone_02_three_spikes` 且承接裁決為 open 才開始本篇。之後只載入已結算的第一階段 state，不重新計算前篇解鎖條件。必讀：`state_ledger_exposed`、`state_clerk_status`、`state_foreman_status`、`state_side_channel`（若玩家前篇提前發現）。
 
 若前篇為 `E1_chain_intact`，玩家帶著帳實矛盾來；若為 `E1_physical_only`，玩家主要依船脂、麻纖維、搬運方向來。兩者都自然指向舊船塢。
 
@@ -143,7 +143,7 @@
 - 物質結果：前篇鹽商追加20兩整隊調查費，已實際取得並共同持有（`shared_asset_id: E2_ROUTE_PAY`；可分割；玩家共同決定分配）。
 - 社會名譽：公開保全工人並建立責任區分時，俠名 `+0.1×E`、惡名 `0.0×E`、【西海道民間】`+0.3×E`；由工人、鹽商與港民傳開。若無差別拘人但仍破案，俠名 `0.0×E`、惡名 `0.0×E`、【西海道民間】`-0.1×E`。
 - state：`state_spike_count`按實得；`state_side_channel`按處置；領工合作則 `state_foreman_cooperates=true`；`campaign_status=active`、`campaign_progress=2/4`。
-- 承接：第三階段。
+- 承接：結算時依總綱以本桌完整前史確認第三階段解鎖路線，成立後才保存 `next_stage=ootb_campaign_tidebone_03_last_cargo` 與實際匹配路線；下篇開局不重算。
 
 ### `E2_foreman_deal`《人證先於鐵證》
 - 結局 ID：`E2_foreman_deal`
@@ -155,7 +155,7 @@
 - 物質結果：15兩整隊調查費已實際取得並共同持有（`shared_asset_id: E2_FOREMAN_PAY`；可分割；玩家共同決定分配）。
 - 社會名譽：一般合作結案時俠名 `0.0×E`、惡名 `0.0×E`、【西海道民間】`+0.2×E`；若公開保護證人且能可靠歸因到角色，俠名改為 `+0.1×E`，其餘不變。
 - state：`state_foreman_cooperates=true`、`campaign_status=active`、`campaign_progress=2/4`。
-- 承接：第三階段以人證監視路線開始。
+- 承接：結算時依總綱確認人證監視路線完整成立後，保存 `next_stage=ootb_campaign_tidebone_03_last_cargo` 與該匹配路線；下篇開局不重算。
 
 ### `E2_workers_broken`《船塢只剩斷索》
 - 結局 ID：`E2_workers_broken`
