@@ -3,7 +3,7 @@
 ## 規格頭
 - 戰役名：潮骨三證
 - `campaign_id`：`ootb_campaign_tidebone_three_proofs`
-- 總劇本版本：1.0.1
+- 總劇本版本：1.0.2
 - 戰役狀態：連載中
 - 已正式發布的階段劇本：無
 - 當前規劃階段：四階段；第一至第三階段在 `campaign_in_progress` 撰寫／修訂中，第四階段規劃中
@@ -87,13 +87,27 @@
 | `state_contractor_status` | `active / exposed / fled / detained / dead` | 第三階段 | <NPC#1@戰役:潮骨三證> 的公開／人身狀態 | 第三階段決定本人是否現場；第四階段決定是否由本人、帳冊／租約或護貨人口供承接責任鏈 |
 | `state_buyer_route` | `unknown / partial / confirmed` | 第三階段 | 玩家對灣外接貨路線的可追程度 | 第四階段解鎖硬前提之一：`confirmed` 對應完整接口，`partial/confirmed` 可對應追索接口；`unknown` 令第四階段保持鎖定 |
 | `campaign_status` | `active / partly_completed / failed / completed` | 第一階段每次正式結算 | 本桌整條戰役的當前層級結果 | 每篇結算只依該 ending 固定一次；`active` 才可保存下一階段接口，`partly_completed/failed/completed` 均不再自動承接 |
-| `campaign_progress` | `1/4 / 2/4 / 3/4 / 4/4` | 第一階段每次正式結算 | 已正式結算的階段數／本版規劃總階段數 | 玩家可見戰役收束與 campaign_save 顯示使用；不作後篇解鎖的替代條件 |
+| `campaign_progress` | `0/4 / 1/4 / 2/4 / 3/4 / 4/4` | 第一階段每次正式結算 | 已正式結算的階段數／本版規劃總階段數 | 玩家可見戰役收束與 campaign_save 顯示使用；不作後篇解鎖的替代條件 |
 
 只有以上真正被後篇讀取或需要保存戰役層結果的資料進入 campaign state；第一階段「已確認海水來源」屬本篇已結算事實，不另保留一個後篇不讀取的旗標。
 
+### 戰役初始 state
+正式開始第一階段、尚未結算任何 ending 時，`campaign_save` 的作者層基線為：
+- `state_ledger_exposed=false`
+- `state_clerk_status=active`
+- `state_foreman_status=active`
+- `state_foreman_cooperates=false`
+- `state_spike_count=0`
+- `state_side_channel=unknown`
+- `state_contractor_status=active`
+- `state_buyer_route=unknown`
+- `campaign_status=active`
+- `campaign_progress=0/4`
+- `state_final_cargo` 尚未建立；只在第二階段正式結算時首次寫入 `scheduled/moved_early`，不得提前用預設值覆蓋實際時間線。
+
 ## 四階段接口
 ### 第一階段《鹽袋上的第二道水線》
-- 狀態：撰寫中；branch 內已完成 1.0.1 修訂，未正式發布。
+- 狀態：撰寫中；branch 內已完成 1.0.2 修訂，未正式發布。
 - 輸入：戰役共同起點；無前篇要求。
 - 使用 NPC：#1、#2、#3。
 - 為何現在發生：鹽貨出現不合正常堆放位置的第二道海水線，承包人要求以「倉漏」結案。
@@ -104,7 +118,7 @@
 - 主要 ending：
   - `E1_chain_intact`：水線與潮簿兩條證據都成立；`campaign_status=active`，解鎖第二階段。
   - `E1_physical_only`：只保住實物因果，潮簿證據未成；`campaign_status=active`，第二階段以船塢物證路線開場。
-  - `E1_false_closure`：接受倉漏說且正式結案，玩家沒有可追接口；`campaign_status=partly_completed`，戰役收束《潮痕止於倉門》：眼前賠付完成、鹽貨爭議結束；尾聲只呈現下一次退潮時遠處舊船塢傳來一次不合班次的絞盤聲。GM 宣告「戰役部分完成（1/4）」；原第二階段不再自動發生。
+  - `E1_false_closure`：接受倉漏說且正式結案，玩家沒有可追接口；`campaign_status=partly_completed`、`campaign_progress=1/4`。最終保存 `state_ledger_exposed=false`、書吏／領工實際 status、若已提前找到則保存 `state_side_channel`；貨證依結算移交鹽商。戰役收束《潮痕止於倉門》：眼前賠付完成、鹽貨爭議結束；尾聲只呈現下一次退潮時遠處舊船塢傳來一次不合班次的絞盤聲。因沒有A+C或A+B可承接證據組合，原第二階段不再自動發生；GM 宣告「戰役部分完成（1/4）」。
   - `E1_abandon`：放棄；`campaign_status=failed`，戰役終止。
 - 第二階段解鎖：
   - 路線A（來源：第一階段）：`E1_chain_intact` 已結算為可承接；帳實矛盾令「為何現在」成立，玩家以受委託調查者身分追到舊船塢。
@@ -112,7 +126,7 @@
   - A OR B 即可；`state_clerk_status`、`state_foreman_status`、`state_side_channel` 只改開場差異，不是額外解鎖門檻。若兩個 ending 均不成立，第二階段保持鎖定。
 
 ### 第二階段《三枚不同鍛痕的船釘》
-- 狀態：撰寫中；branch 內已完成 1.0.1 修訂，未正式發布。
+- 狀態：撰寫中；branch 內已完成 1.0.2 修訂，未正式發布。
 - 輸入：第一階段可承接 ending；帶入書吏與領工狀態。
 - 使用 NPC：#1、#2、#3。
 - 為何現在發生：第一階段留下的潮時／實物矛盾指向舊船塢；領工開始擔心自己被滅證。
@@ -123,7 +137,7 @@
 - 主要 ending：
   - `E2_route_proven`：定位側渠且至少保住一枚船釘；`campaign_status=active`，解鎖第三階段。
   - `E2_foreman_deal`：未取得完整物證但領工合作並口述操作法；`campaign_status=active`，第三階段以人證監視路線開場。
-  - `E2_workers_broken`：玩家無差別處置工人，領工帶證逃離且側渠未定位；`campaign_status=partly_completed`，收束《船塢只剩斷索》：本篇工人衝突正式結束，第一階段的貨損仍可交差；尾聲只留一枚被拔走後留下的新鮮釘孔。GM 宣告「戰役部分完成（2/4）」；第三階段不開。
+  - `E2_workers_broken`：玩家無差別處置工人，領工帶證逃離且側渠未定位；`campaign_status=partly_completed`、`campaign_progress=2/4`。最終保存 `state_foreman_status=hostile/fled` 依實際、`state_foreman_cooperates=false`、`state_spike_count` 已保全數量、`state_side_channel=unknown`，並保留第一階段所有有效 state；本篇未建立可承接的最後貨接口。收束《船塢只剩斷索》：本篇工人衝突正式處理，第一階段貨損仍可交差；因既無側渠位置／用途證據亦無合作領工，第三階段不開。GM 宣告「戰役部分完成（2/4）」。
   - `E2_abandon`：放棄；`campaign_status=failed`。
 - 第三階段解鎖：
   - 路線A（來源：第二階段＋第一階段差異）：`E2_route_proven` 可承接；第二階段已證明側渠／夜班用途。第一階段的 `state_ledger_exposed`、`state_clerk_status` 不作門檻，但分別改變帳證來源與潮時資訊。
@@ -131,19 +145,19 @@
   - A OR B；兩條路線都必須帶入第二階段已結算的 `state_final_cargo` 及全部仍有效早期 state。若兩個 ending 均不成立，第三階段保持鎖定。
 
 ### 第三階段《退潮前移動的最後一批貨》
-- 狀態：撰寫中；branch 內已完成 1.0.1 修訂，未正式發布。
+- 狀態：撰寫中；branch 內已完成 1.0.2 修訂，未正式發布。
 - 輸入：第二階段可承接 ending；同時讀取第一階段 `state_ledger_exposed`、`state_clerk_status`。
 - 使用 NPC：#1、#2、#3。
 - 為何現在發生：承包人按暴露程度選擇原定交貨或提前轉移最後一批貨。
 - 玩家介入：由側渠／領工人證推知下一次退潮窗口，可監視、截貨、跟蹤或促使書吏合作。
 - 獨立目標：確認最後貨物的移動路線並取得足以指向承包人的責任鏈。
 - 局部真相：最後一批貨是策劃者準備收尾的最大一批；外海買家只按約接貨，不會為他死守。
-- 條件式開場：`state_ledger_exposed=true` → 貨物提前一個潮窗；否則按原定窗口。`state_clerk_status=cooperating` → 玩家可取得半刻級潮時優勢；否則須靠船塢觀察。
+- 條件式開場：直接讀取第二階段已結算的 `state_final_cargo`；`moved_early` → 貨物提前一個潮窗，`scheduled` → 按原定窗口。只有舊存檔缺少此鍵時才以 `state_ledger_exposed`／第二階段耗時作相容補寫。`state_clerk_status=cooperating` → 玩家可取得半刻級潮時資訊；否則須靠船塢觀察。
 - 可改 state：`state_final_cargo`、`state_contractor_status`、`state_buyer_route`。
 - 主要 ending：
   - `E3_chain_to_buyer`：取得承包人責任鏈並確認外海接貨路線；`campaign_status=active`，解鎖第四階段。
-  - `E3_contractor_only`：承包人責任成立但買家路線永久失去；`campaign_status=partly_completed`，收束《潮口止證》：地方私運案可正式交辦、貨路在海面斷掉；尾聲只留下無主接貨燈號熄滅。GM 宣告「戰役部分完成（3/4）」；第四階段不開。
-  - `E3_cargo_escaped_with_trace`：貨逃走但玩家取得可靠船向／燈號；`campaign_status=active`，第四階段改為追索路線。
+  - `E3_contractor_only`：承包人責任成立但買家路線永久失去；`campaign_status=partly_completed`、`campaign_progress=3/4`、`state_buyer_route=unknown`，並保存 `state_final_cargo` 與 `state_contractor_status` 的實際最終值。收束《潮口止證》：地方私運案可正式交辦、貨路在海面斷掉；尾聲只留下無主接貨燈號熄滅。因沒有可靠灣外路線可追，第四階段不開；GM 宣告「戰役部分完成（3/4）」。
+  - `E3_cargo_escaped_with_trace`：貨逃走但玩家取得可靠船向／燈號；`state_buyer_route` 依一項未交叉核對資料=`partial`、兩項以上相容獨立資料或可核對木牌=`confirmed`；`campaign_status=active`，第四階段改為追索路線。
   - `E3_abandon`：放棄；`campaign_status=failed`。
 - 第四階段解鎖：
   - 路線A（來源：第三階段，並保留第一／二階段差異）：`E3_chain_to_buyer` AND `state_buyer_route=confirmed`；玩家已握有可直接辨認的灣外接貨接口。
