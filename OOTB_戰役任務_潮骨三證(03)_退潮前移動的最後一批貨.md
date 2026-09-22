@@ -3,8 +3,8 @@
 ## 劇本規格
 - 劇本名稱：《退潮前移動的最後一批貨》
 - `script_id`：`ootb_campaign_tidebone_03_last_cargo`
-- 版本：1.0.2
-- `replay_policy`：`once_per_campaign`
+- 版本：1.0.3
+- `replay_policy`：`once_per_character`
 - 連續性：`continuous`（只接受第二階段 `E2_route_proven` 或 `E2_foreman_deal` 已正式結算且已保存承接裁決的 `campaign_save`）
 - 所屬戰役：`ootb_campaign_tidebone_three_proofs`《潮骨三證》
 - 階段：03／04
@@ -34,7 +34,7 @@
 - 需要引用的內容庫條目：`內容庫/拿手.md`：識字、說服、生存、身法；`內容庫/相對名譽對象.md`：【西海道民間】
 
 ## 解鎖與前史載入
-開局讀取此前所有仍有效 state：`state_ledger_exposed`、`state_clerk_status`、`state_foreman_status`、`state_foreman_cooperates`、`state_spike_count`、`state_side_channel`、`state_final_cargo`。不重新判定前篇 ending。
+開局先讀上一階段結算保存的 `continuation_handoff`；只有 `next_stage=ootb_campaign_tidebone_03_last_cargo` 且承接裁決為 open 才開始本篇。之後讀取此前所有仍有效 state：`state_ledger_exposed`、`state_clerk_status`、`state_foreman_status`、`state_foreman_cooperates`、`state_spike_count`、`state_side_channel`、`state_final_cargo`。不重新判定前篇 ending。
 
 條件式開場：
 - `state_final_cargo=moved_early`：承包人已把最後貨提前一個潮窗，玩家只剩約6小時。
@@ -162,7 +162,7 @@ C至少保住一項可追資料，第四階段才合法解鎖。 結算 `state_b
 - 物質結果：地方鹽商與受損貨主共同追加30兩，整隊已實際取得並共同持有（`shared_asset_id: E3_CHAIN_PAY`；可分割；玩家共同決定分配）；截獲海貨屬待交辦共同財物，不自動成玩家戰利品。
 - 社會名譽：公開可靠歸因時，俠名 `+0.2×E`、惡名 `0.0×E`、【西海道民間】`+0.4×E`；由受損貨主、鹽商與在場港民傳開。秘密交辦時，俠名 `0.0×E`、惡名 `0.0×E`、【西海道民間】`+0.2×E`。
 - state：`state_final_cargo=intercepted`、`state_contractor_status`依實際、`state_buyer_route=confirmed`、`campaign_status=active`、`campaign_progress=3/4`。
-- 承接：第四階段。
+- 承接：結算時依總綱確認第四階段路線A完整成立後，保存 `next_stage=ootb_campaign_tidebone_04_buyer_lights` 與實際匹配路線；下篇開局不重算。
 
 ### `E3_cargo_escaped_with_trace`《貨出了灣，燈號留下》
 - 結局 ID：`E3_cargo_escaped_with_trace`
@@ -174,7 +174,7 @@ C至少保住一項可追資料，第四階段才合法解鎖。 結算 `state_b
 - 物質結果：20兩整隊酬勞已實際取得並共同持有（`shared_asset_id: E3_TRACE_PAY`；可分割；玩家共同決定分配）；逃離貨物為未取得。
 - 社會名譽：俠名 `0.0×E`、惡名 `0.0×E`、【西海道民間】`+0.2×E`；若角色公開承擔追索且身分可可靠歸因，俠名改為 `+0.1×E`。
 - state：`state_final_cargo=escaped`、`state_contractor_status`依實際、`state_buyer_route`依本篇C的明確判定寫入 `partial` 或 `confirmed`、`campaign_status=active`、`campaign_progress=3/4`。
-- 承接：第四階段改為追索路線。
+- 承接：結算時依總綱確認第四階段路線B完整成立後，保存 `next_stage=ootb_campaign_tidebone_04_buyer_lights` 與實際匹配路線；下篇開局不重算。
 
 ### `E3_contractor_only`《潮口止證》
 - 結局 ID：`E3_contractor_only`
