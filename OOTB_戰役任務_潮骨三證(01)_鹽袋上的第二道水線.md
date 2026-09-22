@@ -139,7 +139,7 @@
 - 基礎歷練：6點；參與完整調查者取得。
 - 酬勞：30兩整隊實際取得；若造成可歸責貨損，扣10兩。
 - 社會名譽：公開且可靠歸因時，俠名 `+0.2×E`、惡名 `0.0×E`、【西海道民間】`+0.4×E`；由三家鹽商、腳夫與港民傳開。若只私下交付證據，俠名 `0.0×E`、惡名 `0.0×E`、【西海道民間】`+0.2×E`，只由委託鹽商圈內傳播。
-- state：`state_saltwater_trace=confirmed`、`state_ledger_exposed=true`；書吏依實際處置記錄；`campaign_status=active`、`campaign_progress=1/4`。
+- state：`state_ledger_exposed=true`；書吏依實際處置寫入 `state_clerk_status`，領工若已被提前接觸則同步其 `state_foreman_status`；`campaign_status=active`、`campaign_progress=1/4`。
 - 承接：解鎖第二階段。
 
 ### `E1_physical_only`《貨證留下，帳頁沒能說話》
@@ -147,7 +147,7 @@
 - 基礎歷練：5點。
 - 酬勞：25兩實際取得。
 - 社會名譽：可靠公開時，俠名 `+0.1×E`、惡名 `0.0×E`、【西海道民間】`+0.2×E`；若只私下交付，三者均為 `0.0×E`。
-- state：`state_saltwater_trace=confirmed`、`state_ledger_exposed=false`、`campaign_status=active`、`campaign_progress=1/4`。
+- state：`state_ledger_exposed=false`；書吏與領工依實際處置寫入各自 status；`campaign_status=active`、`campaign_progress=1/4`。
 - 承接：解鎖第二階段，以實物／船塢路線開場。
 
 ### `E1_false_closure`《潮痕止於倉門》
