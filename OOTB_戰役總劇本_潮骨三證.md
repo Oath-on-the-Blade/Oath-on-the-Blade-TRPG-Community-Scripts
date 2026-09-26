@@ -3,10 +3,10 @@
 ## 規格頭
 - 戰役名：潮骨三證
 - `campaign_id`：`ootb_campaign_tidebone_three_proofs`
-- 總劇本版本：1.0.3
-- 戰役狀態：連載中
-- 已正式發布的階段劇本：無
-- 當前規劃階段：四階段；第一至第三階段在 `campaign_in_progress` 撰寫／修訂中，第四階段規劃中
+- 總劇本版本：1.0.4
+- 戰役狀態：已完結（四階段正文均已完成；尚待由 `campaign_in_progress` 發布至 default）
+- 已正式發布的階段劇本：無（本版四階段目前僅存在於 `campaign_in_progress`，不得視為 default 已發布）
+- 當前規劃階段：四階段，全部已完成最終正文；第一至第四階段分別為 `ootb_campaign_tidebone_01_second_waterline`、`ootb_campaign_tidebone_02_three_spikes`、`ootb_campaign_tidebone_03_last_cargo`、`ootb_campaign_tidebone_04_bay_signal`
 - 共同起點：西海道海陵外港、蒼龍灣東緣鹽埠
 - 主要地理範圍：海陵外港、蒼龍灣近岸礁島、鹽運支渠與舊船塢；均屬西海道地方新增地點，不改寫定潮島與海陵既有權威設定
 - 建議等級走向：6–10級；各階段以 R8 為主要校準
@@ -68,9 +68,9 @@
 ## 戰役級 NPC registry
 | Key | 姓名欄 | 身份／功能 | actor_key | 首次規劃登場 | 首次正式登場 |
 |---|---|---|---|---|---|
-| `NPC#1@戰役:潮骨三證` | 姓?-名? | 鹽運承包人／策劃者 | `actor_contractor` | 第一階段 | 待發布 |
-| `NPC#2@戰役:潮骨三證` | 姓?-名? | 驗潮書吏／帳簿接口 | `actor_clerk` | 第一階段 | 待發布 |
-| `NPC#3@戰役:潮骨三證` | 姓?-名? | 舊船塢領工／實物接口 | `actor_foreman` | 第一階段 | 待發布 |
+| `NPC#1@戰役:潮骨三證` | 姓?-名? | 鹽運承包人／策劃者 | `actor_contractor` | 第一階段 | 第一階段 |
+| `NPC#2@戰役:潮骨三證` | 姓?-名? | 驗潮書吏／帳簿接口 | `actor_clerk` | 第一階段 | 第一階段 |
+| `NPC#3@戰役:潮骨三證` | 姓?-名? | 舊船塢領工／實物接口 | `actor_foreman` | 第一階段 | 第一階段 |
 
 編號永久保留；新增跨篇具體人物須先更新本表。
 
@@ -113,7 +113,9 @@
 
 ## 四階段接口
 ### 第一階段《鹽袋上的第二道水線》
-- 狀態：撰寫中；branch 內已完成 1.0.3 修訂，未正式發布。
+- 狀態：完成；branch 內最終版本 1.0.3，待整體發布。
+- `script_id`：`ootb_campaign_tidebone_01_second_waterline`
+- 正式檔名：`OOTB_戰役任務_潮骨三證(01)_鹽袋上的第二道水線.md`
 - 輸入：戰役共同起點；無前篇要求。
 - 使用 NPC：#1、#2、#3。
 - 為何現在發生：鹽貨出現不合正常堆放位置的第二道海水線，承包人要求以「倉漏」結案。
@@ -132,7 +134,9 @@
   - A OR B 即可；`state_clerk_status`、`state_foreman_status`、`state_side_channel` 只改開場差異，不是額外解鎖門檻。若兩個 ending 均不成立，第二階段保持鎖定。
 
 ### 第二階段《三枚不同鍛痕的船釘》
-- 狀態：撰寫中；branch 內已完成 1.0.3 修訂，未正式發布。
+- 狀態：完成；branch 內最終版本 1.0.3，待整體發布。
+- `script_id`：`ootb_campaign_tidebone_02_three_spikes`
+- 正式檔名：`OOTB_戰役任務_潮骨三證(02)_三枚不同鍛痕的船釘.md`
 - 輸入：第一階段可承接 ending；帶入書吏與領工狀態。
 - 使用 NPC：#1、#2、#3。
 - 為何現在發生：第一階段留下的潮時／實物矛盾指向舊船塢；領工開始擔心自己被滅證。
@@ -151,7 +155,9 @@
   - A OR B；兩條路線都必須帶入第二階段已結算的 `state_final_cargo` 及全部仍有效早期 state。若兩個 ending 均不成立，第三階段保持鎖定。
 
 ### 第三階段《退潮前移動的最後一批貨》
-- 狀態：撰寫中；branch 內已完成 1.0.3 修訂，未正式發布。
+- 狀態：完成；branch 內最終版本 1.0.4，待整體發布。
+- `script_id`：`ootb_campaign_tidebone_03_last_cargo`
+- 正式檔名：`OOTB_戰役任務_潮骨三證(03)_退潮前移動的最後一批貨.md`
 - 輸入：第二階段可承接 ending；同時讀取第一階段 `state_ledger_exposed`、`state_clerk_status`。
 - 使用 NPC：#1、#2、#3。
 - 為何現在發生：承包人按暴露程度選擇原定交貨或提前轉移最後一批貨。
@@ -171,17 +177,19 @@
   - A OR B；`state_final_cargo`、`state_contractor_status`、`state_foreman_cooperates`、`state_side_channel` 不另作解鎖門檻，但必須帶入並改變末篇開場、可用證人與貨物狀態。若 `state_buyer_route=unknown` 或第三階段 ending 不屬上述兩者，第四階段保持鎖定並由第三階段完成提早收束。
 
 ### 第四階段《灣外沒有名字的接貨燈》
-- 狀態：已規劃、未製作。
+- 狀態：完成；branch 內最終版本 1.0.2，待整體發布。
+- `script_id`：`ootb_campaign_tidebone_04_bay_signal`
+- 正式檔名：`OOTB_戰役任務_潮骨三證(04)_灣外沒有名字的接貨燈.md`
 - 輸入：第三階段可承接 ending；讀取 `state_final_cargo`、`state_contractor_status`、`state_buyer_route`、`state_foreman_cooperates`。
 - 使用 NPC：#1（若仍可接觸）；#2/#3只按既有狀態作證人或缺席，不強制存活。
 - 為何現在發生：玩家已取得外海接貨路線或可追蹤痕跡，買家船準備離開蒼龍灣。
 - 玩家介入：追索最後貨／交易證據，或把完整證據鏈交給有權機關處理並協助辨認接貨船。
 - 獨立目標：處理最後一批貨與外海交易接口，決定證據、貨物與地方責任人的最終交付。
 - 局部真相：買家網只是一組逐利交易者，不揭露為既有大勢力；其離開不會無限延伸新陰謀。
-- 末篇規劃 ending：
+- 主要 ending：
   - `E4_full_delivery`：截獲或完成合法證據交辦，核心因果與最後貨接口均處理；`campaign_status=completed`、`campaign_progress=4/4`。
   - `E4_bitter_close`：買家船離開，但地方責任鏈、最後貨去向與接貨接口已獲足夠處理，主要問題可正式回答；`campaign_status=completed`、`campaign_progress=4/4`，以苦澀完成收束。
-  - `E4_abandon`：玩家明確退出末篇核心追索；依戰役規則一律 `campaign_status=failed`、`campaign_progress=4/4`，保留前三篇既有成果但不把放棄改寫為 `partly_completed`。第四階段正文製作時必須把三者落成可直接運行的完整 ending。
+  - `E4_abandon`：玩家明確退出末篇核心追索；`campaign_status=failed`、`campaign_progress=4/4`，保留前三篇既有成果但不把放棄改寫為 `partly_completed`。
 
 ## 跨篇一致性與回歸代用品
 - #1 死亡／被捕：後篇以其帳冊、租約、受薪護貨人口供承接責任鏈；不得讓死亡抹掉已存在的客觀證據。
@@ -191,4 +199,4 @@
 - 玩家提前公開案情：承包人按 `state_ledger_exposed` 類型提前移貨；不保證預定場景照常發生。
 
 ## 最終收束邊界
-第四階段必須讓玩家接觸並處理戰役根本因果：地方承包人如何利用潮時、側渠、帳簿與工人完成私運，以及外海接貨接口如何終止。外海買家不升格成新的無限幕後黑手；若其身份未明，可作「局部未盡答案」，但戰役仍須對地方私運結構、主要責任人、最後貨物與證據交付作正式結算。
+第四階段讓玩家接觸並處理戰役根本因果：地方承包人如何利用潮時、側渠、帳簿與工人完成私運，以及外海接貨接口如何終止。外海買家不升格成新的無限幕後黑手；若其身份未明，可作「局部未盡答案」，但戰役仍須對地方私運結構、主要責任人、最後貨物與證據交付作正式結算。
