@@ -15,6 +15,7 @@
 | 《千機峽外六桶車脂有一桶總在開封後浮出細木屑》 | `ootb-linked-tianji-grease-shavings-001` | 《千機峽外五車回爐鐵有一車總在轉彎後鬆掉一枚輪楔》 | 後續／車軸安全覆核後的耗材封存與責任追溯 | 非必要 |
 | 《千機峽外七張濾布領用籤有一張總在歸檔後多一道折痕》 | `ootb-linked-tianji-filter-cloth-fold-001` | 《千機峽外六桶車脂有一桶總在開封後浮出細木屑》 | 後續／耗材污染覆核後的濾材領用與批次追溯 | 非必要 |
 | 《千機峽外八只晾布筐有一只總在入庫後多出半把細砂》 | `ootb-linked-tianji-drying-basket-sand-001` | 《千機峽外七張濾布領用籤有一張總在歸檔後多一道折痕》 | 後續／濾布乾燥覆驗後的晾曬轉運與異物追溯 | 非必要 |
+| 《千機峽外九卷護軸布有一卷總在封包後透出灰線》 | `ootb-linked-tianji-axle-cloth-grey-line-001` | 《千機峽外八只晾布筐有一只總在入庫後多出半把細砂》 | 後續／濾布與護軸布分流後的封包覆驗與灰痕追溯 | 非必要 |
 
 ## 關連圖
 ```text
@@ -31,6 +32,8 @@
 《千機峽外七張濾布領用籤有一張總在歸檔後多一道折痕》
   ↓
 《千機峽外八只晾布筐有一只總在入庫後多出半把細砂》
+  ↓
+《千機峽外九卷護軸布有一卷總在封包後透出灰線》
 ```
 以上直接邊均為非必要後續。
 
@@ -44,6 +47,7 @@
 - 第四後作的甲乙丙丁戊己六桶車脂、粗刨臨時攪棒與丁桶木屑污染均為另一宗新事件；不把第三後作任何 ending 升格為共同正史。
 - 第五後作的七張領用籤、七包濾布、西窗漏雨與戊包受潮均為另一宗新事件；不把第四後作任何 ending 升格為共同正史。
 - 第六後作的八只晾布筐、南曬場積水、鋪砂維修帶、己筐舊竹縫與底層兩幅沾砂均為另一宗新事件；不把第五後作任何 ending 升格為共同正史。
+- 第七後作的九卷護軸布、封包台接縫殘墨、庚卷灰線與外兩層受染均為另一宗新事件；不把第六後作任何 ending 升格為共同正史。
 
 ## branch-specific state
 根任務 → 第一後作：
@@ -82,6 +86,12 @@
 - `tianji_filter_chain_broken=true`：八筐入庫改為雙人見證；每次正式拆筐檢視增加10分鐘程序成本。
 - `tianji_filter_abandoned=true` 或無前作紀錄：使用一般洗布棚／入庫廊基線。
 
+第六後作 → 第七後作：
+- `tianji_drying_chain_restored=true`：第一次查封包簿時同時取得庚卷最後壓平與封紙兩個時刻。
+- `tianji_drying_safe_hold=true`：庚卷預先增加一道「待覆驗」麻繩封條；解除檢視與復原各增加5分鐘。
+- `tianji_drying_chain_broken=true`：九卷封包改為雙人見證；每次正式拆包檢視增加10分鐘程序成本。
+- `tianji_drying_abandoned=true` 或無前作紀錄：使用一般封包房／交接廊基線。
+
 以上 overlay 只改資料成本、附加標記、見證或程序，不改後作核心真相、DC或主要結局可達性。
 
 ## 可累積 state
@@ -96,6 +106,7 @@
 - 第四後作：`tianji_grease_chain_restored`／`tianji_grease_safe_hold`／`tianji_grease_chain_broken`／`tianji_grease_abandoned`。
 - 第五後作：`tianji_filter_chain_restored`／`tianji_filter_safe_hold`／`tianji_filter_chain_broken`／`tianji_filter_abandoned`。
 - 第六後作：`tianji_drying_chain_restored`／`tianji_drying_safe_hold`／`tianji_drying_chain_broken`／`tianji_drying_abandoned`。
+- 第七後作：`tianji_axlecloth_chain_restored`／`tianji_axlecloth_safe_hold`／`tianji_axlecloth_chain_broken`／`tianji_axlecloth_abandoned`。
 
 ## ending／state → 後續映射
 | 來源 | 後續 | 效果 |
@@ -106,10 +117,11 @@
 | 第三後作任一 ending 或無紀錄 | 《千機峽外六桶車脂有一桶總在開封後浮出細木屑》 | 均可開始；按 overlay 執行 |
 | 第四後作任一 ending 或無紀錄 | 《千機峽外七張濾布領用籤有一張總在歸檔後多一道折痕》 | 均可開始；按 overlay 執行 |
 | 第五後作任一 ending 或無紀錄 | 《千機峽外八只晾布筐有一只總在入庫後多出半把細砂》 | 均可開始；按 overlay 執行 |
-| `tianji_drying_chain_restored`／`safe_hold`／`chain_broken`／`abandoned` | 未指定 | 保留為未來可讀取 state |
+| 第六後作任一 ending 或無紀錄 | 《千機峽外九卷護軸布有一卷總在封包後透出灰線》 | 均可開始；按 overlay 執行 |
+| `tianji_axlecloth_chain_restored`／`safe_hold`／`chain_broken`／`abandoned` | 未指定 | 保留為未來可讀取 state |
 
 ## 多來源條件
-目前沒有多來源節點。第六後作只實際讀取第五後作的劇本專用 state；更早任務僅為同樹共同背景的間接來源，不冒充直接來源。
+目前沒有多來源節點。第七後作只實際讀取第六後作的劇本專用 state；更早任務僅為同樹共同背景的間接來源，不冒充直接來源。
 
 ## 維護註記
 - 新增節點前先讀本目錄、所有直接來源全文，以及會影響共同背景或 branch state 的必要樹內劇本。
