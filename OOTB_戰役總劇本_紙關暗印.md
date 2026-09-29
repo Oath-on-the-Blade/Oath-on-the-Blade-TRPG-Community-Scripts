@@ -1,10 +1,10 @@
 # 戰役總劇本：紙關暗印
 
 - `campaign_id`: `ootb-campaign-paper-pass-hidden-seal`
-- 總劇本版本：0.9.0
-- 戰役狀態：規劃中
-- 已正式發布階段：無
-- 當前規劃階段：01–04
+- 總劇本版本：1.0.0
+- 戰役狀態：連載中
+- 已完成未發布階段：01、02、03（僅存在 `campaign_in_progress`；尚未合併 default）
+- 當前規劃階段：04；01–03 已完成作者稿
 - 共同起點與地理：承泰二十一年，昊國一座道內河運與驛路交會的普通州城及其近郊紙坊、驛站、河關；不指定既有正典城市、官署具名人物或門派
 - 等級／規模走向：4–6級小型 → 6–8級中型 → 8–11級中型 → 10–13級大型
 - 共用世界權威：`世界知識庫/README.md`、`世界知識庫/地理與世界基準/時代與世界基準.md`；劇本不新增全世界正典人物或組織
@@ -61,6 +61,16 @@
 - `public_attribution`: none | local_forgery_ring | broad_office_blame
 - `campaign_status`: active | partly_completed | failed | completed
 - `campaign_progress`: 已結算階段數/4
+
+## State 權威表
+- `paper_source`（01建立；unknown/suspected/proven/sealed）：紙料外流證明程度；02、03、04讀取，決定可否合法擴大比對與是否仍有新餘料。
+- `broker_route`（02建立；unknown/traced/exposed/broken）：掮客交接路線暴露程度；03、04讀取，改變貨物分拆與追查入口。
+- `clerk_link`（02建立；unknown/suspected/confirmed/severed）：夜班補記鏈證明／存續狀態；03、04讀取。
+- `batch_cargo`（02建立；planned/split/moving/seized/dispersed）：大批量貨物的實際物流狀態；03、04讀取。
+- 三個 `actor_*_status`：各自首次由人物可被處置的階段建立；後篇只按已保存狀態決定本人能否行動，不復活、不重置。
+- `inspection_alert`（01建立；low/raised/lockdown）：合法查驗警戒；02–04讀取，增加查驗資源並促使貨主退出／集中。
+- `public_attribution`（04建立；none/local_forgery_ring/broad_office_blame）：公開歸因結果；只有證據鏈足夠才可寫入 local_forgery_ring；broad_office_blame 只可保存為錯誤／過度歸因的世界後果，不能當作已證實真相。
+- `campaign_status`、`campaign_progress`：每篇結算寫入；前者記 active/partly_completed/failed/completed，後者記已正式結算階段數/4。
 
 後續只保存會被實際讀取的值。人物例外狀態若超出枚舉，由單桌 `campaign_save` 保存；總綱不預寫所有例外。
 
