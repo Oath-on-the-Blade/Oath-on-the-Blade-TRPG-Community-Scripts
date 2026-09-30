@@ -16,6 +16,8 @@
 | 《千機峽外七張濾布領用籤有一張總在歸檔後多一道折痕》 | `ootb-linked-tianji-filter-cloth-fold-001` | 《千機峽外六桶車脂有一桶總在開封後浮出細木屑》 | 後續／耗材污染覆核後的濾材領用與批次追溯 | 非必要 |
 | 《千機峽外八只晾布筐有一只總在入庫後多出半把細砂》 | `ootb-linked-tianji-drying-basket-sand-001` | 《千機峽外七張濾布領用籤有一張總在歸檔後多一道折痕》 | 後續／濾布乾燥覆驗後的晾曬轉運與異物追溯 | 非必要 |
 | 《千機峽外九卷護軸布有一卷總在封包後透出灰線》 | `ootb-linked-tianji-axle-cloth-grey-line-001` | 《千機峽外八只晾布筐有一只總在入庫後多出半把細砂》 | 後續／濾布與護軸布分流後的封包覆驗與灰痕追溯 | 非必要 |
+| 《千機峽外十只護軸布套有一只總在裝車後多出一道油印》 | `ootb-linked-tianji-axle-sleeve-oilmark-001` | 《千機峽外九卷護軸布有一卷總在封包後透出灰線》 | 後續／成套裝車與油污追溯 | 非必要 |
+| 《千機峽外十一枚車軸銷有一枚總在午驗後多出半圈黑痕》 | `ootb-linked-tianji-axlepin-blackring-001` | 《千機峽外十只護軸布套有一只總在裝車後多出一道油印》 | 後續／車軸銷試裝與黑痕追溯 | 非必要 |
 
 ## 關連圖
 ```text
@@ -34,6 +36,10 @@
 《千機峽外八只晾布筐有一只總在入庫後多出半把細砂》
   ↓
 《千機峽外九卷護軸布有一卷總在封包後透出灰線》
+  ↓
+《千機峽外十只護軸布套有一只總在裝車後多出一道油印》
+  ↓
+《千機峽外十一枚車軸銷有一枚總在午驗後多出半圈黑痕》
 ```
 以上直接邊均為非必要後續。
 
@@ -48,6 +54,8 @@
 - 第五後作的七張領用籤、七包濾布、西窗漏雨與戊包受潮均為另一宗新事件；不把第四後作任何 ending 升格為共同正史。
 - 第六後作的八只晾布筐、南曬場積水、鋪砂維修帶、己筐舊竹縫與底層兩幅沾砂均為另一宗新事件；不把第五後作任何 ending 升格為共同正史。
 - 第七後作的九卷護軸布、封包台接縫殘墨、庚卷灰線與外兩層受染均為另一宗新事件；不把第六後作任何 ending 升格為共同正史。
+- 第八後作的十只護軸布套、辛箱、舊油紙與裝車廊墊箱均為另一宗新事件。
+- 第九後作的十一枚車軸銷、乙試裝孔、石墨殘粉與辛銷半圈黑痕均為另一宗新事件。
 
 ## branch-specific state
 根任務 → 第一後作：
@@ -92,6 +100,18 @@
 - `tianji_drying_chain_broken=true`：九卷封包改為雙人見證；每次正式拆包檢視增加10分鐘程序成本。
 - `tianji_drying_abandoned=true` 或無前作紀錄：使用一般封包房／交接廊基線。
 
+第七後作 → 第八後作：
+- `tianji_axlecloth_chain_restored=true`：查裝車簿時同時取得辛箱落架與重抬時刻。
+- `tianji_axlecloth_safe_hold=true`：辛套有待覆驗封條，解除與復原各加5分鐘。
+- `tianji_axlecloth_chain_broken=true`：裝箱改雙人見證，正式拆箱加10分鐘。
+- `tianji_axlecloth_abandoned=true` 或無紀錄：一般車料棚基線。
+
+第八後作 → 第九後作：
+- `tianji_axlesleeve_chain_restored=true`：查試裝簿時同時取得辛銷入乙孔與拔出時刻。
+- `tianji_axlesleeve_safe_hold=true`：辛銷有待覆驗封條，解除與復原各加5分鐘。
+- `tianji_axlesleeve_chain_broken=true`：試裝改雙人見證，每次正式試裝加10分鐘。
+- `tianji_axlesleeve_abandoned=true` 或無紀錄：一般修車棚基線。
+
 以上 overlay 只改資料成本、附加標記、見證或程序，不改後作核心真相、DC或主要結局可達性。
 
 ## 可累積 state
@@ -107,6 +127,8 @@
 - 第五後作：`tianji_filter_chain_restored`／`tianji_filter_safe_hold`／`tianji_filter_chain_broken`／`tianji_filter_abandoned`。
 - 第六後作：`tianji_drying_chain_restored`／`tianji_drying_safe_hold`／`tianji_drying_chain_broken`／`tianji_drying_abandoned`。
 - 第七後作：`tianji_axlecloth_chain_restored`／`tianji_axlecloth_safe_hold`／`tianji_axlecloth_chain_broken`／`tianji_axlecloth_abandoned`。
+- 第八後作：`tianji_axlesleeve_chain_restored`／`tianji_axlesleeve_safe_hold`／`tianji_axlesleeve_chain_broken`／`tianji_axlesleeve_abandoned`。
+- 第九後作：`tianji_axlepin_chain_restored`／`tianji_axlepin_safe_hold`／`tianji_axlepin_chain_broken`／`tianji_axlepin_abandoned`。
 
 ## ending／state → 後續映射
 | 來源 | 後續 | 效果 |
@@ -118,10 +140,12 @@
 | 第四後作任一 ending 或無紀錄 | 《千機峽外七張濾布領用籤有一張總在歸檔後多一道折痕》 | 均可開始；按 overlay 執行 |
 | 第五後作任一 ending 或無紀錄 | 《千機峽外八只晾布筐有一只總在入庫後多出半把細砂》 | 均可開始；按 overlay 執行 |
 | 第六後作任一 ending 或無紀錄 | 《千機峽外九卷護軸布有一卷總在封包後透出灰線》 | 均可開始；按 overlay 執行 |
-| `tianji_axlecloth_chain_restored`／`safe_hold`／`chain_broken`／`abandoned` | 未指定 | 保留為未來可讀取 state |
+| `tianji_axlecloth_chain_restored`／`safe_hold`／`chain_broken`／`abandoned` | 《千機峽外十只護軸布套有一只總在裝車後多出一道油印》 | 均可開始；按 overlay 執行 |
+| `tianji_axlesleeve_chain_restored`／`safe_hold`／`chain_broken`／`abandoned` | 《千機峽外十一枚車軸銷有一枚總在午驗後多出半圈黑痕》 | 均可開始；按 overlay 執行 |
+| `tianji_axlepin_chain_restored`／`safe_hold`／`chain_broken`／`abandoned` | 未指定 | 保留為未來可讀取 state |
 
 ## 多來源條件
-目前沒有多來源節點。第七後作只實際讀取第六後作的劇本專用 state；更早任務僅為同樹共同背景的間接來源，不冒充直接來源。
+目前沒有多來源節點。第九後作只實際讀取第八後作的劇本專用 state；更早任務僅為同樹共同背景的間接來源，不冒充直接來源。
 
 ## 維護註記
 - 新增節點前先讀本目錄、所有直接來源全文，以及會影響共同背景或 branch state 的必要樹內劇本。
