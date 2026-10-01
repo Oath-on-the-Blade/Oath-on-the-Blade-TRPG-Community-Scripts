@@ -1,5 +1,7 @@
 # 天機閣門派任務：千機峽五座水尺有一座總在夜雨後高半寸
 
+> 本劇本預寫拿手判定依 `遊玩規則/核心/拿手與非戰鬥.md` 與 `內容庫/拿手.md` 執行。
+
 ## 劇本規格
 - `script_id`: `ootb-tianji-five-water-gauges-half-inch-high`
 - 版本：1.0.1
