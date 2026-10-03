@@ -3,7 +3,7 @@
 ## 規格頭
 - 劇本名稱：北倉七枚封泥有一枚沒有官紋
 - script_id：OOTB-CAMPAIGN-CAOYIN-CHENSHA-001-S01
-- 劇本版本：1.0.1
+- 劇本版本：1.0.2
 - replay_policy：once_per_character
 - 連續性：continuous
 - 承接來源：戰役總劇本《漕印沉沙》第一階段；開場時 C01=unknown、C02=unknown、C03=none、C04=denial、C05=0、C07=private、C08=active。
@@ -82,7 +82,7 @@ E 定義：E = 角色等級折算後、歷練型絕活／背景／其他個人�
 - ending_id: CAOYIN-S01-E1
 - 角色卡顯示名稱：封泥留證
 - 結算類型：完成結局／可承接
-條件：C01=documented 且 C02=located 或 C03=secured。C08=active；C09=stage2。歷練：計略4、江湖1，共5。20兩全額實際取得；所有權為全隊共同權利，先由隊伍指定角色保管，可分割；玩家共同決定分配，未達共識時維持 shared_asset_id=CAOYIN-S01-PAY-20 共同持有。俠名+0.2xE；惡名0；【河洛道官府】+0.2xE；【河洛道民間】+0.1xE，因管事、驗糧人與渡工能可靠知道並有限傳播。玩家可見收尾：第五車、樣本與簿冊各自封存，石門渡方向寫入附記，眼前交接已處置，夜渡留下下一步。
+條件：符合戰役總綱任一完整 stage2 解鎖路線：A=C01=documented 且 C02=located；或 B=C03=secured 且 C04=bargaining/cooperating；或 C=C03=partial 且已取得明確石門渡方向。C08=active；C09=stage2。歷練：計略4、江湖1，共5。20兩全額實際取得；所有權為全隊共同權利，先由隊伍指定角色保管，可分割；玩家共同決定分配，未達共識時維持 shared_asset_id=CAOYIN-S01-PAY-20 共同持有。俠名+0.2xE；惡名0；【河洛道官府】+0.2xE；【河洛道民間】+0.1xE，因管事、驗糧人與渡工能可靠知道並有限傳播。玩家可見收尾：第五車、樣本與簿冊各自封存，石門渡方向或NPC#1已確認的短駁時點寫入附記，眼前交接已處置，夜渡留下下一步。
 
 ### 結局二：分車交接
 - ending_id: CAOYIN-S01-E2
