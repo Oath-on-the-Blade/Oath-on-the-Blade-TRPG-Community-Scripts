@@ -3,7 +3,7 @@
 ## 劇本規格頭
 - **劇本名稱**：《河港三面封倉牌有一面總在開鎖後留下舊繩粉》
 - `script_id`: `ootb-linked-riverport-warehouse-tag-rope-dust-001`
-- 劇本版本：1.0.0
+- 劇本版本：1.0.1
 - 運行類別：一般任務；`replay_policy`: `once_per_character`；連續性：`independent`
 - 直接關連來源：《河港六張放行票有一張總在封倉前多出第二道壓痕》／`ootb-linked-riverport-release-slip-double-impression-001`；後續；非必要前置
 - 關連樹：`OOTB_任務_三十六枚渡簽有一枚總在雨後褪去半筆_關連樹目錄.md`
@@ -22,8 +22,8 @@
 ## 1. 關連 overlay
 本篇只讀直接前作的程序後果；封倉牌、舊繩料與貨箱擦傷均為新事件。
 - `riverport_release_chain_restored=true`：核票督辦已建立分項查驗慣例；玩家第一次提出「牌孔繩粉與箱角擦傷可能不同源」時，直接取得30分鐘額外查驗寬限。
-- `riverport_release_safe_reissue=true`：票紙與封牌原件須雙人見證；第一次正式取出昨日封牌記錄多耗5分鐘。
-- `riverport_release_overhold=true`：貨戶要求中立腳夫先核八箱箱號；第一次正式開倉多耗10分鐘。
+- `riverport_release_safe_recheck=true`：票紙與封牌原件須雙人見證；第一次正式取出昨日封牌記錄多耗5分鐘。
+- `riverport_release_blanket_hold=true`：貨戶要求中立腳夫先核八箱箱號；第一次正式開倉多耗10分鐘。
 - `riverport_release_abandoned=true` 或無前作紀錄：使用一般河港基線。
 以上只改程序成本／寬限，不改本篇真相、DC、主要結局、歷練或報酬。
 
