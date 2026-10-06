@@ -49,8 +49,8 @@
 
 ## branch-specific state：第三節點 → 第四節點
 - `riverport_release_chain_restored=true`：第一次提出「牌孔繩粉與箱角擦傷可能不同源」時，直接取得30分鐘查驗寬限。
-- `riverport_release_safe_reissue=true`：票紙與封牌原件須雙人見證；第一次正式取出昨日封牌記錄增加5分鐘。
-- `riverport_release_overhold=true`：貨戶要求中立腳夫先核八箱箱號；第一次正式開倉增加10分鐘。
+- `riverport_release_safe_recheck=true`：票紙與封牌原件須雙人見證；第一次正式取出昨日封牌記錄增加5分鐘。
+- `riverport_release_blanket_hold=true`：貨戶要求中立腳夫先核八箱箱號；第一次正式開倉增加10分鐘。
 - `riverport_release_abandoned=true` 或無第三節點紀錄：使用一般河港基線。
 
 以上 overlay 只改程序成本或查驗寬限，不改第四節點核心真相、DC、主要結局、歷練或銀兩。
