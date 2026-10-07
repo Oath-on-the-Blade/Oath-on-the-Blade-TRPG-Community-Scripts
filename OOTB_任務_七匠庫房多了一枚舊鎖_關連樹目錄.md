@@ -19,6 +19,8 @@
 | 《千機峽外十只護軸布套有一只總在裝車後多出一道油印》 | `ootb-linked-tianji-axle-sleeve-oilmark-001` | 《千機峽外九卷護軸布有一卷總在封包後透出灰線》 | 後續／成套裝車與油污追溯 | 非必要 |
 | 《千機峽外十一枚車軸銷有一枚總在午驗後多出半圈黑痕》 | `ootb-linked-tianji-axlepin-blackring-001` | 《千機峽外十只護軸布套有一只總在裝車後多出一道油印》 | 後續／車軸銷試裝與黑痕追溯 | 非必要 |
 | 《千機峽外十二片止退墊有一片總在壓緊後翹起一角》 | `ootb-linked-tianji-retaining-washer-curl-001` | 《千機峽外十一枚車軸銷有一枚總在午驗後多出半圈黑痕》 | 後續／車軸銷覆驗後的止退墊裝配與壓緊異常追溯 | 非必要 |
+| 《千機峽外十三枚輪轂墊圈有一枚總在試轉後偏出半線》 | `ootb-linked-tianji-hub-shim-offset-001` | 《千機峽外十二片止退墊有一片總在壓緊後翹起一角》 | 後續／止退墊覆驗後的輪轂間隙與試轉偏移追溯 | 非必要 |
+| 《千機峽外十四枚輪轂隔套有一枚總在覆量後短半分》 | `ootb-linked-tianji-hub-spacer-short-001` | 《千機峽外十三枚輪轂墊圈有一枚總在試轉後偏出半線》 | 後續／輪轂墊圈覆驗後的隔套量具偏差追溯 | 非必要 |
 
 ## 關連圖
 ```text
@@ -43,6 +45,10 @@
 《千機峽外十一枚車軸銷有一枚總在午驗後多出半圈黑痕》
   ↓
 《千機峽外十二片止退墊有一片總在壓緊後翹起一角》
+  ↓
+《千機峽外十三枚輪轂墊圈有一枚總在試轉後偏出半線》
+  ↓
+《千機峽外十四枚輪轂隔套有一枚總在覆量後短半分》
 ```
 以上直接邊均為非必要後續。
 
@@ -60,6 +66,8 @@
 - 第八後作的十只護軸布套、辛箱、舊油紙與裝車廊墊箱均為另一宗新事件。
 - 第九後作的十一枚車軸銷、乙試裝孔、石墨殘粉與辛銷半圈黑痕均為另一宗新事件。
 - 第十後作的十二片止退墊、丁位木墊、嵌入薄鐵屑與壬片翹角均為另一宗新事件。
+- 第十一後作的十三枚輪轂墊圈、乙位試轉架、乾硬桐油漆皮與癸枚偏移均為另一宗新事件。
+- 第十二後作的十四枚輪轂隔套、丙位覆量架、木屑卡底與子枚短量均為另一宗新事件。
 - 每篇後作均不得把上一節點任一 ending 偷升格為共同正史；只按實際存檔 overlay，無紀錄時使用本篇獨立基線。
 
 ## branch-specific state
@@ -123,6 +131,18 @@
 - `tianji_axlepin_chain_broken=true`：裝配改雙人見證，每次正式試壓加10分鐘。
 - `tianji_axlepin_abandoned=true` 或無紀錄：一般修車棚／壓裝台基線。
 
+第十後作 → 第十一後作：
+- `tianji_washer_chain_restored=true`：第一次查試轉簿時同時取得癸枚三次均使用乙位的記錄。
+- `tianji_washer_safe_hold=true`：癸枚有待覆驗封條，解除與復原各加5分鐘。
+- `tianji_washer_chain_broken=true`：覆驗改雙人見證，每次正式試轉加10分鐘。
+- `tianji_washer_abandoned=true` 或無紀錄：一般修車棚基線。
+
+第十一後作 → 第十二後作：
+- `tianji_hubshim_chain_restored=true`：首次查簿直接取得子枚三次均用丙位的記錄。
+- `tianji_hubshim_safe_hold=true`：子枚有待覆量封條，解除與復原各加5分鐘。
+- `tianji_hubshim_chain_broken=true`：覆量改雙人見證，每次正式上架加10分鐘。
+- `tianji_hubshim_abandoned=true` 或無紀錄：一般基線。
+
 以上 overlay 只改資料成本、附加標記、見證或程序，不改後作核心真相、DC或主要結局可達性。
 
 ## 可累積 state
@@ -141,6 +161,8 @@
 - 第八後作：`tianji_axlesleeve_chain_restored`／`tianji_axlesleeve_safe_hold`／`tianji_axlesleeve_chain_broken`／`tianji_axlesleeve_abandoned`。
 - 第九後作：`tianji_axlepin_chain_restored`／`tianji_axlepin_safe_hold`／`tianji_axlepin_chain_broken`／`tianji_axlepin_abandoned`。
 - 第十後作：`tianji_washer_chain_restored`／`tianji_washer_safe_hold`／`tianji_washer_chain_broken`／`tianji_washer_abandoned`。
+- 第十一後作：`tianji_hubshim_chain_restored`／`tianji_hubshim_safe_hold`／`tianji_hubshim_chain_broken`／`tianji_hubshim_abandoned`。
+- 第十二後作：`tianji_hubspacer_chain_restored`／`tianji_hubspacer_safe_hold`／`tianji_hubspacer_chain_broken`／`tianji_hubspacer_abandoned`。
 
 ## ending／state → 後續映射
 | 來源 | 後續 | 效果 |
@@ -155,10 +177,12 @@
 | 第七後作任一 ending 或無紀錄 | 《千機峽外十只護軸布套有一只總在裝車後多出一道油印》 | 均可開始；按 overlay 執行 |
 | 第八後作任一 ending 或無紀錄 | 《千機峽外十一枚車軸銷有一枚總在午驗後多出半圈黑痕》 | 均可開始；按 overlay 執行 |
 | 第九後作任一 ending 或無紀錄 | 《千機峽外十二片止退墊有一片總在壓緊後翹起一角》 | 均可開始；按 overlay 執行 |
-| `tianji_washer_chain_restored`／`safe_hold`／`chain_broken`／`abandoned` | 未指定 | 保留為未來可讀取 state |
+| 第十後作任一 ending 或無紀錄 | 《千機峽外十三枚輪轂墊圈有一枚總在試轉後偏出半線》 | 均可開始；按 overlay 執行 |
+| 第十一後作任一 ending 或無紀錄 | 《千機峽外十四枚輪轂隔套有一枚總在覆量後短半分》 | 均可開始；按 overlay 執行 |
+| `tianji_hubspacer_chain_restored`／`safe_hold`／`chain_broken`／`abandoned` | 未指定 | 保留為未來可讀取 state |
 
 ## 多來源條件
-目前沒有多來源節點。第十後作只實際讀取第九後作的劇本專用 state；更早任務僅為同樹共同背景的間接來源，不冒充直接來源。
+目前沒有多來源節點。第十二後作只實際讀取第十一後作的劇本專用 state；更早任務僅為同樹共同背景的間接來源，不冒充直接來源。
 
 ## 維護註記
 - 新增節點前先讀本目錄、所有直接來源全文，以及會影響共同背景或 branch state 的必要樹內劇本。
